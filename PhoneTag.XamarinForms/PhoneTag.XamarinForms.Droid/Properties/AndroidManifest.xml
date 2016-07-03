@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.Sanhedrin.PhoneTag" android:installLocation="preferExternal" android:versionCode="1" android:versionName="Initial">
+	<uses-sdk android:minSdkVersion="14" />
+	<uses-permission android:name="android.permission.CAMERA" />
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+	<uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<application android:label="PhoneTag" android:hardwareAccelerated="true" android:icon="@drawable/icon">
+		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyCcoqfGQR5sWgP5jcTAushsTVYwlJAA_GE" />
+	</application>
+</manifest>
