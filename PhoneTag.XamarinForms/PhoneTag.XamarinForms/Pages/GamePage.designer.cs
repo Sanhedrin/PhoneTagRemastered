@@ -12,11 +12,9 @@ namespace PhoneTag.XamarinForms.Pages
 {
     public partial class GamePage : ContentPage
     {
-        private CameraPreview m_Camera;
-
         private void initializeComponent()
         {
-            Title = "Main Page";
+            Title = "PhoneTag!";
             Padding = new Thickness(0, 20, 0, 0);
             Content = new StackLayout
             {
@@ -67,7 +65,7 @@ namespace PhoneTag.XamarinForms.Pages
                             new Button { Text = "Reload", BackgroundColor = Color.Green },
                             new Button {
                                 Text = "Shoot", BackgroundColor = Color.Red,
-                                Command = new Command( () => { m_Camera.TakePicture(); })
+                                Command = new Command( () => { GamePage_ShootButtonClicked(); })
                             }
                         }
                     }

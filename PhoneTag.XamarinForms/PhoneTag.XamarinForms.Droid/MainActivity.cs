@@ -14,6 +14,9 @@ using Android.Net;
 
 using Environment = Android.OS.Environment;
 using Uri = Android.Net.Uri;
+using PushNotification.Plugin;
+using PhoneTag.XamarinForms.PushNotifications;
+using PhoneTag.SharedCodebase.Utils;
 
 namespace PhoneTag.XamarinForms.Droid
 {
@@ -21,14 +24,15 @@ namespace PhoneTag.XamarinForms.Droid
         ScreenOrientation = ScreenOrientation.Portrait)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
     {
-        private static readonly File sr_imageFile = new File(Environment.GetExternalStoragePublicDirectory(Environment.DirectoryPictures), "tmp.jpg");
-
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
             Xamarin.FormsMaps.Init(this, bundle);
+            
+            CrossPushNotification.Initialize<CrossPushNotificationListener>(Keys.AndroidProjectNumber);
+
             LoadApplication(new App());
         }
     }

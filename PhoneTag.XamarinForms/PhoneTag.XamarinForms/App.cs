@@ -10,6 +10,10 @@ using Xamarin.Forms;
 using Plugin.Media.Abstractions;
 
 using PhoneTag.XamarinForms.Pages;
+using PushNotification.Plugin;
+using com.shephertz.app42.paas.sdk.csharp;
+using PhoneTag.SharedCodebase.Utils;
+using System.Threading.Tasks;
 
 namespace PhoneTag.XamarinForms
 {
@@ -18,12 +22,15 @@ namespace PhoneTag.XamarinForms
         public App()
         {
             // The root page of your application
+            App42API.Initialize(Keys.App42APIKey, Keys.App42SecretKey);
+
             MainPage = new NavigationPage(new GamePage());
         }
 
         protected override void OnStart()
         {
             // Handle when your app starts
+            //CrossPushNotification.Current.Register();
         }
 
         protected override void OnSleep()

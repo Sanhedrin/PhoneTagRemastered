@@ -14,6 +14,7 @@ namespace PhoneTag.XamarinForms.Pages
     public partial class GamePage : ContentPage
     {
         private GameMap m_GameMap = new GameMap(new Position(32.0486850, 34.7600850), 0.5, 1);
+        private CameraPreview m_Camera;
 
         public GamePage()
         {
@@ -32,6 +33,11 @@ namespace PhoneTag.XamarinForms.Pages
         private async void GamePage_PictureReady(object sender, PictureReadyEventArgs e)
         {
             await Navigation.PushAsync(new ShotDisplayPage(e.PictureBuffer));
+        }
+
+        private void GamePage_ShootButtonClicked()
+        {
+            m_Camera.TakePicture();
         }
     }
 }

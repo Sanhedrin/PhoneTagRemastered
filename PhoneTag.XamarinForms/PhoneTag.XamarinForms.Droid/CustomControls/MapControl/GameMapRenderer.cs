@@ -117,7 +117,7 @@ namespace PhoneTag.XamarinForms.Droid
             GameMap gameMap = (GameMap)e.NewElement;
             m_MaxZoom = gameMap.MaxZoom;
             m_MinZoom = gameMap.MinZoom;
-            m_GameLocation = new LatLng(gameMap.StartLocation.Latitude, gameMap.StartLocation.Longitude);
+            m_LastValidLocation = m_GameLocation = new LatLng(gameMap.StartLocation.Latitude, gameMap.StartLocation.Longitude);
             m_GameRadius = gameMap.GameRadius;
 
             markPlayArea(gameMap.StartLocation, gameMap.GameRadius);

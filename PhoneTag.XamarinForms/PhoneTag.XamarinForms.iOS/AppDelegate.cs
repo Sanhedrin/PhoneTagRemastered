@@ -6,6 +6,8 @@ using Foundation;
 using UIKit;
 
 using PhoneTag.XamarinForms;
+using PushNotification.Plugin;
+using PhoneTag.XamarinForms.PushNotifications;
 
 namespace PhoneTag.XamarinForms.iOS
 {
@@ -26,6 +28,9 @@ namespace PhoneTag.XamarinForms.iOS
         {
             global::Xamarin.Forms.Forms.Init();
             Xamarin.FormsMaps.Init();
+
+            CrossPushNotification.Initialize<CrossPushNotificationListener>();
+
             LoadApplication(new App());
 
             return base.FinishedLaunching(app, options);
