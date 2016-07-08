@@ -36,14 +36,31 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
-    <Compile Include="Controls\CameraOptions.cs" />
-    <Compile Include="Controls\CameraPreview.cs" />
-    <Compile Include="Controls\GameMap.cs" />
-    <Compile Include="Controls\PictureReadyEventArgs.cs" />
-    <Compile Include="Controls\TakePictureEventArgs.cs" />
+    <Compile Include="Controls\CameraControl\CameraOptions.cs" />
+    <Compile Include="Controls\CameraControl\CameraPreview.cs" />
+    <Compile Include="Controls\MapControl\GameMap.cs" />
+    <Compile Include="Controls\MapControl\GameMapSetup.cs" />
+    <Compile Include="Controls\CameraControl\PictureReadyEventArgs.cs" />
+    <Compile Include="Controls\CameraControl\TakePictureEventArgs.cs" />
+    <Compile Include="Pages\CreateGamePage.cs" />
+    <Compile Include="Pages\CreateGamePage.designer.cs">
+      <DependentUpon>CreateGamePage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\ErrorPage.cs" />
+    <Compile Include="Pages\ErrorPage.designer.cs">
+      <DependentUpon>ErrorPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\GameAreaChooserPage.cs" />
+    <Compile Include="Pages\GameAreaChooserPage.designer.cs">
+      <DependentUpon>GameAreaChooserPage.cs</DependentUpon>
+    </Compile>
     <Compile Include="Pages\GamePage.cs" />
     <Compile Include="Pages\GamePage.designer.cs">
       <DependentUpon>GamePage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\LoadingPage.cs" />
+    <Compile Include="Pages\LoadingPage.designer.cs">
+      <DependentUpon>LoadingPage.cs</DependentUpon>
     </Compile>
     <Compile Include="Pages\MainMenuPage.cs" />
     <Compile Include="Pages\MainMenuPage.designer.cs">

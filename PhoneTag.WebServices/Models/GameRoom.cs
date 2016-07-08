@@ -10,6 +10,9 @@ using MongoDB.Bson;
 
 namespace PhoneTag.WebServices.Models
 {
+    /// <summary>
+    /// The game room model.
+    /// </summary>
     public class GameRoom : IViewable
     {
         public ObjectId _id { get; set; }
@@ -33,6 +36,9 @@ namespace PhoneTag.WebServices.Models
             GameTime = 0;
         }
 
+        /// <summary>
+        /// Generates a view for this model.
+        /// </summary>
         public dynamic GenerateView()
         {
             GameRoomView roomView = new GameRoomView();

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace PhoneTag.SharedCodebase.Utils
 {
+    /// <summary>
+    /// Contains all constant strings representing keys required by our various plugins.
+    /// </summary>
     public static class Keys
     {
         public const String AndroidProjectNumber = "232827258785";

@@ -14,6 +14,7 @@ using PushNotification.Plugin;
 using com.shephertz.app42.paas.sdk.csharp;
 using PhoneTag.SharedCodebase.Utils;
 using System.Threading.Tasks;
+using PhoneTag.SharedCodebase.StaticInfo;
 
 namespace PhoneTag.XamarinForms
 {
@@ -21,10 +22,9 @@ namespace PhoneTag.XamarinForms
     {        
         public App()
         {
-            // The root page of your application
-            App42API.Initialize(Keys.App42APIKey, Keys.App42SecretKey);
-
-            MainPage = new NavigationPage(new GamePage());
+            
+            MainPage = new LoadingPage();
+            //MainPage = new NavigationPage(new GamePage());
         }
 
         protected override void OnStart()

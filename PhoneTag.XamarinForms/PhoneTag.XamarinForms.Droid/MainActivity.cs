@@ -30,7 +30,9 @@ namespace PhoneTag.XamarinForms.Droid
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
             Xamarin.FormsMaps.Init(this, bundle);
-            
+
+            this.Window.SetFlags(WindowManagerFlags.KeepScreenOn, WindowManagerFlags.KeepScreenOn);
+
             CrossPushNotification.Initialize<CrossPushNotificationListener>(Keys.AndroidProjectNumber);
 
             LoadApplication(new App());

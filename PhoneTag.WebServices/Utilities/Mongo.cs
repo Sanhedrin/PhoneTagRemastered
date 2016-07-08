@@ -8,12 +8,18 @@ using System.Web;
 
 namespace PhoneTag.WebServices
 {
+    /// <summary>
+    /// Allows access to our database.
+    /// </summary>
     public class Mongo
     {
         private static IMongoClient s_Client;
         public static IMongoDatabase Database { get; private set; }
         public static bool IsReady { get; private set; }
 
+        /// <summary>
+        /// Initializes the database connection.
+        /// </summary>
         public static string Init()
         {
             String errorMessage = "All's well";

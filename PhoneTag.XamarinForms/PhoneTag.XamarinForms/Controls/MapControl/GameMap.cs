@@ -7,12 +7,15 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 
-namespace PhoneTag.XamarinForms.Controls
+namespace PhoneTag.XamarinForms.Controls.MapControl
 {
+    /// <summary>
+    /// A custom control representing an interactive map that can be put as a view on a page.
+    /// The map is initialized to a given play area and is locked to it, allowing players to view the game
+    /// area, but not stray away from it to keep ease of use.
+    /// </summary>
     public class GameMap : Map
     {
-        public double MaxZoom { get; private set; }
-        public double MinZoom { get; private set; }
         public double GameRadius { get; private set; }
         public Position StartLocation { get; private set; }
 
@@ -24,9 +27,6 @@ namespace PhoneTag.XamarinForms.Controls
             WidthRequest = CrossScreen.Current.Size.Width;
             HorizontalOptions = LayoutOptions.Fill;
             VerticalOptions = LayoutOptions.Fill;
-
-            MaxZoom = i_GameRadius * 2;
-            MinZoom = i_GameRadius * 2;
 
             StartLocation = i_GameLocation;
             GameRadius = i_GameRadius;

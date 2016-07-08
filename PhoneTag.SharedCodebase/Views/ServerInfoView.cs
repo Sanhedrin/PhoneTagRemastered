@@ -7,11 +7,15 @@ using System.Threading.Tasks;
 namespace PhoneTag.SharedCodebase.Views
 {
     /// <summary>
-    /// Views implementing this interface support updating their stored info to current server values 
-    /// instead of requiring a new instance to be requested.
+    /// A view containing info about the server.
     /// </summary>
-    interface IUpdateable
+    public class ServerInfoView
     {
-        Task Update();
+        public String Version { get; set; }
+
+        public ServerInfoView()
+        {
+
+        }
     }
 }

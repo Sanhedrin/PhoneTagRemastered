@@ -35,13 +35,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Extensions\HttpExtensions.cs" />
-    <Compile Include="Utils\DeviceLocationInfo.cs" />
+    <Compile Include="StaticInfo\PhoneTagInfo.cs" />
+    <Compile Include="Utils\GeoPoint.cs" />
+    <Compile Include="Utils\GeoUtils.cs" />
     <Compile Include="Utils\Keys.cs" />
-    <Compile Include="Utils\Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\GameDetailsView.cs" />
+    <Compile Include="Views\GameModeView.cs" />
     <Compile Include="Views\GameRoomView.cs" />
     <Compile Include="Views\IUpdateable.cs" />
+    <Compile Include="Views\ServerInfoView.cs" />
     <Compile Include="Views\UserView.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -7,6 +7,10 @@ using Android.Views;
 
 namespace PhoneTag.XamarinForms.Droid.CustomControls.CameraControl
 {
+    /// <summary>
+    /// The view of the custom camera control, handles set up of the platform specific implementation for 
+    /// android.
+    /// </summary>
     public sealed class UICameraPreview : ViewGroup, ISurfaceHolderCallback
     {
         SurfaceView surfaceView;

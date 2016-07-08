@@ -180,6 +180,7 @@
     <Compile Include="CustomControls\MapControl\GameMapRenderer.cs" />
     <Compile Include="CustomControls\CameraControl\UICameraPreview.cs" />
     <Compile Include="CustomControls\CameraControl\CameraPreviewRenderer.cs" />
+    <Compile Include="CustomControls\MapControl\GameMapSetupRenderer.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MainApplication.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />

@@ -25,6 +25,11 @@ namespace PhoneTag.XamarinForms.PushNotifications
             Debug.WriteLine("Message Arrived");
         }
 
+        /// <summary>
+        /// Occurs after the Register() method has been called, should only happen ONCE in the app's lifetime.
+        /// </summary>
+        /// <param name="i_Token">The ID generated for this user by the APNS, this value should be stored
+        /// for future use.</param>
         public void OnRegistered(string i_Token, DeviceType i_DeviceType)
         {
             Debug.WriteLine(string.Format("Push Notification - Device Registered - Token : {0}", i_Token));

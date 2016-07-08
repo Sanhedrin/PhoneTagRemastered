@@ -1,5 +1,4 @@
-﻿using Plugin.XamJam.Screen;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,22 +7,14 @@ using Xamarin.Forms;
 
 namespace PhoneTag.XamarinForms.Pages
 {
-    public partial class ShotDisplayPage
+    public partial class GameAreaChooserPage : ContentPage
     {
-        private Image m_ShotView;
-
         private void initializeComponent()
         {
-            NavigationPage.SetHasNavigationBar(this, false);
+            NavigationPage.SetHasBackButton(this, true);
 
-            m_ShotView = new Image
-            {
-                Aspect = Aspect.Fill,
-                HeightRequest = CrossScreen.Current.Size.Height * 2 / 5,
-                WidthRequest = CrossScreen.Current.Size.Width,
-            };
-
-            Title = "Main Page";
+            Title = "Choose the game area";
+            Padding = new Thickness(0, 20, 0, 0);
             Content = new StackLayout
             {
                 VerticalOptions = new LayoutOptions
@@ -31,7 +22,12 @@ namespace PhoneTag.XamarinForms.Pages
                     Alignment = LayoutAlignment.Fill
                 },
                 Children = {
-                    m_ShotView
+                    m_GameMap,
+                    new Button
+                    {
+                        Text = "Done",
+                        Command = new Command(() => { GameAreaChooserPage_DoneButtonClicked(); })
+                    }
                 }
             };
         }

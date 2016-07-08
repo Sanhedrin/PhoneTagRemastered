@@ -4,10 +4,14 @@ using AVFoundation;
 using CoreGraphics;
 using Foundation;
 using UIKit;
-using PhoneTag.XamarinForms.Controls;
+using PhoneTag.XamarinForms.Controls.CameraControl;
 
 namespace PhoneTag.XamarinForms.iOS.CustomControls.CameraControl
 {
+    /// <summary>
+    /// The view of the custom camera control, handles set up of the platform specific implementation for 
+    /// android.
+    /// </summary>
     public class UICameraPreview : UIView
     {
         AVCaptureVideoPreviewLayer previewLayer;

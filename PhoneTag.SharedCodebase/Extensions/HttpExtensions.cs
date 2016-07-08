@@ -20,7 +20,7 @@ namespace PhoneTag.SharedCodebase
         /// <param name="i_RequestUri">URI of the http resources(Must complete the BaseUri defined in the HttpExtensions class).</param>
         /// <param name="i_Content">An optional parameter to send to the method.</param>
         /// <returns>A response object if any such are returned by the method.
-        /// This object is returned as a dynamic.</returns>
+        /// This object is returned as type T.</returns>
         public static async Task<dynamic> PostMethodAsync<T>(this HttpClient i_HttpClient, string i_RequestUri, T i_Content)
         {
             //Serialize the input parameter and send the request.
@@ -31,8 +31,8 @@ namespace PhoneTag.SharedCodebase
 
             //Obtain the result and deserialize it.
             string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            
-            if (jsonResponse.Contains("\"Message\""))
+
+            if (!response.IsSuccessStatusCode)
             {
                 throw new HttpRequestException(jsonResponse);
             }
@@ -45,7 +45,7 @@ namespace PhoneTag.SharedCodebase
         /// </summary>
         /// <param name="i_RequestUri">URI of the http resources(Must complete the BaseUri defined in the HttpExtensions class).</param>
         /// <returns>A response object if any such are returned by the method.
-        /// This object is returned as a dynamic.</returns>
+        /// This object is returned as a dynamic which translates to a JObject on client side.</returns>
         public static async Task<dynamic> PostMethodAsync(this HttpClient i_HttpClient, string i_RequestUri)
         {
             //Serialize the input parameter and send the request.
@@ -53,8 +53,8 @@ namespace PhoneTag.SharedCodebase
 
             //Obtain the result and deserialize it.
             string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            
-            if (jsonResponse.Contains("\"Message\""))
+
+            if (!response.IsSuccessStatusCode)
             {
                 throw new HttpRequestException(jsonResponse);
             }
@@ -67,7 +67,7 @@ namespace PhoneTag.SharedCodebase
         /// </summary>
         /// <param name="i_RequestUri">URI of the http resources(Must complete the BaseUri defined in the HttpExtensions class).</param>
         /// <returns>A response object if any such are returned by the method.
-        /// This object is returned as a dynamic.</returns>
+        /// This object is returned as a dynamic which translates to a JObject on client side.</returns>
         public static async Task<dynamic> GetMethodAsync(this HttpClient i_HttpClient, string i_RequestUri)
         {
             //Send the request.
@@ -76,7 +76,7 @@ namespace PhoneTag.SharedCodebase
             //Obtain the result and deserialize it.
             string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            if (jsonResponse.Contains("\"Message\""))
+            if (!response.IsSuccessStatusCode)
             {
                 throw new HttpRequestException(jsonResponse);
             }
@@ -90,7 +90,7 @@ namespace PhoneTag.SharedCodebase
         /// </summary>
         /// <param name="i_RequestUri">URI of the http resources(Must complete the BaseUri defined in the HttpExtensions class).</param>
         /// <returns>A response object if any such are returned by the method.
-        /// This object is returned as a dynamic.</returns>
+        /// This object is returned as type T.</returns>
         public static async Task<T> GetMethodAsync<T>(this HttpClient i_HttpClient, string i_RequestUri)
         {
             //Send the request.
@@ -99,7 +99,7 @@ namespace PhoneTag.SharedCodebase
             //Obtain the result and deserialize it.
             string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            if (jsonResponse.Contains("\"Message\""))
+            if (!response.IsSuccessStatusCode)
             {
                 throw new HttpRequestException(jsonResponse);
             }

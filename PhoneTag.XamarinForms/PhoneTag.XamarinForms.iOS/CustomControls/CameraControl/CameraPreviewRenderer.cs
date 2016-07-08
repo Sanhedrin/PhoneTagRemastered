@@ -8,7 +8,7 @@ using System.IO;
 using System.Threading.Tasks;
 using CoreMedia;
 using Foundation;
-using PhoneTag.XamarinForms.Controls;
+using PhoneTag.XamarinForms.Controls.CameraControl;
 using PhoneTag.XamarinForms.iOS.CustomControls.CameraControl;
 
 [assembly: ExportRenderer(typeof(CameraPreview), typeof(CameraPreviewRenderer))]
@@ -38,12 +38,17 @@ namespace PhoneTag.XamarinForms.iOS.CustomControls.CameraControl
             }
         }
 
+        //Handles a picture request.
         private async void OnTakePictureRequested(object sender, TakePictureEventArgs e)
         {
             byte[] pictureStream = await TakePicture();
             e.PictureReadyCallback(pictureStream);
         }
 
+        /// <summary>
+        /// Takes the picture using the Android's platform camera interface.
+        /// </summary>
+        /// <returns>Byte array representing the picture that was just taken.</returns>
         public async Task<byte[]> TakePicture()
         {
             //Might need this if CaptureSession.Outputs is empty, can't tell without testing

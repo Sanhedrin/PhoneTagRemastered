@@ -7,6 +7,9 @@ using Xamarin.Forms;
 
 namespace PhoneTag.XamarinForms.Pages
 {
+    /// <summary>
+    /// The main menu.
+    /// </summary>
     public partial class MainMenuPage : ContentPage
     {
         public MainMenuPage()
@@ -16,7 +19,7 @@ namespace PhoneTag.XamarinForms.Pages
 
         private void MainMenu_CreateGameButtonClicked()
         {
-            throw new NotImplementedException();
+            Navigation.PushAsync(new CreateGamePage());
         }
 
         private void MainMenu_FindGameButtonClicked()

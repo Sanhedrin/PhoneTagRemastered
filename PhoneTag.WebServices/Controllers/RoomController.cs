@@ -13,31 +13,45 @@ using PhoneTag.SharedCodebase.Views;
 
 namespace PhoneTag.WebServices.Controllers
 {
+    /// <summary>
+    /// The controller to manage game room specific operations.
+    /// </summary>
     public class RoomController : ApiController
     {
+        /// <summary>
+        /// Creates a new game room.
+        /// </summary>
+        /// <param name="i_GameDetailsView">Details about the new game's rules</param>
+        /// <returns>The ID of the created room.</returns>
         [Route("api/rooms/create")]
         [HttpPost]
-        public async Task<bool> CreateRoom(GameDetailsView i_GameDetailsView)
+        public async Task<String> CreateRoom(GameDetailsView i_GameDetailsView)
         {
-            bool success = true;
+            String roomId = null;
 
             GameRoom gameRoom = new GameRoom(GameDetails.FromView(i_GameDetailsView));
 
             try
             {
                 await Mongo.Database.GetCollection<GameRoom>("Rooms").InsertOneAsync(gameRoom);
+                roomId = gameRoom._id.ToString();
             }
             catch (Exception e)
             {
-                success = false;
+                roomId = null;
             }
 
-            return success;
+            return roomId;
         }
 
+        /// <summary>
+        /// Gets the room by the given id and returns a view of it.
+        /// </summary>
+        /// <param name="i_RoomId"></param>
+        /// <returns></returns>
         [Route("api/rooms/{i_RoomId}")]
         [HttpGet]
-        public async Task<User> GetRoom(string i_RoomId)
+        public async Task<GameRoomView> GetRoom(string i_RoomId)
         {
             GameRoom foundRoom = await getRoomModel(i_RoomId);
 

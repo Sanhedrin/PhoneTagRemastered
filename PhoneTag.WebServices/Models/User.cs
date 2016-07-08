@@ -8,6 +8,9 @@ using MongoDB.Bson;
 
 namespace PhoneTag.WebServices.Models
 {
+    /// <summary>
+    /// The user model.
+    /// </summary>
     public class User : IViewable
     {
         public ObjectId _id { get; set; }
@@ -16,6 +19,9 @@ namespace PhoneTag.WebServices.Models
         public bool IsReady { get; set; }
         public int Ammo { get; set; }
 
+        /// <summary>
+        /// Generates a view for this model,
+        /// </summary>
         public dynamic GenerateView()
         {
             UserView userView = new UserView();
@@ -26,7 +32,8 @@ namespace PhoneTag.WebServices.Models
 
             //We can't start generating views for each of my friends because it'll cause a cyclic
             //infinite loop.
-            //We might not care about the entirety of the list though, and only get basic details
+            //We might not care about the entirety of the list though, and only get basic details.
+            //If more information is required, the friend's username can be used to poll it.
             userView.Friends = new List<UserView>();
             foreach (User friend in Friends)
             {

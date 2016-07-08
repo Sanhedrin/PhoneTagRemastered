@@ -1,4 +1,4 @@
-﻿using PhoneTag.XamarinForms.Controls;
+﻿using PhoneTag.XamarinForms.Controls.CameraControl;
 using Plugin.XamJam.Screen;
 using System;
 using System.Collections.Generic;
@@ -14,6 +14,8 @@ namespace PhoneTag.XamarinForms.Pages
     {
         private void initializeComponent()
         {
+            NavigationPage.SetHasNavigationBar(this, false);
+
             Title = "PhoneTag!";
             Padding = new Thickness(0, 20, 0, 0);
             Content = new StackLayout

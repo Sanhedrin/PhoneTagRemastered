@@ -14,28 +14,32 @@ using Xamarin.Forms;
 using Xamarin.Forms.Maps.Android;
 
 using PhoneTag.XamarinForms.Droid;
-using PhoneTag.XamarinForms.Controls;
+using PhoneTag.XamarinForms.Controls.MapControl;
 using System.ComponentModel;
 using Android.Gms.Maps;
 using Xamarin.Forms.Platform.Android;
 using Android.Gms.Maps.Model;
 using System.Threading.Tasks;
 using Xamarin.Forms.Maps;
+using PhoneTag.SharedCodebase.Utils;
 
 [assembly: ExportRenderer(typeof(GameMap), typeof(GameMapRenderer))]
 namespace PhoneTag.XamarinForms.Droid
 {
+    /// <summary>
+    /// Custom renderer for the game map control.
+    /// </summary>
     class GameMapRenderer : MapRenderer
     {
-
-        private const double k_EarthRadius = 6371e3; // metres
-
         private LatLng m_GameLocation;
         private double m_GameRadius;
         private double m_MinZoom;
         private double m_MaxZoom;
         private double? m_InitialZoom = null;
-        private GoogleMap m_MapView;
+        protected GoogleMap m_MapView;
+        protected GameMap m_GameMap;
+
+        private bool m_MapControlReady = false;
 
         private LatLng m_LastValidLocation;
 
@@ -44,14 +48,49 @@ namespace PhoneTag.XamarinForms.Droid
             base.OnElementPropertyChanged(sender, e);
 
             m_MapView = ((MapView)Control).Map;
-            m_MapView.UiSettings.ZoomControlsEnabled = false;
-
-            m_MapView.SetIndoorEnabled(true);
-
-            m_MapView.CameraChange += CameraChanged;
+            setupMapControl();
         }
 
-        public void CameraChanged(object sender, GoogleMap.CameraChangeEventArgs e)
+        protected override void OnElementChanged(ElementChangedEventArgs<Xamarin.Forms.View> e)
+        {
+            base.OnElementChanged(e);
+
+            m_GameMap = (GameMap)e.NewElement;
+            setupMap(m_GameMap.StartLocation, m_GameMap.GameRadius);
+        }
+
+        //UI setup for the map control.
+        private void setupMapControl()
+        {
+            if (!m_MapControlReady)
+            {
+                m_MapView.UiSettings.ZoomControlsEnabled = false;
+
+                m_MapView.SetIndoorEnabled(true);
+
+                m_MapView.CameraChange += CameraChanged;
+
+                m_MapControlReady = true;
+            }
+        }
+
+        //Sets the view of the map to the given game area.
+        protected void setupMap(Position i_Location, double i_GameRadius)
+        {
+            m_MaxZoom = i_GameRadius * 2;
+            m_MinZoom = i_GameRadius * 2;
+            m_LastValidLocation = m_GameLocation = new LatLng(i_Location.Latitude, i_Location.Longitude);
+            m_GameRadius = i_GameRadius;
+
+            markPlayArea(i_Location, i_GameRadius);
+        }
+
+        /// <summary>
+        /// Handles changes to the visible area on the map.
+        /// We'll ensure that it doesn't go out of range, and if it does, move the view back to the
+        /// game area.
+        /// </summary>
+        public virtual void CameraChanged(object sender, GoogleMap.CameraChangeEventArgs e)
         {
             fixCameraZoom(e.Position.Zoom);
 
@@ -60,19 +99,22 @@ namespace PhoneTag.XamarinForms.Droid
 
         private void fixCameraZoom(double i_CurrentZoom)
         {
-            if (m_InitialZoom == null)
+            if (m_MapView != null)
             {
-                m_InitialZoom = m_MapView.CameraPosition.Zoom;
-                m_MaxZoom = m_InitialZoom.Value + m_MaxZoom;
-                m_MinZoom = m_InitialZoom.Value - m_MinZoom;
-            }
-            else if (i_CurrentZoom > m_MaxZoom)
-            {
-                m_MapView.AnimateCamera(CameraUpdateFactory.ZoomTo((float)m_MaxZoom));
-            }
-            else if (i_CurrentZoom < m_MinZoom)
-            {
-                m_MapView.AnimateCamera(CameraUpdateFactory.ZoomTo((float)m_MinZoom));
+                if (m_InitialZoom == null)
+                {
+                    m_InitialZoom = m_MapView.CameraPosition.Zoom;
+                    m_MaxZoom = m_InitialZoom.Value + m_MaxZoom;
+                    m_MinZoom = m_InitialZoom.Value - m_MinZoom;
+                }
+                else if (i_CurrentZoom > m_MaxZoom)
+                {
+                    m_MapView.AnimateCamera(CameraUpdateFactory.ZoomTo((float)m_MaxZoom));
+                }
+                else if (i_CurrentZoom < m_MinZoom)
+                {
+                    m_MapView.AnimateCamera(CameraUpdateFactory.ZoomTo((float)m_MinZoom));
+                }
             }
         }
 
@@ -88,56 +130,36 @@ namespace PhoneTag.XamarinForms.Droid
             }
         }
 
-        private bool isLocationOutOfBounds(LatLng i_Location)
-        {
-            double lat1Rad = toRadians(i_Location.Latitude);
-            double lat2Rad = toRadians(m_GameLocation.Latitude);
-            double latDeltaRad = toRadians(i_Location.Latitude - m_GameLocation.Latitude);
-            double lonDeltaRad = toRadians(i_Location.Longitude - m_GameLocation.Longitude);
-
-            double calculatedValue1 = Math.Sin(latDeltaRad / 2) * Math.Sin(latDeltaRad / 2) +
-                    Math.Cos(lat1Rad) * Math.Cos(lat2Rad) *
-                    Math.Sin(lonDeltaRad / 2) * Math.Sin(lonDeltaRad / 2);
-            double calculatedValue2 = 2 * Math.Atan2(Math.Sqrt(calculatedValue1), Math.Sqrt(1 - calculatedValue1));
-
-            double distance = (k_EarthRadius * calculatedValue2) / 1000; //Based on earth radius, in km
-
-            return distance > m_GameRadius;
-        }
-
-        private double toRadians(double i_Degree)
-        {
-            return i_Degree * Math.PI / 180;
-        }
-
-        protected override void OnElementChanged(ElementChangedEventArgs<Xamarin.Forms.View> e)
-        {
-            base.OnElementChanged(e);
-
-            GameMap gameMap = (GameMap)e.NewElement;
-            m_MaxZoom = gameMap.MaxZoom;
-            m_MinZoom = gameMap.MinZoom;
-            m_LastValidLocation = m_GameLocation = new LatLng(gameMap.StartLocation.Latitude, gameMap.StartLocation.Longitude);
-            m_GameRadius = gameMap.GameRadius;
-
-            markPlayArea(gameMap.StartLocation, gameMap.GameRadius);
-        }
-
         private async void markPlayArea(Position i_GameLocation, double i_GameRadius)
         {
-            CircleOptions circleOptions = new CircleOptions();
-            circleOptions.InvokeCenter(new LatLng(i_GameLocation.Latitude, i_GameLocation.Longitude));
-            circleOptions.InvokeRadius(i_GameRadius * 1000); //Meters to kilometers
-            circleOptions.InvokeFillColor(Android.Graphics.Color.Argb(50, 255, 0, 0));
-            circleOptions.InvokeStrokeWidth(3);
-
             while (m_MapView == null)
             {
                 await Task.Delay(10);
             }
 
+            m_MapView.Clear();
+
+            CircleOptions circleOptions = new CircleOptions();
+            LatLng gameLocation = new LatLng(i_GameLocation.Latitude, i_GameLocation.Longitude);
+            circleOptions.InvokeCenter(gameLocation);
+            circleOptions.InvokeRadius(i_GameRadius * 1000); //Meters to kilometers
+            circleOptions.InvokeFillColor(Android.Graphics.Color.Argb(50, 255, 0, 0));
+            circleOptions.InvokeStrokeWidth(3);
             Circle newCircle = m_MapView.AddCircle(circleOptions);
             newCircle.Visible = true;
+
+            m_LastValidLocation = gameLocation;
+            m_MapView.AnimateCamera(CameraUpdateFactory.NewLatLng(m_LastValidLocation));
+        }
+
+        private bool isLocationOutOfBounds(LatLng i_Location)
+        {
+            GeoPoint currentLocation = new GeoPoint(i_Location.Latitude, i_Location.Longitude);
+            GeoPoint gameLocation = new GeoPoint(m_GameLocation.Latitude, m_GameLocation.Longitude);
+
+            double distance = GeoUtils.GetDistanceBetween(currentLocation, gameLocation);
+
+            return distance > m_GameRadius;
         }
     }
 }

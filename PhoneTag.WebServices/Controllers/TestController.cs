@@ -11,6 +11,9 @@ using PhoneTag.WebServices.Models;
 
 namespace PhoneTag.WebServices.Controllers
 {
+    /// <summary>
+    /// Just some testing controls.
+    /// </summary>
     public class TestController : ApiController
     {
         [Route("api/test/ping")]

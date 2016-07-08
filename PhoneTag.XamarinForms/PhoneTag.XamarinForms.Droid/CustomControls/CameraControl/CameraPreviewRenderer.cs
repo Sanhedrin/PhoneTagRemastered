@@ -6,19 +6,22 @@ using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using System.IO;
 using System.Threading.Tasks;
-using PhoneTag.XamarinForms.Controls;
+using PhoneTag.XamarinForms.Controls.CameraControl;
 using PhoneTag.XamarinForms.Droid.CustomControls.CameraControl;
 
-[assembly: ExportRenderer(typeof(PhoneTag.XamarinForms.Controls.CameraPreview), typeof(CameraPreviewRenderer))]
+[assembly: ExportRenderer(typeof(PhoneTag.XamarinForms.Controls.CameraControl.CameraPreview), typeof(CameraPreviewRenderer))]
 namespace PhoneTag.XamarinForms.Droid.CustomControls.CameraControl
 {
-    public class CameraPreviewRenderer : ViewRenderer<PhoneTag.XamarinForms.Controls.CameraPreview, PhoneTag.XamarinForms.Droid.CustomControls.CameraControl.UICameraPreview>, Camera.IPictureCallback
+    /// <summary>
+    /// The renderer for the custom camera control.
+    /// </summary>
+    public class CameraPreviewRenderer : ViewRenderer<PhoneTag.XamarinForms.Controls.CameraControl.CameraPreview, PhoneTag.XamarinForms.Droid.CustomControls.CameraControl.UICameraPreview>, Camera.IPictureCallback
     {
         UICameraPreview cameraPreview;
 
         byte[] m_PictureDataStream = null;
 
-        protected override void OnElementChanged(ElementChangedEventArgs<PhoneTag.XamarinForms.Controls.CameraPreview> e)
+        protected override void OnElementChanged(ElementChangedEventArgs<PhoneTag.XamarinForms.Controls.CameraControl.CameraPreview> e)
         {
             base.OnElementChanged(e);
 
@@ -39,12 +42,17 @@ namespace PhoneTag.XamarinForms.Droid.CustomControls.CameraControl
             }
         }
 
+        //Handles a picture request.
         private async void OnTakePictureRequested(object sender, TakePictureEventArgs e)
         {
             byte[] pictureStream = await TakePicture();
             e.PictureReadyCallback(pictureStream);
         }
 
+        /// <summary>
+        /// Takes the picture using the Android's platform camera interface.
+        /// </summary>
+        /// <returns>Byte array representing the picture that was just taken.</returns>
         public async Task<byte[]> TakePicture()
         {
             m_PictureDataStream = null;
@@ -57,11 +65,19 @@ namespace PhoneTag.XamarinForms.Droid.CustomControls.CameraControl
             return m_PictureDataStream;
         }
 
+        /// <summary>
+        /// Called once the picture is taken.
+        /// </summary>
+        /// <param name="data">Byte array representing the picture that was just taken.</param>
+        /// <param name="camera">The camera that took the picture.</param>
         public void OnPictureTaken(byte[] data, Camera camera)
         {
             m_PictureDataStream = data;
         }
 
+        /// <summary>
+        /// Enables the streaming of the physical camera to the view.
+        /// </summary>
         public void ToggleCameraPreview()
         {
             if (cameraPreview.IsPreviewing)

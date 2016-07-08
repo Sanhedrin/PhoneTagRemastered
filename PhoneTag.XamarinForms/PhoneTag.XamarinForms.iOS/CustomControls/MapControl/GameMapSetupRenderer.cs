@@ -4,8 +4,8 @@ using System.Text;
 
 namespace PhoneTag.XamarinForms.iOS.CustomControls.MapControl
 {
-    public class GameMapRenderer
+    public class GameMapSetupRenderer
     {
-        //TODO: Port Android's GameMapRenderer
+        //TODO: Port Android's GameMapSetupRenderer
     }
 }

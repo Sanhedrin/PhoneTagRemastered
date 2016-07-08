@@ -31,6 +31,8 @@ namespace PhoneTag.XamarinForms.iOS
 
             CrossPushNotification.Initialize<CrossPushNotificationListener>();
 
+            UIApplication.SharedApplication.IdleTimerDisabled = true;
+
             LoadApplication(new App());
 
             return base.FinishedLaunching(app, options);

@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace PhoneTag.SharedCodebase.Views
 {
+    /// <summary>
+    /// A view representing a game room, allows interaction with the server on per room basis.
+    /// </summary>
     public class GameRoomView : IUpdateable
     {
         public String RoomId { get; set; }
@@ -23,16 +26,24 @@ namespace PhoneTag.SharedCodebase.Views
         {
         }
 
-        public static async Task<bool> CreateRoom(GameDetailsView i_GameDetailsView)
+        /// <summary>
+        /// Creates a new game room.
+        /// </summary>
+        /// <param name="i_GameDetailsView">Contains details about the game to be created.</param>
+        /// <returns>A string representing the created game room's id.</returns>
+        public static async Task<String> CreateRoom(GameDetailsView i_GameDetailsView)
         {
             using (HttpClient client = new HttpClient())
             {
-                bool result = await client.PostMethodAsync("rooms/create", i_GameDetailsView);
+                String roomId = await client.PostMethodAsync("rooms/create", i_GameDetailsView);
 
-                return result;
+                return roomId;
             }
         }
 
+        /// <summary>
+        /// Gets a game room by the given id string.
+        /// </summary>
         public static async Task<GameRoomView> GetRoom(string i_RoomId)
         {
             using (HttpClient client = new HttpClient())
@@ -43,6 +54,9 @@ namespace PhoneTag.SharedCodebase.Views
             }
         }
 
+        /// <summary>
+        /// Updates the view to current server values.
+        /// </summary>
         public async Task Update()
         {
             GameRoomView view = await GetRoom(RoomId);

@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace PhoneTag.SharedCodebase.Views
 {
+    /// <summary>
+    /// A view representing a user, allows interaction with the server on per user basis.
+    /// </summary>
     public class UserView : IUpdateable
     {
         public String Username { get; set; }
@@ -25,6 +28,10 @@ namespace PhoneTag.SharedCodebase.Views
 
         }
 
+        /// <summary>
+        /// Requests that a new user be created with the given name, whereas a username is unique
+        /// for all users.
+        /// </summary>
         public static async Task<bool> CreateUser(string i_Username)
         {
             using (HttpClient client = new HttpClient())
@@ -35,6 +42,9 @@ namespace PhoneTag.SharedCodebase.Views
             }
         }
 
+        /// <summary>
+        /// Gets a user by the given name.
+        /// </summary>
         public static async Task<UserView> GetUser(string i_Username)
         {
             using (HttpClient client = new HttpClient())
@@ -45,6 +55,9 @@ namespace PhoneTag.SharedCodebase.Views
             }
         }
 
+        /// <summary>
+        /// Updates the view to current server values.
+        /// </summary>
         public async Task Update()
         {
             UserView view = await GetUser(Username);
