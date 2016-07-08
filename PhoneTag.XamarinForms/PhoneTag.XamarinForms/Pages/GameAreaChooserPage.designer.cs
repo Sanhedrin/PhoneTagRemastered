@@ -26,7 +26,7 @@ namespace PhoneTag.XamarinForms.Pages
                     new Button
                     {
                         Text = "Done",
-                        Command = new Command(() => { GameAreaChooserPage_DoneButtonClicked(); })
+                        Command = new Command(() => { DoneButton_Clicked(); })
                     }
                 }
             };

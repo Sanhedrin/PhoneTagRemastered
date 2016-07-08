@@ -26,7 +26,7 @@ namespace PhoneTag.XamarinForms.Pages
                     },
                     new Button{
                         Text = "Back to main menu",
-                        Command = new Command(() => { ErrorPage_RestartAppButtonClicked(); })
+                        Command = new Command(() => { RestartAppButton_Clicked(); })
                     }
                 }
             };

@@ -41,7 +41,7 @@ namespace PhoneTag.XamarinForms.Pages
             await Navigation.PushAsync(new ShotDisplayPage(e.PictureBuffer));
         }
 
-        private void GamePage_ShootButtonClicked()
+        private void ShootButton_Clicked()
         {
             m_Camera.TakePicture();
         }

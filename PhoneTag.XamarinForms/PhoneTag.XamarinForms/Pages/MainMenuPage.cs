@@ -17,12 +17,12 @@ namespace PhoneTag.XamarinForms.Pages
             initializeComponent();
         }
 
-        private void MainMenu_CreateGameButtonClicked()
+        private void CreateGameButton_Clicked()
         {
             Navigation.PushAsync(new CreateGamePage());
         }
 
-        private void MainMenu_FindGameButtonClicked()
+        private void FindGameButton_Clicked()
         {
             throw new NotImplementedException();
         }

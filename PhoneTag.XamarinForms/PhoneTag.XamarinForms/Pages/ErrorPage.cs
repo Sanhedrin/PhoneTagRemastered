@@ -17,7 +17,7 @@ namespace PhoneTag.XamarinForms.Pages
             initializeComponent(i_ErrorMessage);
         }
 
-        private void ErrorPage_RestartAppButtonClicked()
+        private void RestartAppButton_Clicked()
         {
             Application.Current.MainPage = new LoadingPage();
         }

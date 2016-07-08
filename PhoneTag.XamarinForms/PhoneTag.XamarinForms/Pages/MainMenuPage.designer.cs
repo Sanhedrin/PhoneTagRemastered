@@ -26,13 +26,13 @@ namespace PhoneTag.XamarinForms.Pages
                     {
                         Text = "Find Game In Your Area!",
                         BackgroundColor = Color.Yellow,
-                        Command = new Command(() => { MainMenu_FindGameButtonClicked(); })
+                        Command = new Command(() => { FindGameButton_Clicked(); })
                     },
                     new Button()
                     {
                         Text = "Create Game!",
                         BackgroundColor = Color.Green,
-                        Command = new Command(() => { MainMenu_CreateGameButtonClicked(); })
+                        Command = new Command(() => { CreateGameButton_Clicked(); })
                     }
                     //TODO: Add friend list component here.
                 }

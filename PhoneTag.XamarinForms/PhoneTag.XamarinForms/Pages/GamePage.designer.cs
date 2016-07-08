@@ -67,7 +67,7 @@ namespace PhoneTag.XamarinForms.Pages
                             new Button { Text = "Reload", BackgroundColor = Color.Green },
                             new Button {
                                 Text = "Shoot", BackgroundColor = Color.Red,
-                                Command = new Command( () => { GamePage_ShootButtonClicked(); })
+                                Command = new Command( () => { ShootButton_Clicked(); })
                             }
                         }
                     }

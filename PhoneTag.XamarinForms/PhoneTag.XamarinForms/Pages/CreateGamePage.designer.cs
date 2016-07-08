@@ -19,6 +19,7 @@ namespace PhoneTag.XamarinForms.Pages
 
             pickerGameMode.WidthRequest = CrossScreen.Current.Size.Width;
             pickerGameMode.Title = "Choose a Game Mode";
+            pickerGameMode.SelectedIndexChanged += PickerGameMode_SelectedIndexChanged;
 
             Title = "Create Game";
             Padding = new Thickness(0, 20, 0, 0);
@@ -35,14 +36,19 @@ namespace PhoneTag.XamarinForms.Pages
                     {
                         Text = "Set Game Area",
                         BackgroundColor = Color.Yellow,
-                        Command = new Command(() => { CreateGamePage_SetGameAreaButtonClicked(); })
+                        Command = new Command(() => { SetGameAreaButton_Clicked(); })
                     },
-                    //TODO: Add varying rules component
+                    new BoxView
+                    {
+                        BackgroundColor = Color.Gray,
+                        VerticalOptions = new LayoutOptions { Alignment = LayoutAlignment.Fill },
+                        HeightRequest = CrossScreen.Current.Size.Height
+                    },
                     new Button
                     {
                         Text = "Create",
                         BackgroundColor = Color.Red,
-                        Command = new Command(() => { CreateGamePage_CreateGameButtonClicked(); })
+                        Command = new Command(() => { CreateGameButton_Clicked(); })
                     }
                 }
             };

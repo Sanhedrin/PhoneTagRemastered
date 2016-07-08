@@ -52,7 +52,7 @@ namespace PhoneTag.XamarinForms.Pages
         }
 
         //When the area is chosen, store the values in the static properties and return to the last page.
-        private async void GameAreaChooserPage_DoneButtonClicked()
+        private async void DoneButton_Clicked()
         {
             LastChosenPosition = m_GameMap.StartLocation;
             LastChosenRadius = m_GameMap.GameRadius;
