@@ -25,7 +25,7 @@ namespace PhoneTag.SharedCodebase
         {
             //Serialize the input parameter and send the request.
             i_HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            string jsonContent = JsonConvert.SerializeObject(i_Content);
+            string jsonContent = JsonConvert.SerializeObject(i_Content, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
             StringContent stringContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
             HttpResponseMessage response = await i_HttpClient.PostAsync(new Uri(new Uri(BaseUri), i_RequestUri), stringContent).ConfigureAwait(false);
 

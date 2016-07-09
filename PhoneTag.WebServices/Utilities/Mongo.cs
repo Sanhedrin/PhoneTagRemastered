@@ -13,6 +13,8 @@ namespace PhoneTag.WebServices
     /// </summary>
     public class Mongo
     {
+        private const long k_SecondsPerHour = 60*60;
+
         private static IMongoClient s_Client;
         public static IMongoDatabase Database { get; private set; }
         public static bool IsReady { get; private set; }
@@ -42,13 +44,23 @@ namespace PhoneTag.WebServices
             return errorMessage;
         }
 
-        private static void rebuildIndexes()
+        private async static void rebuildIndexes()
         {
             //If the database is out of date, rebuild the indexes.
-            if (!Mongo.Database.GetCollection<BsonDocument>("FloatingValues").FindSync(Builders<BsonDocument>.Filter.Eq("Ready", "true")).Any())
+            if (!(await Mongo.Database.GetCollection<BsonDocument>("FloatingValues").FindAsync(Builders<BsonDocument>.Filter.Eq("Ready", "true"))).Any())
             {
-                Database.GetCollection<User>("Users").Indexes.DropAll();
+                IMongoCollection<GameRoom> col = Mongo.Database.GetCollection<GameRoom>("Rooms");
 
+                await Database.GetCollection<User>("Users").Indexes.DropAllAsync();
+                await col.Indexes.DropAllAsync();
+
+                //Create timed index for rooms
+                CreateIndexOptions creationOptions = new CreateIndexOptions();
+                creationOptions.ExpireAfter = new TimeSpan(TimeSpan.TicksPerSecond * k_SecondsPerHour);
+                IndexKeysDefinition<GameRoom> keys = Builders<GameRoom>.IndexKeys.Ascending("ExpirationTime");
+                await col.Indexes.CreateOneAsync(keys, creationOptions);
+
+                //Create username index for users.
                 Database.GetCollection<User>("Users").Indexes.CreateOne(
                     Builders<User>.IndexKeys.Ascending("Username"),
                     new CreateIndexOptions<User>() { Unique = true }

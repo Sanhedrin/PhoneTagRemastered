@@ -1,4 +1,5 @@
-﻿using Plugin.XamJam.Screen;
+﻿using PhoneTag.XamarinForms.Extensions;
+using Plugin.XamJam.Screen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +17,17 @@ namespace PhoneTag.XamarinForms.Pages
 
             textBoxGameName.WidthRequest = CrossScreen.Current.Size.Width;
             textBoxGameName.Placeholder = "Game Name";
+            textBoxGameName.SetBinding(Entry.TextProperty, "Name");
+            textBoxGameName.BindingContext = m_GameDetails;
 
             pickerGameMode.WidthRequest = CrossScreen.Current.Size.Width;
             pickerGameMode.Title = "Choose a Game Mode";
-            pickerGameMode.SelectedIndexChanged += PickerGameMode_SelectedIndexChanged;
+            pickerGameMode.IsEnabled = false;
 
+            buttonCreateGame.Text = "Create";
+            buttonCreateGame.IsEnabled = false;
+            buttonCreateGame.BackgroundColor = Color.Red;
+            
             Title = "Create Game";
             Padding = new Thickness(0, 20, 0, 0);
             Content = new StackLayout
@@ -38,18 +45,8 @@ namespace PhoneTag.XamarinForms.Pages
                         BackgroundColor = Color.Yellow,
                         Command = new Command(() => { SetGameAreaButton_Clicked(); })
                     },
-                    new BoxView
-                    {
-                        BackgroundColor = Color.Gray,
-                        VerticalOptions = new LayoutOptions { Alignment = LayoutAlignment.Fill },
-                        HeightRequest = CrossScreen.Current.Size.Height
-                    },
-                    new Button
-                    {
-                        Text = "Create",
-                        BackgroundColor = Color.Red,
-                        Command = new Command(() => { CreateGameButton_Clicked(); })
-                    }
+                    stackLayoutGameDetails,
+                    buttonCreateGame
                 }
             };
         }

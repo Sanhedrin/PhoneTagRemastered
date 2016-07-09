@@ -192,6 +192,9 @@
     </Compile>
     <Compile Include="Models\GameDetails.cs" />
     <Compile Include="Models\GameMode.cs" />
+    <Compile Include="Models\GameModes\GameModeModelViewRelation.cs" />
+    <Compile Include="Models\GameModes\TDMGameMode.cs" />
+    <Compile Include="Models\GameModes\VIPGameMode.cs" />
     <Compile Include="Models\GameRoom.cs" />
     <Compile Include="Models\IViewable.cs" />
     <Compile Include="Models\ServerInfo.cs" />

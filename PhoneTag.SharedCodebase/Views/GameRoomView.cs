@@ -15,6 +15,7 @@ namespace PhoneTag.SharedCodebase.Views
     public class GameRoomView : IUpdateable
     {
         public String RoomId { get; set; }
+        public DateTime ExpirationTime { get; set; }
         public GameDetailsView GameModeDetails { get; set; }
         public bool Started { get; set; }
         public bool Finished { get; set; }

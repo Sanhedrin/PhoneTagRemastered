@@ -30,6 +30,7 @@ namespace PhoneTag.WebServices.Controllers
             String roomId = null;
 
             GameRoom gameRoom = new GameRoom(GameDetails.FromView(i_GameDetailsView));
+            gameRoom.ExpirationTime = DateTime.Now;
 
             try
             {

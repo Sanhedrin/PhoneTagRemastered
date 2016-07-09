@@ -19,11 +19,11 @@ namespace PhoneTag.XamarinForms.Pages
         /// <summary>
         /// Holds the game location as chosen by the interactive map.
         /// </summary>
-        public static Position? LastChosenPosition { get; private set; }
+        public Position ChosenPosition { get; private set; }
         /// <summary>
         /// Holds the game radius as chosen by the interactive map.
         /// </summary>
-        public static double? LastChosenRadius { get; private set; }
+        public double ChosenRadius { get; private set; }
 
         private const double k_DefaultGameRadius = 0.5;
         private const double k_DefaultGameZoom = 1;
@@ -41,21 +41,17 @@ namespace PhoneTag.XamarinForms.Pages
         //Initializes the map to the last chosen location or to your current location.
         private void setupChooserMap()
         {
-            if (LastChosenPosition != null && LastChosenRadius != null)
-            {
-                m_GameMap = new GameMapSetup(LastChosenPosition.Value, LastChosenRadius.Value, LastChosenRadius.Value * 2);
-            }
-            else
-            {
-                m_GameMap = new GameMapSetup(new Position(32.0486850, 34.7600850), k_DefaultGameRadius, k_DefaultGameZoom);
-            }
+            Position startLocation = new Position(32.0486850, 34.7600850);
+            m_GameMap = new GameMapSetup(startLocation, k_DefaultGameRadius, k_DefaultGameZoom);
+           
+            //Store the values in the static properties for access once we're done.
+            ChosenPosition = startLocation;
+            ChosenRadius = k_DefaultGameRadius;
         }
 
-        //When the area is chosen, store the values in the static properties and return to the last page.
+        //When the area is chosen return to the last page.
         private async void DoneButton_Clicked()
         {
-            LastChosenPosition = m_GameMap.StartLocation;
-            LastChosenRadius = m_GameMap.GameRadius;
             await Navigation.PopAsync();
         }
     }

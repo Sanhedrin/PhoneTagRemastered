@@ -17,6 +17,8 @@ namespace PhoneTag.WebServices.Models
     {
         public ObjectId _id { get; set; }
 
+        public DateTime ExpirationTime { get; set; }
+
         public GameDetails GameModeDetails { get; set; }
         public bool Started { get; set; }
         public bool Finished { get; set; }
@@ -44,6 +46,7 @@ namespace PhoneTag.WebServices.Models
             GameRoomView roomView = new GameRoomView();
 
             roomView.RoomId = _id.ToString();
+            roomView.ExpirationTime = ExpirationTime;
             roomView.Finished = Finished;
             roomView.GameTime = GameTime;
             roomView.Started = Started;

@@ -37,12 +37,12 @@ namespace PhoneTag.WebServices.Controllers
                 IMongoCollection<BsonDocument> col = Mongo.Database.GetCollection<BsonDocument>("myCollection");
                 CreateIndexOptions creationOptions = new CreateIndexOptions();
                 creationOptions.ExpireAfter = new TimeSpan(TimeSpan.TicksPerSecond * 5);
-                IndexKeysDefinition<BsonDocument> keys = Builders<BsonDocument>.IndexKeys.Ascending("id");
+                IndexKeysDefinition<BsonDocument> keys = Builders<BsonDocument>.IndexKeys.Ascending("time");
                 await col.Indexes.DropAllAsync();
                 await col.Indexes.CreateOneAsync(keys, creationOptions);
                 for (int i = 0; i < 10; ++i)
                 {
-                    col.InsertOne(new BsonDocument { { "id", DateTime.Now.AddSeconds(i) }, { "User", new User() { Username = "user" + i.ToString() }.ToBsonDocument() } });
+                    col.InsertOne(new BsonDocument { { "time", DateTime.Now.AddSeconds(i) }, { "User", new User() { Username = "user" + i.ToString() }.ToBsonDocument() } });
                 }
             }
             catch(Exception e)

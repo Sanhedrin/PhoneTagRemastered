@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using PhoneTag.SharedCodebase.Views;
 
 namespace PhoneTag.SharedCodebase.StaticInfo
 {
@@ -43,6 +44,9 @@ namespace PhoneTag.SharedCodebase.StaticInfo
         /// <summary>
         /// Gets the names of all game modes supported by the server.
         /// </summary>
+        //We hold the game mode list on the server, unlike the game mode objects, so that we have server
+        //side control over which game modes are currently available to choose from without needing to
+        //patch the client every time we want to make a change.
         public static async Task<List<String>> GetGameModeList()
         {
             using (HttpClient client = new HttpClient())
@@ -51,6 +55,15 @@ namespace PhoneTag.SharedCodebase.StaticInfo
 
                 return gameModes;
             }
+        }
+
+        /// <summary>
+        /// Gets a GameDetailsView for the wanted game mode that should be filled and sent to the server
+        /// when creating a room.
+        /// </summary>
+        public static GameDetailsView GetGameDetailsForMode(string i_GameModeName)
+        {
+            return new GameDetailsView(i_GameModeName);
         }
     }
 }
