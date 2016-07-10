@@ -51,7 +51,7 @@ namespace PhoneTag.WebServices.Models
             roomView.GameTime = GameTime;
             roomView.Started = Started;
 
-            roomView.GameModeDetails = GameModeDetails.GenerateView();
+            roomView.GameDetails = GameModeDetails.GenerateView();
 
             return roomView;
         }

@@ -14,7 +14,9 @@ namespace PhoneTag.WebServices.Models
     public class User : IViewable
     {
         public ObjectId _id { get; set; }
+        public String FBID { get; set; }
         public String Username { get; set; }
+        public String ProfilePicUrl { get; set; }
         public List<User> Friends { get; set; }
         public bool IsReady { get; set; }
         public int Ammo { get; set; }
@@ -26,7 +28,9 @@ namespace PhoneTag.WebServices.Models
         {
             UserView userView = new UserView();
 
+            userView.FBID = FBID;
             userView.Username = Username;
+            userView.ProfilePicUrl = ProfilePicUrl;
             userView.IsReady = IsReady;
             userView.Ammo = Ammo;
 

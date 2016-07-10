@@ -16,15 +16,17 @@ namespace PhoneTag.SharedCodebase.Views
     {
         public String RoomId { get; set; }
         public DateTime ExpirationTime { get; set; }
-        public GameDetailsView GameModeDetails { get; set; }
+        public GameDetailsView GameDetails { get; set; }
         public bool Started { get; set; }
         public bool Finished { get; set; }
         public int GameTime { get; set; }
-        public List<UserView> LivingUsers { get; set; }
-        public List<UserView> DeadUsers { get; set; }
+        public List<UserView> LivingUsers { get; private set; }
+        public List<UserView> DeadUsers { get; private set; }
 
         public GameRoomView()
         {
+            LivingUsers = new List<UserView>();
+            DeadUsers = new List<UserView>();
         }
 
         /// <summary>
@@ -49,10 +51,17 @@ namespace PhoneTag.SharedCodebase.Views
         {
             using (HttpClient client = new HttpClient())
             {
-                JObject room = await client.GetMethodAsync(String.Format("rooms/{0}", i_RoomId));
-
-                return (room != null) ? room.ToObject<GameRoomView>() : null;
+                return await client.GetMethodAsync<GameRoomView>(String.Format("rooms/{0}", i_RoomId));
             }
+        }
+
+        /// <summary>
+        /// Gets the list of friends a specific user has in this room.
+        /// </summary>
+        /// <param name="i_User">User whose friends we want to poll.</param>
+        public List<UserView> FriendsInRoomFor(UserView i_User)
+        {
+            return LivingUsers.Where((userView) => i_User.Friends.Any((friendView) => userView.Username.Equals(friendView.Username))).ToList();
         }
 
         /// <summary>

@@ -37,7 +37,7 @@ namespace PhoneTag.SharedCodebase
                 throw new HttpRequestException(jsonResponse);
             }
 
-            return JsonConvert.DeserializeObject(jsonResponse);
+            return JsonConvert.DeserializeObject(jsonResponse, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace PhoneTag.SharedCodebase
                 throw new HttpRequestException(jsonResponse);
             }
 
-            return JsonConvert.DeserializeObject(jsonResponse);
+            return JsonConvert.DeserializeObject(jsonResponse, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace PhoneTag.SharedCodebase
                 throw new HttpRequestException(jsonResponse);
             }
 
-            return JsonConvert.DeserializeObject(jsonResponse);
+            return JsonConvert.DeserializeObject(jsonResponse, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace PhoneTag.SharedCodebase
                 throw new HttpRequestException(jsonResponse);
             }
 
-            return (T)JsonConvert.DeserializeObject(jsonResponse, typeof(T));
+            return (T)JsonConvert.DeserializeObject(jsonResponse, typeof(T), new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
         }
     }
 }

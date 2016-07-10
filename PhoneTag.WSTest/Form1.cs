@@ -51,14 +51,20 @@ namespace PhoneTag.WSTest
 
         private async void createUser()
         {
-            bool success = await UserView.CreateUser("TestUser");
+            UserSocialView user = new UserSocialView()
+            {
+                Id = "000000000000000",
+                Name = "TestUser",
+                ProfilePictureUrl = "https://fbcdn-profile-a.akamaihd.net/hprofile-ak-xpf1/v/t1.0-1/p50x50/12509626_1091087887602511_1046699018755865026_n.jpg?oh=eb7d2acea0fb1a866dce99acc7b00d5b&oe=57F49E68&__gda__=1479833351_a28298e3486449c760c485d5e44664fd"
+            };
+            bool success = await UserView.CreateUser(user);
 
             tbResult.Text = success.ToString();
         }
 
         private async void getUser()
-        {
-            UserView user = await UserView.GetUser("TestUser");
+        { 
+            UserView user = await UserView.GetUser("000000000000000");
 
             tbResult.Text = JsonConvert.SerializeObject(user);
         }

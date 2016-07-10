@@ -48,6 +48,7 @@
     <Compile Include="Views\GameRoomView.cs" />
     <Compile Include="Views\IUpdateable.cs" />
     <Compile Include="Views\ServerInfoView.cs" />
+    <Compile Include="Views\UserSocialView.cs" />
     <Compile Include="Views\UserView.cs" />
   </ItemGroup>
   <ItemGroup>

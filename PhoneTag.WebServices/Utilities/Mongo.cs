@@ -62,7 +62,7 @@ namespace PhoneTag.WebServices
 
                 //Create username index for users.
                 Database.GetCollection<User>("Users").Indexes.CreateOne(
-                    Builders<User>.IndexKeys.Ascending("Username"),
+                    Builders<User>.IndexKeys.Ascending("FBID"),
                     new CreateIndexOptions<User>() { Unique = true }
                 );
 

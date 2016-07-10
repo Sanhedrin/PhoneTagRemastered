@@ -63,7 +63,8 @@ namespace PhoneTag.XamarinForms.Pages
             m_GameDetails.StartLocation = new GeoPoint(m_AreaChooserPage.ChosenPosition.Latitude, m_AreaChooserPage.ChosenPosition.Longitude);
             m_GameDetails.GameRadius = m_AreaChooserPage.ChosenRadius;
 
-            await GameRoomView.CreateRoom(m_GameDetails);
+            String gameRoomId = await GameRoomView.CreateRoom(m_GameDetails);
+            await Navigation.PushAsync(new GameLobbyPage(gameRoomId));
         }
 
         //Updates the selected game mode.

@@ -65,7 +65,7 @@ namespace PhoneTag.WebServices.Controllers
 
             try
             {
-                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_Id", i_RoomId);
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(i_RoomId));
 
                 using (IAsyncCursor<GameRoom> cursor = await Mongo.Database.GetCollection<BsonDocument>("Rooms").FindAsync<GameRoom>(filter))
                 {

@@ -28,13 +28,15 @@ namespace PhoneTag.WebServices.Controllers
         /// <returns>Success indicator.</returns>
         [Route("api/users/create")]
         [HttpPost]
-        public async Task<bool> CreateUser([FromBody]string i_Username)
+        public async Task<bool> CreateUser([FromBody]UserSocialView i_UserSocialView)
         {
             bool success = true;
 
             User newUser = new User();
 
-            newUser.Username = i_Username;
+            newUser.FBID = i_UserSocialView.Id;
+            newUser.Username = i_UserSocialView.Name;
+            newUser.ProfilePicUrl = i_UserSocialView.ProfilePictureUrl;
             newUser.Ammo = 3;
             newUser.IsReady = true;
             newUser.Friends = new List<User>();
@@ -50,26 +52,26 @@ namespace PhoneTag.WebServices.Controllers
 
             return success;
         }
-
+        
         /// <summary>
         /// Gets a view of the user with the given username.
         /// </summary>
-        [Route("api/users/{i_Username}")]
+        [Route("api/users/{i_FBID}")]
         [HttpGet]
-        public async Task<UserView> GetUser(string i_Username)
+        public async Task<UserView> GetUser(string i_FBID)
         {
-            User foundUser = await getUserModel(i_Username);
+            User foundUser = await getUserModel(i_FBID);
 
             return (foundUser != null) ? foundUser.GenerateView() : null;
         }
 
-        private async Task<User> getUserModel(string i_Username)
+        private async Task<User> getUserModel(string i_FBID)
         {
             User foundUser = null;
 
             try
             {
-                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("Username", i_Username);
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_FBID);
 
                 using (IAsyncCursor<User> cursor = await Mongo.Database.GetCollection<BsonDocument>("Users").FindAsync<User>(filter))
                 {
