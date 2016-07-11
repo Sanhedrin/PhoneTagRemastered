@@ -72,7 +72,7 @@ namespace PhoneTag.XamarinForms.Controls.Login
                 UserSocialView socialView = JsonConvert.DeserializeObject<UserSocialView>(
                     CrossSettings.Current.GetValueOrDefault<String>("SocialInfo", null));
 
-                return socialView == null ? null : socialView.Id;
+                return socialView?.Id;
             }
         }
 

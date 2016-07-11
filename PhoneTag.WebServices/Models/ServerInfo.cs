@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using PhoneTag.SharedCodebase.Views;
+using System.Threading.Tasks;
 
 namespace PhoneTag.WebServices.Models
 {
@@ -18,7 +19,7 @@ namespace PhoneTag.WebServices.Models
         /// <summary>
         /// Generates a view for this model.
         /// </summary>
-        public dynamic GenerateView()
+        public async Task<dynamic> GenerateView()
         {
             ServerInfoView serverInfoView = new ServerInfoView();
 

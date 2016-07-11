@@ -130,7 +130,7 @@ namespace PhoneTag.XamarinForms.Droid
             }
         }
 
-        private async void markPlayArea(Position i_GameLocation, double i_GameRadius)
+        private async Task markPlayArea(Position i_GameLocation, double i_GameRadius)
         {
             while (m_MapView == null)
             {

@@ -4,6 +4,7 @@ using PhoneTag.WebServices.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 namespace PhoneTag.WebServices
@@ -44,7 +45,7 @@ namespace PhoneTag.WebServices
             return errorMessage;
         }
 
-        private async static void rebuildIndexes()
+        private static async Task rebuildIndexes()
         {
             //If the database is out of date, rebuild the indexes.
             if (!(await Mongo.Database.GetCollection<BsonDocument>("FloatingValues").FindAsync(Builders<BsonDocument>.Filter.Eq("Ready", "true"))).Any())

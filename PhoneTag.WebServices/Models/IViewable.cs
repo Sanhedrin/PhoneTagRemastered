@@ -15,6 +15,6 @@ namespace PhoneTag.WebServices.Models
         /// Generates a view into this model.
         /// </summary>
         /// <returns>The view class of this model as a dynamic.</returns>
-        dynamic GenerateView();
+        Task<dynamic> GenerateView();
     }
 }

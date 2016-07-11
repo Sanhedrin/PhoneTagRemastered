@@ -1,11 +1,12 @@
 ﻿using PhoneTag.SharedCodebase.Views;
+using PhoneTag.XamarinForms.Pages;
 using Plugin.XamJam.Screen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
-
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace PhoneTag.XamarinForms.Controls.GameDetailsTile
@@ -20,7 +21,7 @@ namespace PhoneTag.XamarinForms.Controls.GameDetailsTile
             setupTile();
         }
 
-        private async void setupTile()
+        private async Task setupTile()
         {
             GameRoomView room = await GameRoomView.GetRoom(m_GameRoomId);
 
@@ -32,7 +33,8 @@ namespace PhoneTag.XamarinForms.Controls.GameDetailsTile
                 Text = room.GameDetails.Name,
                 BackgroundColor = Color.Green,
                 WidthRequest = CrossScreen.Current.Size.Width / 4,
-                Command = new Command(() => { joinRoom(); })
+                Command = new Command(() => { Navigation.PushAsync(new GameLobbyPage(m_GameRoomId)); }),
+                IsEnabled = !m_GameRoomId.Equals(UserView.Current.PlayingIn) //Disable if already in room.
             });
 
             Children.Add(new Label() {
@@ -54,12 +56,6 @@ namespace PhoneTag.XamarinForms.Controls.GameDetailsTile
                 i_Room.LivingUsers.Count.ToString(), i_Room.FriendsInRoomFor(UserView.Current).Count.ToString()));
 
             return builder.ToString();
-        }
-
-        //Checks if we can join this room, and if so, loads up the lobby page.
-        private void joinRoom()
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -36,9 +36,14 @@ namespace PhoneTag.XamarinForms.Pages
             m_Camera.PictureReady += GamePage_PictureReady;
         }
 
-        private async void GamePage_PictureReady(object sender, PictureReadyEventArgs e)
+        private void GamePage_PictureReady(object sender, PictureReadyEventArgs e)
         {
-            await Navigation.PushAsync(new ShotDisplayPage(e.PictureBuffer));
+            pictureReady(e.PictureBuffer);
+        }
+
+        private async Task pictureReady(byte[] i_PictureData)
+        {
+            await Navigation.PushAsync(new ShotDisplayPage(i_PictureData));
         }
 
         private void ShootButton_Clicked()

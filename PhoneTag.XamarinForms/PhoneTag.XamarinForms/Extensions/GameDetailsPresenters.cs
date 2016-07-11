@@ -100,6 +100,25 @@ namespace PhoneTag.XamarinForms.Extensions
         {
             List<View> items = ((GameModeView)i_ModeView).GetPresenterList();
 
+            items.Add(
+                new Label()
+                {
+                    Text = "Players per team:"
+                });
+
+            //Sets a picker for the number of players per team in a TDM game.
+            BindablePicker playersPerTeamPicker = new BindablePicker()
+            {
+                Title = "Number of players per team",
+                BackgroundColor = Color.Black
+            };
+            playersPerTeamPicker.ItemsSource = new List<int>();
+            for (int i = 1; i <= k_MaxPlayersPerTeam; i++) { playersPerTeamPicker.ItemsSource.Add(i); playersPerTeamPicker.Items.Add(i.ToString()); }
+            playersPerTeamPicker.SetBinding(BindablePicker.SelectedItemProperty, "PlayersPerTeam");
+            playersPerTeamPicker.BindingContext = i_ModeView;
+            playersPerTeamPicker.SelectedItem = 3;
+            items.Add(playersPerTeamPicker);
+
             return items;
         }
 

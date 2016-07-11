@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using MongoDB.Bson.Serialization;
 using PhoneTag.SharedCodebase.Views;
 using PhoneTag.WebServices.Models;
+using Nito.AsyncEx;
 
 namespace PhoneTag.WebServices.Controllers
 {
@@ -21,6 +22,8 @@ namespace PhoneTag.WebServices.Controllers
     /// </summary>
     public class UsersController : ApiController
     {
+        private static readonly AsyncLock sr_UserChangeMutex = new AsyncLock();
+
         /// <summary>
         /// Creates a new user with the given name.
         /// </summary>
@@ -39,7 +42,7 @@ namespace PhoneTag.WebServices.Controllers
             newUser.ProfilePicUrl = i_UserSocialView.ProfilePictureUrl;
             newUser.Ammo = 3;
             newUser.IsReady = true;
-            newUser.Friends = new List<User>();
+            newUser.Friends = new List<String>();
 
             try
             {
@@ -60,12 +63,15 @@ namespace PhoneTag.WebServices.Controllers
         [HttpGet]
         public async Task<UserView> GetUser(string i_FBID)
         {
-            User foundUser = await getUserModel(i_FBID);
+            User foundUser = await GetUserModel(i_FBID);
 
-            return (foundUser != null) ? foundUser.GenerateView() : null;
+            return (foundUser != null) ? (await foundUser.GenerateView()) : null;
         }
 
-        private async Task<User> getUserModel(string i_FBID)
+        /// <summary>
+        /// Gets the model of the user whose id is given or null if such doesn't exist.
+        /// </summary>
+        public static async Task<User> GetUserModel(string i_FBID)
         {
             User foundUser = null;
 
@@ -84,6 +90,25 @@ namespace PhoneTag.WebServices.Controllers
             }
 
             return foundUser;
+        }
+
+
+        /// <summary>
+        /// Sets the given room as this player's active room.
+        /// </summary>
+        [Route("api/users/{i_PlayerFBID}/join/{i_RoomId}")]
+        [HttpPost]
+        public static async Task JoinRoom(string i_PlayerFBID, string i_RoomId)
+        {
+            using (await sr_UserChangeMutex.LockAsync())
+            {
+                //Add the room as the user's current playing room.
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
+                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                    .Set<String>("PlayingIn", i_RoomId);
+
+                await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+            }
         }
     }
 }

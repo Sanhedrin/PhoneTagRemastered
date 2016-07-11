@@ -39,7 +39,7 @@ namespace PhoneTag.XamarinForms.Pages
         }
 
         //Collects the supported game modes from the server and updates the picker with them.
-        private async void initializeGameModeList()
+        private async Task initializeGameModeList()
         {
             List<String> gameModes = await PhoneTagInfo.GetGameModeList();
 
@@ -52,13 +52,18 @@ namespace PhoneTag.XamarinForms.Pages
         }
 
         //Opens the area chooser page to choose the game's area.
-        private async void SetGameAreaButton_Clicked()
+        private async Task SetGameAreaButton_Clicked()
         {
             await Navigation.PushAsync(m_AreaChooserPage);
         }
 
         //Creates the game using the chosen parameters.
-        private async void CreateGameButton_Clicked(object sender, EventArgs e)
+        private void CreateGameButton_Clicked(object sender, EventArgs e)
+        {
+            createGame();
+        }
+
+        private async Task createGame()
         {
             m_GameDetails.StartLocation = new GeoPoint(m_AreaChooserPage.ChosenPosition.Latitude, m_AreaChooserPage.ChosenPosition.Longitude);
             m_GameDetails.GameRadius = m_AreaChooserPage.ChosenRadius;

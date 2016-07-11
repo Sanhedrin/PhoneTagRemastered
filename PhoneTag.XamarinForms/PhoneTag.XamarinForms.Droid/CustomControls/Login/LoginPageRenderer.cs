@@ -20,6 +20,7 @@ using PhoneTag.XamarinForms.Controls.Login;
 using Facebook;
 using PhoneTag.SharedCodebase.Views;
 using Plugin.Settings;
+using System.Threading.Tasks;
 
 [assembly: ExportRenderer(typeof(LoginPage), typeof(LoginPageRenderer))]
 namespace PhoneTag.XamarinForms.Droid.CustomControls.Login
@@ -32,7 +33,7 @@ namespace PhoneTag.XamarinForms.Droid.CustomControls.Login
         }
 
         //Logs in to facebook
-        private async void login()
+        private async Task login()
         {
             Account userAccount = await FBLoginService.GetCurrentAccount();
 
@@ -82,7 +83,7 @@ namespace PhoneTag.XamarinForms.Droid.CustomControls.Login
         }
 
         //Tries to connect the user using the given access token
-        private async void authenticateUser(Account i_UserAccount)
+        private async Task authenticateUser(Account i_UserAccount)
         {
             FacebookClient client = null;
 

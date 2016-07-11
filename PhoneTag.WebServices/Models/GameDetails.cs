@@ -29,7 +29,7 @@ namespace PhoneTag.WebServices.Models
         /// <summary>
         /// Generates a view of this model.
         /// </summary>
-        public dynamic GenerateView()
+        public async Task<dynamic> GenerateView()
         {
             GameDetailsView detailsView = new GameDetailsView();
 
@@ -39,7 +39,7 @@ namespace PhoneTag.WebServices.Models
             detailsView.GameRadius = GameRadius;
             detailsView.StartLocation = StartLocation;
 
-            detailsView.Mode = Mode.GenerateView();
+            detailsView.Mode = await Mode.GenerateView();
 
             return detailsView;
         }

@@ -50,7 +50,7 @@ namespace PhoneTag.XamarinForms.Pages
         }
 
         //When the area is chosen return to the last page.
-        private async void DoneButton_Clicked()
+        private async Task DoneButton_Clicked()
         {
             await Navigation.PopAsync();
         }

@@ -25,7 +25,7 @@ namespace PhoneTag.SharedCodebase.Views
         public bool IsReady { get; set; }
         public int Ammo { get; set; }
         public bool IsActive { get; set; }
-        public GameRoomView PlayingIn { get; set; }
+        public String PlayingIn { get; set; }
 
         public UserView()
         {
@@ -80,9 +80,7 @@ namespace PhoneTag.SharedCodebase.Views
         {
             using (HttpClient client = new HttpClient())
             {
-                JObject user = await client.GetMethodAsync(String.Format("users/{0}", i_FBID));
-
-                return (user != null) ? user.ToObject<UserView>() : null;
+                return await client.GetMethodAsync<UserView>(String.Format("users/{0}", i_FBID));
             }
         }
 
@@ -91,7 +89,7 @@ namespace PhoneTag.SharedCodebase.Views
         /// </summary>
         public async Task Update()
         {
-            UserView view = await GetUser(Username);
+            UserView view = await GetUser(FBID);
 
             this.PlayingIn = view.PlayingIn;
             this.IsReady = view.IsReady;

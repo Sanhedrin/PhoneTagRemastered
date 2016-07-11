@@ -6,6 +6,7 @@ using System.Web;
 using PhoneTag.SharedCodebase.Views;
 using PhoneTag.SharedCodebase.Utils;
 using PhoneTag.WebServices.Models.GameModes;
+using System.Threading.Tasks;
 
 namespace PhoneTag.WebServices.Models
 {
@@ -17,6 +18,8 @@ namespace PhoneTag.WebServices.Models
         public ObjectId _id { get; set; }
         public String Name { get; set; }
 
+        public abstract int NumberOfPlayers { get; }
+
         public GameMode()
         {
             Name = GameModeFactory.GetNameOfModeViewType(GameModeModelViewRelation.GetViewTypeForModel(this.GetType()));
@@ -25,6 +28,6 @@ namespace PhoneTag.WebServices.Models
         /// <summary>
         /// Generates a view for this model.
         /// </summary>
-        public abstract dynamic GenerateView();
+        public abstract Task<dynamic> GenerateView();
     }
 }

@@ -19,6 +19,7 @@ namespace PhoneTag.XamarinForms.Pages
             textBoxGameName.Placeholder = "Game Name";
             textBoxGameName.SetBinding(Entry.TextProperty, "Name");
             textBoxGameName.BindingContext = m_GameDetails;
+            textBoxGameName.Keyboard = Keyboard.Url;
 
             pickerGameMode.WidthRequest = CrossScreen.Current.Size.Width;
             pickerGameMode.Title = "Choose a Game Mode";

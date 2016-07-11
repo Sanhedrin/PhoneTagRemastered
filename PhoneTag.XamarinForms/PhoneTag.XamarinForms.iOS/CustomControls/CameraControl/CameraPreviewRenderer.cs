@@ -39,10 +39,15 @@ namespace PhoneTag.XamarinForms.iOS.CustomControls.CameraControl
         }
 
         //Handles a picture request.
-        private async void OnTakePictureRequested(object sender, TakePictureEventArgs e)
+        private void OnTakePictureRequested(object sender, TakePictureEventArgs e)
+        {
+            takePicture(e.PictureReadyCallback);
+        }
+
+        private async Task takePicture(Action<byte[]> i_Callback)
         {
             byte[] pictureStream = await TakePicture();
-            e.PictureReadyCallback(pictureStream);
+            i_Callback(pictureStream);
         }
 
         /// <summary>

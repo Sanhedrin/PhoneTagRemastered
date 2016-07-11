@@ -8,6 +8,7 @@ using Plugin.Settings;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Auth;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
@@ -23,7 +24,7 @@ namespace PhoneTag.XamarinForms.iOS.CustomControls.Login
         }
 
         //Logs in to facebook
-        private async void login()
+        private async Task login()
         {
             Account userAccount = await FBLoginService.GetCurrentAccount();
 
@@ -72,7 +73,7 @@ namespace PhoneTag.XamarinForms.iOS.CustomControls.Login
         }
 
         //Tries to connect the user using the given access token
-        private async void authenticateUser(Account i_UserAccount)
+        private async Task authenticateUser(Account i_UserAccount)
         {
             FacebookClient client = null;
 

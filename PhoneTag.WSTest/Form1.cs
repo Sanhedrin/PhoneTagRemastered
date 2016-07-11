@@ -39,7 +39,7 @@ namespace PhoneTag.WSTest
             clearUser();
         }
 
-        private async void clearUser()
+        private async Task clearUser()
         {
             using (HttpClient client = new HttpClient())
             {
@@ -49,7 +49,7 @@ namespace PhoneTag.WSTest
             }
         }
 
-        private async void createUser()
+        private async Task createUser()
         {
             UserSocialView user = new UserSocialView()
             {
@@ -62,7 +62,7 @@ namespace PhoneTag.WSTest
             tbResult.Text = success.ToString();
         }
 
-        private async void getUser()
+        private async Task getUser()
         { 
             UserView user = await UserView.GetUser("000000000000000");
 

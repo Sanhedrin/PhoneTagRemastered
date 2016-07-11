@@ -24,7 +24,7 @@ namespace PhoneTag.XamarinForms.Pages
 
         private void FindGameButton_Clicked()
         {
-            throw new NotImplementedException();
+            Navigation.PushAsync(new GameSearchPage());
         }
     }
 }

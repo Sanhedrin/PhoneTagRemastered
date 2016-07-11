@@ -66,6 +66,10 @@
     <Compile Include="Pages\GamePage.designer.cs">
       <DependentUpon>GamePage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Pages\GameSearchPage.cs" />
+    <Compile Include="Pages\GameSearchPage.designer.cs">
+      <DependentUpon>GameSearchPage.cs</DependentUpon>
+    </Compile>
     <Compile Include="Pages\LoadingPage.cs" />
     <Compile Include="Pages\LoadingPage.designer.cs">
       <DependentUpon>LoadingPage.cs</DependentUpon>

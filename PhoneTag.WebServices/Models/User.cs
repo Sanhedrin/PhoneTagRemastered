@@ -5,6 +5,8 @@ using System.Linq;
 using System.Web;
 using PhoneTag.SharedCodebase.Views;
 using MongoDB.Bson;
+using System.Threading.Tasks;
+using PhoneTag.WebServices.Controllers;
 
 namespace PhoneTag.WebServices.Models
 {
@@ -17,14 +19,15 @@ namespace PhoneTag.WebServices.Models
         public String FBID { get; set; }
         public String Username { get; set; }
         public String ProfilePicUrl { get; set; }
-        public List<User> Friends { get; set; }
+        public List<String> Friends { get; set; }
         public bool IsReady { get; set; }
         public int Ammo { get; set; }
+        public String PlayingIn { get; set; }
 
         /// <summary>
         /// Generates a view for this model,
         /// </summary>
-        public dynamic GenerateView()
+        public async Task<dynamic> GenerateView()
         {
             UserView userView = new UserView();
 
@@ -34,14 +37,21 @@ namespace PhoneTag.WebServices.Models
             userView.IsReady = IsReady;
             userView.Ammo = Ammo;
 
+            if (PlayingIn != null)
+            {
+                userView.PlayingIn = PlayingIn;
+            }
+
             //We can't start generating views for each of my friends because it'll cause a cyclic
             //infinite loop.
             //We might not care about the entirety of the list though, and only get basic details.
             //If more information is required, the friend's username can be used to poll it.
             userView.Friends = new List<UserView>();
-            foreach (User friend in Friends)
+            foreach (String friendId in Friends)
             {
                 UserView friendView = new UserView();
+                User friend = await UsersController.GetUserModel(friendId);
+
                 friendView.Username = friend.Username;
                 friendView.Ammo = friend.Ammo;
                 friendView.IsReady = friend.IsReady;

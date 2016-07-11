@@ -31,7 +31,7 @@ namespace PhoneTag.XamarinForms.Droid.CustomControls.MapControl
         }
 
         //If the area doesn't change before selection is done, the default area is chosen.
-        private async void setupReturnValues()
+        private async Task setupReturnValues()
         {
             while (m_MapView == null || m_GameMap == null) { await Task.Delay(100); }
 
@@ -39,7 +39,7 @@ namespace PhoneTag.XamarinForms.Droid.CustomControls.MapControl
             ((GameMapSetup)m_GameMap).GameRadius = m_GameMap.GameRadius;
         }
 
-        private async void setupGestures()
+        private async Task setupGestures()
         {
             while (m_MapView == null || m_GameMap == null) { await Task.Delay(100); }
             

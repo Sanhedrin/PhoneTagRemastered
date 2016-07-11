@@ -10,6 +10,8 @@ using MongoDB.Driver;
 using System.IO;
 using PhoneTag.WebServices.Models;
 using PhoneTag.SharedCodebase.Views;
+using Nito.AsyncEx;
+using PhoneTag.SharedCodebase.Utils;
 
 namespace PhoneTag.WebServices.Controllers
 {
@@ -18,6 +20,8 @@ namespace PhoneTag.WebServices.Controllers
     /// </summary>
     public class RoomController : ApiController
     {
+        private static readonly AsyncLock sr_RoomChangeMutex = new AsyncLock();
+
         /// <summary>
         /// Creates a new game room.
         /// </summary>
@@ -46,6 +50,48 @@ namespace PhoneTag.WebServices.Controllers
         }
 
         /// <summary>
+        /// Adds the player whose FBID is given to the given room.
+        /// </summary>
+        /// <returns>True or false based on if joining was successful</returns>
+        [Route("api/rooms/{i_RoomId}/join/{i_PlayerFBID}")]
+        [HttpPost]
+        public async Task<bool> JoinRoom(string i_RoomId, string i_PlayerFBID)
+        {
+            bool success = false;
+
+            using (await sr_RoomChangeMutex.LockAsync())
+            {
+                GameRoom room = await GetRoomModel(i_RoomId);
+
+                if (!room.Started && room.LivingUsers.Count < room.GameModeDetails.Mode.NumberOfPlayers)
+                {
+                    room.LivingUsers.Add(i_PlayerFBID);
+                    
+                    try
+                    {
+                        //Update the room to add the player to it.
+                        FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(i_RoomId));
+                        UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                            .Set<List<String>>("LivingUsers", room.LivingUsers);
+
+                        await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+
+                        //Add the room as the user's current playing room.
+                        await UsersController.JoinRoom(i_PlayerFBID, i_RoomId);
+
+                        success = true;
+                    }
+                    catch (Exception e)
+                    {
+                        success = false;
+                    }
+                }
+            }
+
+            return success;
+        }
+
+        /// <summary>
         /// Gets the room by the given id and returns a view of it.
         /// </summary>
         /// <param name="i_RoomId"></param>
@@ -54,12 +100,35 @@ namespace PhoneTag.WebServices.Controllers
         [HttpGet]
         public async Task<GameRoomView> GetRoom(string i_RoomId)
         {
-            GameRoom foundRoom = await getRoomModel(i_RoomId);
+            GameRoom foundRoom = await GetRoomModel(i_RoomId);
 
-            return (foundRoom != null) ? foundRoom.GenerateView() : null;
+            return (foundRoom != null) ? await foundRoom.GenerateView() : null;
         }
 
-        private async Task<GameRoom> getRoomModel(string i_RoomId)
+        /// <summary>
+        /// Searches all the existing pending rooms in nearby proximity to the user.
+        /// </summary>
+        /// <param name="i_Location">Location to use as the search base.</param>
+        /// <param name="i_SearchRadius">Maximum distance of the play area from the user in km.</param>
+        /// <returns>A list of matching room ids</returns>
+        [Route("api/rooms/find/{i_Location}/{i_SearchRadius}")]
+        [HttpGet]
+        public async Task<List<String>> GetRoomsInRange(GeoPoint i_Location, float i_SearchRadius)
+        {
+            List<String> roomIds = new List<string>();
+
+            IFindFluent<GameRoom, String> gameModes = Mongo.Database.GetCollection<GameRoom>("Rooms")
+                .Find(Builders<GameRoom>.Filter.Empty)
+                .Project(room => room._id.ToString());
+            roomIds = await gameModes.ToListAsync();
+
+            return roomIds;
+        }
+
+        /// <summary>
+        /// Gets the model for the room of the given ID
+        /// </summary>
+        public static async Task<GameRoom> GetRoomModel(string i_RoomId)
         {
             GameRoom foundRoom = null;
 

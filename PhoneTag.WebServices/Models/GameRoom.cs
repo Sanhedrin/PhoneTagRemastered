@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PhoneTag.SharedCodebase.Views;
 using MongoDB.Bson;
+using PhoneTag.WebServices.Controllers;
 
 namespace PhoneTag.WebServices.Models
 {
@@ -24,11 +25,9 @@ namespace PhoneTag.WebServices.Models
         public bool Finished { get; set; }
         public int GameTime { get; set; }
         
-        public List<User> LivingUsers { get { return new List<User>(r_LivingUsers); } }
-        private readonly List<User> r_LivingUsers = new List<User>();
+        public List<String> LivingUsers { get; private set; }
         
-        public List<User> DeadUsers { get { return new List<User>(r_DeadUsers); } }
-        private readonly List<User> r_DeadUsers = new List<User>();
+        public List<String> DeadUsers { get; private set; }
 
         public GameRoom(GameDetails i_GameDetails)
         {
@@ -36,12 +35,14 @@ namespace PhoneTag.WebServices.Models
             Started = false;
             Finished = false;
             GameTime = 0;
+            LivingUsers = new List<string>();
+            DeadUsers = new List<string>();
         }
 
         /// <summary>
         /// Generates a view for this model.
         /// </summary>
-        public dynamic GenerateView()
+        public async Task<dynamic> GenerateView()
         {
             GameRoomView roomView = new GameRoomView();
 
@@ -51,7 +52,16 @@ namespace PhoneTag.WebServices.Models
             roomView.GameTime = GameTime;
             roomView.Started = Started;
 
-            roomView.GameDetails = GameModeDetails.GenerateView();
+            foreach (String userId in LivingUsers)
+            {
+                roomView.LivingUsers.Add(await (await UsersController.GetUserModel(userId)).GenerateView());
+            }
+            foreach (String userId in DeadUsers)
+            {
+                roomView.DeadUsers.Add(await (await UsersController.GetUserModel(userId)).GenerateView());
+            }
+
+            roomView.GameDetails = await GameModeDetails.GenerateView();
 
             return roomView;
         }

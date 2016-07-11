@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using PhoneTag.SharedCodebase.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +21,9 @@ namespace PhoneTag.SharedCodebase.Views
         public GameDetailsView GameDetails { get; set; }
         public bool Started { get; set; }
         public bool Finished { get; set; }
+
         public int GameTime { get; set; }
+        
         public List<UserView> LivingUsers { get; private set; }
         public List<UserView> DeadUsers { get; private set; }
 
@@ -52,6 +56,31 @@ namespace PhoneTag.SharedCodebase.Views
             using (HttpClient client = new HttpClient())
             {
                 return await client.GetMethodAsync<GameRoomView>(String.Format("rooms/{0}", i_RoomId));
+            }
+        }
+
+        /// <summary>
+        /// Searches all the existing pending rooms in nearby proximity to the user.
+        /// </summary>
+        /// <param name="i_Location">Location to use as the search base.</param>
+        /// <param name="i_SearchRadius">Maximum distance of the play area from the user in km.</param>
+        /// <returns>A list of matching room ids</returns>
+        public static async Task<List<String>> GetAllRoomsInRange(GeoPoint i_Location, float i_SearchRadius)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                return await client.GetMethodAsync<List<String>>(String.Format("rooms/find/{0}/{1}", i_Location, i_SearchRadius));
+            }
+        }
+
+        /// <summary>
+        /// Adds the user with the given id to the room's player list.
+        /// </summary>
+        public async Task<bool> JoinRoom(string i_FBID)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                return await client.PostMethodAsync(String.Format("rooms/{0}/join/{1}", RoomId, i_FBID));
             }
         }
 

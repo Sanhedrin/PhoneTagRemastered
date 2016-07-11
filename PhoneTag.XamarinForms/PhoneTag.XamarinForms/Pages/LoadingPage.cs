@@ -27,7 +27,7 @@ namespace PhoneTag.XamarinForms.Pages
         //Verifies that the client's version matches that of the server.
         //If it does, we initialize the game and move to the main menu, otherwise the user is requested to
         //update their app.
-        private async void initGame()
+        private async Task initGame()
         {
             if (await PhoneTagInfo.ValidateVersion())
             {
