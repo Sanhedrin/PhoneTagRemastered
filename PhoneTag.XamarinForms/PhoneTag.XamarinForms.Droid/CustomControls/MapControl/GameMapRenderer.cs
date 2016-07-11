@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms.Maps;
 using PhoneTag.SharedCodebase.Utils;
 
-[assembly: ExportRenderer(typeof(GameMap), typeof(GameMapRenderer))]
+[assembly: ExportRenderer(typeof(GameMapDisplay), typeof(GameMapRenderer))]
 namespace PhoneTag.XamarinForms.Droid
 {
     /// <summary>
@@ -37,7 +37,7 @@ namespace PhoneTag.XamarinForms.Droid
         private double m_MaxZoom;
         private double? m_InitialZoom = null;
         protected GoogleMap m_MapView;
-        protected GameMap m_GameMap;
+        protected GameMapDisplay m_GameMap;
 
         private bool m_MapControlReady = false;
 
@@ -55,7 +55,7 @@ namespace PhoneTag.XamarinForms.Droid
         {
             base.OnElementChanged(e);
 
-            m_GameMap = (GameMap)e.NewElement;
+            m_GameMap = (GameMapDisplay)e.NewElement;
             setupMap(m_GameMap.StartLocation, m_GameMap.GameRadius);
         }
 

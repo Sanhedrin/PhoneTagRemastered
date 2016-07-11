@@ -50,6 +50,7 @@
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <NoWarn>CS4014;CS1998;CS0168</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -93,6 +94,7 @@
     <Compile Include="CustomControls\MapControl\GameMapRenderer.cs" />
     <Compile Include="CustomControls\MapControl\GameMapSetupRenderer.cs" />
     <Compile Include="Helpers\Settings.cs" />
+    <Compile Include="LinkerHelper.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="CustomControls\CameraControl\UICameraPreview.cs" />
@@ -132,8 +134,24 @@
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="CrossPlatformLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CrossPlatformLibrary.1.0.73\lib\xamarin.ios10\CrossPlatformLibrary.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CrossPlatformLibrary.Platform, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CrossPlatformLibrary.1.0.73\lib\xamarin.ios10\CrossPlatformLibrary.Platform.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Facebook">
       <HintPath>..\..\..\..\..\..\Downloads\facebook-sdk-6.2.2\lib\ios-unified\Facebook.dll</HintPath>
+    </Reference>
+    <Reference Include="Guards, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ac6aedb73a72f46e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Guards.1.0.10\lib\xamarin.ios10\Guards.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.8.0.3\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
@@ -145,6 +163,18 @@
     </Reference>
     <Reference Include="PCLStorage.Abstractions, Version=1.0.2.0, Culture=neutral, PublicKeyToken=286fe515a2c35b64, processorArchitecture=MSIL">
       <HintPath>..\..\packages\PCLStorage.1.0.2\lib\portable-Xamarin.iOS+Xamarin.Mac\PCLStorage.Abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PlatformAdapter, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6631b0d7444ed877, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CrossPlatformAdapter.1.0.12\lib\xamarin.ios10\PlatformAdapter.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Plugin.Geolocator, Version=3.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xam.Plugin.Geolocator.4.0.0-beta4\lib\Xamarin.iOS10\Plugin.Geolocator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Plugin.Geolocator.Abstractions, Version=3.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xam.Plugin.Geolocator.4.0.0-beta4\lib\Xamarin.iOS10\Plugin.Geolocator.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Plugin.Media, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">

@@ -45,13 +45,15 @@ namespace PhoneTag.XamarinForms.Pages
             m_GameMap = new GameMapSetup(startLocation, k_DefaultGameRadius, k_DefaultGameZoom);
            
             //Store the values in the static properties for access once we're done.
-            ChosenPosition = startLocation;
-            ChosenRadius = k_DefaultGameRadius;
+            m_GameMap.StartLocation = startLocation;
+            m_GameMap.GameRadius = k_DefaultGameRadius;
         }
 
         //When the area is chosen return to the last page.
         private async Task DoneButton_Clicked()
         {
+            ChosenPosition = m_GameMap.StartLocation;
+            ChosenRadius = m_GameMap.GameRadius;
             await Navigation.PopAsync();
         }
     }

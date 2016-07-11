@@ -60,6 +60,8 @@ namespace PhoneTag.XamarinForms.Pages
         //Creates the game using the chosen parameters.
         private void CreateGameButton_Clicked(object sender, EventArgs e)
         {
+            buttonCreateGame.IsEnabled = false;
+            initializeComponent();
             createGame();
         }
 
@@ -69,7 +71,8 @@ namespace PhoneTag.XamarinForms.Pages
             m_GameDetails.GameRadius = m_AreaChooserPage.ChosenRadius;
 
             String gameRoomId = await GameRoomView.CreateRoom(m_GameDetails);
-            await Navigation.PushAsync(new GameLobbyPage(gameRoomId));
+            Navigation.InsertPageBefore(new GameLobbyPage(gameRoomId), this);
+            Navigation.PopAsync();
         }
 
         //Updates the selected game mode.

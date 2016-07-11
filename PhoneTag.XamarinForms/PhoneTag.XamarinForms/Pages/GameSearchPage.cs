@@ -1,6 +1,9 @@
-﻿using PhoneTag.SharedCodebase.Utils;
+﻿using FreshEssentials;
+using PhoneTag.SharedCodebase.Utils;
 using PhoneTag.SharedCodebase.Views;
 using PhoneTag.XamarinForms.Controls.GameDetailsTile;
+using Plugin.Geolocator;
+using Plugin.Geolocator.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,30 +15,73 @@ namespace PhoneTag.XamarinForms.Pages
 {
     public partial class GameSearchPage : ContentPage
     {
+        public int SearchRadius { get; set; }
+
+        private BindablePicker pickerSearchRadius;
+
         private StackLayout m_GameRoomTileDisplay = new StackLayout();
 
         public GameSearchPage()
         {
+            initRadiusPicker();
             initializeComponent();
         }
 
         protected override void OnAppearing()
         {
-            m_GameRoomTileDisplay.Children.Clear();
+            CrossGeolocator.Current.PositionError += Current_PositionError;
+
             populateRoomList();
+        }
+
+        private void Current_PositionError(object sender, PositionErrorEventArgs e)
+        {
+            Application.Current.MainPage = new ErrorPage("GPS signal not found, please enable GPS");
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
         }
 
         //Looks for all nearby rooms and adds them to the search page results.
         private async Task populateRoomList()
         {
-            List<String> roomIds = await GameRoomView.GetAllRoomsInRange(new GeoPoint(0, 0), 10);
+            m_GameRoomTileDisplay.Children.Clear();
 
-            foreach(String roomId in roomIds)
+            await startGeoLocationListening();
+
+            Position userLocation = await CrossGeolocator.Current.GetPositionAsync(timeoutMilliseconds: 3);
+
+            await CrossGeolocator.Current.StopListeningAsync();
+
+            List<String> roomIds = await GameRoomView.GetAllRoomsInRange(new GeoPoint(userLocation.Latitude, userLocation.Longitude), 10);
+
+            foreach (String roomId in roomIds)
             {
                 m_GameRoomTileDisplay.Children.Add(new GameDetailsTile(roomId));
             }
-            
+
             initializeComponent();
+        }
+
+        //Starts listening to the geolocator, while looking for errors.
+        private async Task startGeoLocationListening()
+        {
+            if (!CrossGeolocator.Current.IsListening)
+            {
+                bool isReady = false;
+
+                if (CrossGeolocator.Current.IsGeolocationAvailable && CrossGeolocator.Current.IsGeolocationEnabled)
+                {
+                    isReady = await CrossGeolocator.Current.StartListeningAsync(1, 1);
+                }
+
+                if (!isReady)
+                {
+                    Application.Current.MainPage = new ErrorPage("GPS signal not found, please enable GPS");
+                }
+            }
         }
     }
 }

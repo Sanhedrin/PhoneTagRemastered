@@ -12,7 +12,7 @@ namespace PhoneTag.XamarinForms.Controls.MapControl
     /// A custom control representing an interactive map that can be put as a view on a page.
     /// A specialized Game Map that allows setting the play area prior to starting a new game.
     /// </summary>
-    public class GameMapSetup : GameMap
+    public class GameMapSetup : GameMapDisplay
     {
         //We override the GameRadius and StartLocation properties of the game map since the setup map
         //allows setting to these values, whereas the play map doesn't.

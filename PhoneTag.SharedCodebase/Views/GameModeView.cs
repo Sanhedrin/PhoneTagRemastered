@@ -10,6 +10,7 @@ namespace PhoneTag.SharedCodebase.Views
     public abstract class GameModeView
     {
         public String Name { get; set; }
+        public abstract int TotalNumberOfPlayers { get; }
 
         public GameModeView()
         {

@@ -15,6 +15,7 @@ using com.shephertz.app42.paas.sdk.csharp;
 using PhoneTag.SharedCodebase.Utils;
 using System.Threading.Tasks;
 using PhoneTag.SharedCodebase.StaticInfo;
+using Plugin.Geolocator;
 
 namespace PhoneTag.XamarinForms
 {
@@ -22,7 +23,8 @@ namespace PhoneTag.XamarinForms
     {        
         public App()
         {
-            
+            CrossGeolocator.Current.DesiredAccuracy = 5;
+
             MainPage = new LoadingPage();
             //MainPage = new NavigationPage(new GamePage());
         }

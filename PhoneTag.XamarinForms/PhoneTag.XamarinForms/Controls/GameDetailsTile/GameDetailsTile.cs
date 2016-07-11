@@ -52,8 +52,9 @@ namespace PhoneTag.XamarinForms.Controls.GameDetailsTile
 
             builder.AppendLine(i_Room.GameDetails.Mode.Name);
             builder.AppendLine(String.Format("{0} minutes", i_Room.GameDetails.GameDurationInMins));
-            builder.AppendLine(String.Format("{0} players / {1} friends", 
-                i_Room.LivingUsers.Count.ToString(), i_Room.FriendsInRoomFor(UserView.Current).Count.ToString()));
+            builder.AppendLine(String.Format("{0} / {1} players", 
+                i_Room.LivingUsers.Count.ToString(), i_Room.GameDetails.Mode.TotalNumberOfPlayers));
+            builder.AppendLine(String.Format("{0} friends", i_Room.FriendsInRoomFor(UserView.Current).Count.ToString()));
 
             return builder.ToString();
         }

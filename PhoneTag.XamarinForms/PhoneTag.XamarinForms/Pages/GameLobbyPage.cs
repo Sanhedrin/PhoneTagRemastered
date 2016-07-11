@@ -26,5 +26,10 @@ namespace PhoneTag.XamarinForms.Pages
 
             initializeComponent(i_GameRoomId);
         }
+
+        private void ReadyButton_Clicked()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
