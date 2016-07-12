@@ -22,7 +22,7 @@ using PhoneTag.SharedCodebase.Utils;
 [assembly: ExportRenderer(typeof(GameMapSetup), typeof(GameMapSetupRenderer))]
 namespace PhoneTag.XamarinForms.Droid.CustomControls.MapControl
 {
-    class GameMapSetupRenderer : GameMapRenderer
+    class GameMapSetupRenderer : GameMapDisplayRenderer
     {
         public GameMapSetupRenderer() : base()
         {

@@ -41,7 +41,8 @@ namespace PhoneTag.WebServices.Controllers
             newUser.Username = i_UserSocialView.Name;
             newUser.ProfilePicUrl = i_UserSocialView.ProfilePictureUrl;
             newUser.Ammo = 3;
-            newUser.IsReady = true;
+            newUser.IsReady = false;
+            newUser.IsActive = true;
             newUser.Friends = new List<String>();
 
             try
@@ -92,12 +93,49 @@ namespace PhoneTag.WebServices.Controllers
             return foundUser;
         }
 
+        /// <summary>
+        /// Sets the user as inactive.
+        /// </summary>
+        [Route("api/users/quit/{i_PlayerFBID}")]
+        [HttpPost]
+        public async Task Quit(string i_PlayerFBID)
+        {
+            using (await sr_UserChangeMutex.LockAsync())
+            {
+                //Add the room as the user's current playing room.
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
+                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                    .Set("IsActive", false);
+
+                await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+            }
+
+            await LeaveRoom(i_PlayerFBID);
+        }
+
+        /// <summary>
+        /// Sets the user as active.
+        /// </summary>
+        [Route("api/users/login/{i_PlayerFBID}")]
+        [HttpPost]
+        public async Task Login(string i_PlayerFBID)
+        {
+            using (await sr_UserChangeMutex.LockAsync())
+            {
+                //Add the room as the user's current playing room.
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
+                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                    .Set("IsActive", true);
+
+                await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+            }
+        }
 
         /// <summary>
         /// Sets the given room as this player's active room.
         /// </summary>
-        [Route("api/users/{i_PlayerFBID}/join/{i_RoomId}")]
-        [HttpPost]
+        //[Route("api/users/{i_PlayerFBID}/join/{i_RoomId}")]
+        //[HttpPost]
         public static async Task JoinRoom(string i_PlayerFBID, string i_RoomId)
         {
             using (await sr_UserChangeMutex.LockAsync())
@@ -106,6 +144,22 @@ namespace PhoneTag.WebServices.Controllers
                 FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
                 UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
                     .Set<String>("PlayingIn", i_RoomId);
+
+                await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+            }
+        }
+
+        /// <summary>
+        /// Removes the player from the room they're currently at.
+        /// </summary>
+        public static async Task LeaveRoom(string i_PlayerFBID)
+        {
+            using (await sr_UserChangeMutex.LockAsync())
+            {
+                //Add the room as the user's current playing room.
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
+                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                    .Set<String>("PlayingIn", null);
 
                 await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
             }

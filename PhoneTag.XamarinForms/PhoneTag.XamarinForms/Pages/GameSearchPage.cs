@@ -1,4 +1,5 @@
 ﻿using FreshEssentials;
+using Nito.AsyncEx;
 using PhoneTag.SharedCodebase.Utils;
 using PhoneTag.SharedCodebase.Views;
 using PhoneTag.XamarinForms.Controls.GameDetailsTile;
@@ -20,6 +21,8 @@ namespace PhoneTag.XamarinForms.Pages
         private BindablePicker pickerSearchRadius;
 
         private StackLayout m_GameRoomTileDisplay = new StackLayout();
+
+        private static readonly AsyncLock sr_PopulateRoomMutex = new AsyncLock();
 
         public GameSearchPage()
         {
@@ -47,22 +50,26 @@ namespace PhoneTag.XamarinForms.Pages
         //Looks for all nearby rooms and adds them to the search page results.
         private async Task populateRoomList()
         {
-            m_GameRoomTileDisplay.Children.Clear();
-
-            await startGeoLocationListening();
-
-            Position userLocation = await CrossGeolocator.Current.GetPositionAsync(timeoutMilliseconds: 3);
-
-            await CrossGeolocator.Current.StopListeningAsync();
-
-            List<String> roomIds = await GameRoomView.GetAllRoomsInRange(new GeoPoint(userLocation.Latitude, userLocation.Longitude), 10);
-
-            foreach (String roomId in roomIds)
+            using(await sr_PopulateRoomMutex.LockAsync())
             {
-                m_GameRoomTileDisplay.Children.Add(new GameDetailsTile(roomId));
-            }
+                m_GameRoomTileDisplay.Children.Clear();
 
-            initializeComponent();
+                await startGeoLocationListening();
+
+                Position userLocation = await CrossGeolocator.Current.GetPositionAsync(timeoutMilliseconds: 3);
+
+                await CrossGeolocator.Current.StopListeningAsync();
+
+                List<String> roomIds = await GameRoomView.GetAllRoomsInRange(new GeoPoint(userLocation.Latitude, userLocation.Longitude), 10);
+
+                foreach (String roomId in roomIds)
+                {
+                    m_GameRoomTileDisplay.Children.Add(new GameDetailsTile(roomId));
+                }
+
+                await UserView.Current.Update();
+                initializeComponent();
+            }
         }
 
         //Starts listening to the geolocator, while looking for errors.

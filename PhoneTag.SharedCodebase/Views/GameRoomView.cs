@@ -20,6 +20,7 @@ namespace PhoneTag.SharedCodebase.Views
         public DateTime ExpirationTime { get; set; }
         public GameDetailsView GameDetails { get; set; }
         public bool Started { get; set; }
+
         public bool Finished { get; set; }
 
         public int GameTime { get; set; }
@@ -81,6 +82,17 @@ namespace PhoneTag.SharedCodebase.Views
             using (HttpClient client = new HttpClient())
             {
                 return await client.PostMethodAsync(String.Format("rooms/{0}/join/{1}", RoomId, i_FBID));
+            }
+        }
+
+        /// <summary>
+        /// Takes the given player out of the room.
+        /// </summary>
+        public async Task LeaveRoom(string i_FBID)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                await client.PostMethodAsync(String.Format("rooms/{0}/leave/{1}", RoomId, i_FBID));
             }
         }
 

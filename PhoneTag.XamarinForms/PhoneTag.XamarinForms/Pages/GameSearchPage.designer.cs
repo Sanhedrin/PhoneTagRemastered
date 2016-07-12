@@ -23,41 +23,47 @@ namespace PhoneTag.XamarinForms.Pages
             NavigationPage.SetHasBackButton(this, true);
 
             m_GameRoomTileDisplay.VerticalOptions = new LayoutOptions { Alignment = LayoutAlignment.Fill };
-            
+
+            ScrollView scrollView = new ScrollView
+            {
+                Content = m_GameRoomTileDisplay
+            };
+            AbsoluteLayout.SetLayoutBounds(scrollView, new Rectangle(0, 0, 1, 0.9));
+            AbsoluteLayout.SetLayoutFlags(scrollView, AbsoluteLayoutFlags.All);
+
+            StackLayout bottomButtonBatch = new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = new LayoutOptions { Alignment = LayoutAlignment.Fill },
+                Children =
+                {
+                    new Label()
+                    {
+                        Text = "Search Radius"
+                    },
+                    pickerSearchRadius
+                }
+            };
+            AbsoluteLayout.SetLayoutBounds(bottomButtonBatch, new Rectangle(0, 0.9, 1, 0.1));
+            AbsoluteLayout.SetLayoutFlags(bottomButtonBatch, AbsoluteLayoutFlags.All);
+
+            Button refreshButton = new Button
+            {
+                Text = "Refresh",
+                Command = new Command(() => { IsEnabled = false; populateRoomList(); })
+            };
+            AbsoluteLayout.SetLayoutBounds(refreshButton, new Rectangle(0, 1, 1, 0.1));
+            AbsoluteLayout.SetLayoutFlags(refreshButton, AbsoluteLayoutFlags.All);
+
             Title = "Find a game near you";
             Padding = new Thickness(0, 20, 0, 0);
-            Content = new StackLayout()
+            Content = new AbsoluteLayout()
             {
                 VerticalOptions = new LayoutOptions { Alignment = LayoutAlignment.Fill },
                 Children = {
-                    new ScrollView
-                    {
-                        HeightRequest = CrossScreen.Current.Size.Height * 3 / 4,
-                        WidthRequest = CrossScreen.Current.Size.Width,
-                        Content = m_GameRoomTileDisplay
-                    },
-                    new StackLayout
-                    {
-                        Orientation = StackOrientation.Horizontal,
-                        HorizontalOptions = new LayoutOptions { Alignment = LayoutAlignment.Fill },
-                        Children =
-                        {
-                            new Label()
-                            {
-                                Text = "Search Radius",
-                                WidthRequest = CrossScreen.Current.Size.Width / 4,
-                                HeightRequest = CrossScreen.Current.Size.Height / 16
-                            },
-                            pickerSearchRadius
-                        }
-                    },
-                    new Button
-                    {
-                        Text = "Refresh",
-                        WidthRequest = CrossScreen.Current.Size.Width,
-                        HeightRequest = CrossScreen.Current.Size.Height / 16,
-                        Command = new Command(() => { populateRoomList(); })
-                    }
+                    scrollView,
+                    bottomButtonBatch,
+                    refreshButton
                 }
             };
 
@@ -68,8 +74,6 @@ namespace PhoneTag.XamarinForms.Pages
         {
             pickerSearchRadius = new BindablePicker()
             {
-                WidthRequest = CrossScreen.Current.Size.Width * 3 / 4,
-                HeightRequest = CrossScreen.Current.Size.Height / 16,
                 Title = "Search Radius",
                 BindingContext = this
             };

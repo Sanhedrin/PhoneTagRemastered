@@ -23,8 +23,8 @@ namespace PhoneTag.SharedCodebase.Views
         public String ProfilePicUrl { get; set; }
         public List<UserView> Friends { get; set; }
         public bool IsReady { get; set; }
-        public int Ammo { get; set; }
         public bool IsActive { get; set; }
+        public int Ammo { get; set; }
         public String PlayingIn { get; set; }
 
         public UserView()
@@ -38,6 +38,43 @@ namespace PhoneTag.SharedCodebase.Views
         public static void SetLoggedInUser(UserView i_LoggedInUser)
         {
             Current = i_LoggedInUser;
+        }
+
+        /// <summary>
+        /// The user quits the game, removes them from all active rooms and marks as inactive.
+        /// </summary>
+        public async Task Quit()
+        {
+            await this.Update();
+
+            //If the user is in a room, leave it.
+            //The room will handle the rest.
+            if(this.PlayingIn != null)
+            {
+                await (await GameRoomView.GetRoom(PlayingIn)).LeaveRoom(FBID);
+            }
+
+            //Either way, we need to set this user as offline for the server.
+            using (HttpClient client = new HttpClient())
+            {
+                await client.PostMethodAsync(String.Format("users/quit/{0}", FBID));
+            }
+
+            await this.Update();
+        }
+
+        /// <summary>
+        /// Sets the user as active for other users to see.
+        /// </summary>
+        public async Task Login()
+        {
+            //Either way, we need to set this user as offline for the server.
+            using (HttpClient client = new HttpClient())
+            {
+                await client.PostMethodAsync(String.Format("users/login/{0}", FBID));
+            }
+
+            await this.Update();
         }
 
         /// <summary>

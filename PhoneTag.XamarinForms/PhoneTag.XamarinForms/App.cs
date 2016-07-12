@@ -16,6 +16,10 @@ using PhoneTag.SharedCodebase.Utils;
 using System.Threading.Tasks;
 using PhoneTag.SharedCodebase.StaticInfo;
 using Plugin.Geolocator;
+using System.Threading;
+using System.Net.Http;
+using PhoneTag.SharedCodebase;
+using PhoneTag.SharedCodebase.Views;
 
 namespace PhoneTag.XamarinForms
 {
@@ -38,11 +42,13 @@ namespace PhoneTag.XamarinForms
         protected override void OnSleep()
         {
             // Handle when your app sleeps
+            UserView.Current?.Quit();
         }
 
         protected override void OnResume()
         {
             // Handle when your app resumes
+            MainPage = new LoadingPage();
         }
     }
 }

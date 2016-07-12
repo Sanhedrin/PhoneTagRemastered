@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
+using PhoneTag.SharedCodebase.Views;
 
 namespace PhoneTag.XamarinForms.Pages
 {
@@ -21,11 +22,16 @@ namespace PhoneTag.XamarinForms.Pages
         private const double k_DefaultGameZoom = 1;
         private const bool k_IsSetUpView = false;
 
-        private GameMap m_GameMap = new GameMap(new Position(32.0486850, 34.7600850), k_DefaultGameRadius, k_DefaultGameZoom);
+        private GameMapInteractive m_GameMap;
         private CameraPreview m_Camera;
+        private GameRoomView m_GameRoomView;
 
-        public GamePage()
+        public GamePage(GameRoomView i_GameRoomView)
         {
+            m_GameRoomView = i_GameRoomView;
+            Position startLocation = new Position(m_GameRoomView.GameDetails.StartLocation.Latitude, m_GameRoomView.GameDetails.StartLocation.Longitude);
+            m_GameMap = new GameMapInteractive(startLocation, m_GameRoomView.GameDetails.GameRadius, m_GameRoomView.GameDetails.GameRadius * 2);
+
             initializeComponent();
 
             setupPage();

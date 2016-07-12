@@ -23,13 +23,13 @@ using System.Threading.Tasks;
 using Xamarin.Forms.Maps;
 using PhoneTag.SharedCodebase.Utils;
 
-[assembly: ExportRenderer(typeof(GameMapDisplay), typeof(GameMapRenderer))]
+[assembly: ExportRenderer(typeof(GameMapDisplay), typeof(GameMapDisplayRenderer))]
 namespace PhoneTag.XamarinForms.Droid
 {
     /// <summary>
     /// Custom renderer for the game map control.
     /// </summary>
-    class GameMapRenderer : MapRenderer
+    class GameMapDisplayRenderer : MapRenderer
     {
         private LatLng m_GameLocation;
         private double m_GameRadius;
@@ -65,6 +65,7 @@ namespace PhoneTag.XamarinForms.Droid
             if (!m_MapControlReady)
             {
                 m_MapView.UiSettings.ZoomControlsEnabled = false;
+                m_MapView.UiSettings.MyLocationButtonEnabled = false;
 
                 m_MapView.SetIndoorEnabled(true);
 

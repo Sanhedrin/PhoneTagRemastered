@@ -21,6 +21,7 @@ namespace PhoneTag.WebServices.Models
         public String ProfilePicUrl { get; set; }
         public List<String> Friends { get; set; }
         public bool IsReady { get; set; }
+        public bool IsActive { get; set; }
         public int Ammo { get; set; }
         public String PlayingIn { get; set; }
 
@@ -35,6 +36,7 @@ namespace PhoneTag.WebServices.Models
             userView.Username = Username;
             userView.ProfilePicUrl = ProfilePicUrl;
             userView.IsReady = IsReady;
+            userView.IsActive = IsActive;
             userView.Ammo = Ammo;
 
             if (PlayingIn != null)
@@ -56,6 +58,7 @@ namespace PhoneTag.WebServices.Models
                 friendView.Ammo = friend.Ammo;
                 friendView.IsReady = friend.IsReady;
                 friendView.Friends = null;
+                friendView.IsActive = friend.IsActive;
 
                 userView.Friends.Add(friendView);
             }

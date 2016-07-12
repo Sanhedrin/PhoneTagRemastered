@@ -53,6 +53,51 @@ namespace PhoneTag.WebServices.Controllers
         /// Adds the player whose FBID is given to the given room.
         /// </summary>
         /// <returns>True or false based on if joining was successful</returns>
+        [Route("api/rooms/{i_RoomId}/leave/{i_PlayerFBID}")]
+        [HttpPost]
+        public async Task LeaveRoom(string i_RoomId, string i_PlayerFBID)
+        {
+            using (await sr_RoomChangeMutex.LockAsync())
+            {
+                GameRoom room = await GetRoomModel(i_RoomId);
+
+                //We need to separate between the case a user leaves in the middle of a game or in the lobby
+                //Game case(If the player is already dead we don't need to doy anything)
+                if (room.Started && room.LivingUsers.Contains(i_PlayerFBID))
+                {
+                    //In the case the user left in the middle of the game, we'll consider it as the player
+                    //having died.
+                    await KillPlayer(i_RoomId, i_PlayerFBID);
+                }
+                //If the game didn't yet start, we just remove the player
+                else if (!room.Started && room.LivingUsers.Contains(i_PlayerFBID)) { 
+                    room.LivingUsers.Remove(i_PlayerFBID);
+                    
+                    //Update the room to add the player to it.
+                    FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(i_RoomId));
+                    UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                        .Set<List<String>>("LivingUsers", room.LivingUsers);
+
+                    await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+
+                    //Add the room as the user's current playing room.
+                    await UsersController.LeaveRoom(i_PlayerFBID);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Kills the player from the current game.
+        /// </summary>
+        public Task KillPlayer(string i_RoomId, string i_PlayerFBID)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Adds the player whose FBID is given to the given room.
+        /// </summary>
+        /// <returns>True or false based on if joining was successful</returns>
         [Route("api/rooms/{i_RoomId}/join/{i_PlayerFBID}")]
         [HttpPost]
         public async Task<bool> JoinRoom(string i_RoomId, string i_PlayerFBID)

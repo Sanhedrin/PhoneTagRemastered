@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PhoneTag.SharedCodebase.Views;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,7 @@ namespace PhoneTag.XamarinForms.Pages
         public MainMenuPage()
         {
             initializeComponent();
+            UserView.Current.Login();
         }
 
         private void CreateGameButton_Clicked()
