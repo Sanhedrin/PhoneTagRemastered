@@ -14,11 +14,6 @@ namespace PhoneTag.XamarinForms.Controls.MapControl
     /// </summary>
     public class GameMapSetup : GameMapDisplay
     {
-        //We override the GameRadius and StartLocation properties of the game map since the setup map
-        //allows setting to these values, whereas the play map doesn't.
-        public new double GameRadius { get; set; }
-        public new Position StartLocation { get; set; }
-
         public GameMapSetup(Position i_GameLocation, double i_GameRadius, double i_ZoomRadius) :
             base(i_GameLocation, i_GameRadius, i_ZoomRadius)
         {

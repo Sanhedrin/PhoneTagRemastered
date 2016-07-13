@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PhoneTag.SharedCodebase;
+using PhoneTag.SharedCodebase.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,7 @@ namespace PhoneTag.SharedCodebase.Views
         public bool IsActive { get; set; }
         public int Ammo { get; set; }
         public String PlayingIn { get; set; }
+        public GeoPoint CurrentLocation { get; set; }
 
         public UserView()
         {
@@ -38,6 +40,20 @@ namespace PhoneTag.SharedCodebase.Views
         public static void SetLoggedInUser(UserView i_LoggedInUser)
         {
             Current = i_LoggedInUser;
+        }
+        
+        /// <summary>
+        /// Sets the user's ready status
+        /// </summary>
+        /// <returns>The user's new ready status.</returns>
+        public async Task<bool> PlayerSetReady(bool i_ReadyStatus)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                bool playerReady = await client.PostMethodAsync<bool>(String.Format("users/ready/{0}", FBID), i_ReadyStatus);
+
+                return playerReady;
+            }
         }
 
         /// <summary>

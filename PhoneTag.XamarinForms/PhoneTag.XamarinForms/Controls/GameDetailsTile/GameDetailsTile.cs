@@ -15,19 +15,18 @@ namespace PhoneTag.XamarinForms.Controls.GameDetailsTile
     {
         private String m_GameRoomId;
 
-        public GameDetailsTile(String i_GameRoomId)
+        public GameDetailsTile()
         {
-            m_GameRoomId = i_GameRoomId;
-            setupTile();
         }
 
-        private async Task setupTile()
+        public async Task SetupTile(String i_GameRoomId)
         {
+            m_GameRoomId = i_GameRoomId;
             GameRoomView room = await GameRoomView.GetRoom(m_GameRoomId);
 
             Orientation = StackOrientation.Horizontal;
             HorizontalOptions = LayoutOptions.FillAndExpand;
-
+            
             //The game's name goes on the button, clicking tries to join the room.
             Children.Add(new Button() {
                 Text = room.GameDetails.Name,

@@ -67,6 +67,11 @@ namespace PhoneTag.XamarinForms.Pages
 
         private async Task createGame()
         {
+            while(m_AreaChooserPage.ChosenPosition.Latitude == 0 && m_AreaChooserPage.ChosenPosition.Longitude == 0)
+            {
+                await Task.Delay(10);
+            }
+
             m_GameDetails.StartLocation = new GeoPoint(m_AreaChooserPage.ChosenPosition.Latitude, m_AreaChooserPage.ChosenPosition.Longitude);
             m_GameDetails.GameRadius = m_AreaChooserPage.ChosenRadius;
 
@@ -95,6 +100,7 @@ namespace PhoneTag.XamarinForms.Pages
             buttonCreateGame.IsEnabled = pickerGameMode.SelectedIndex >= 0 && !String.IsNullOrEmpty(textBoxGameName.Text);
         }
 
+        //Adds the details of the game mode for editting.
         private void updateGameModeBox()
         {
             String gameModeName = pickerGameMode.Items[pickerGameMode.SelectedIndex];

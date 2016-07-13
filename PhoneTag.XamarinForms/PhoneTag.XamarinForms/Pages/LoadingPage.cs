@@ -59,8 +59,6 @@ namespace PhoneTag.XamarinForms.Pages
         //Once authenticated, we can move on to the main menu page.
         private static void proceedToMainMenuPage()
         {
-            App42API.Initialize(Keys.App42APIKey, Keys.App42SecretKey);
-
             // The root page of your application
             Application.Current.MainPage = new NavigationPage(new MainMenuPage());
         }

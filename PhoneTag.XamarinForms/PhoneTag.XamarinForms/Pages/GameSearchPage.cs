@@ -60,14 +60,17 @@ namespace PhoneTag.XamarinForms.Pages
 
                 await CrossGeolocator.Current.StopListeningAsync();
 
-                List<String> roomIds = await GameRoomView.GetAllRoomsInRange(new GeoPoint(userLocation.Latitude, userLocation.Longitude), 10);
+                List<String> roomIds = await GameRoomView.GetAllRoomsInRange(new GeoPoint(userLocation.Latitude, userLocation.Longitude), SearchRadius);
+                
+                await UserView.Current.Update();
 
                 foreach (String roomId in roomIds)
                 {
-                    m_GameRoomTileDisplay.Children.Add(new GameDetailsTile(roomId));
+                    GameDetailsTile tile = new GameDetailsTile();
+                    await tile.SetupTile(roomId);
+                    m_GameRoomTileDisplay.Children.Add(tile);
                 }
 
-                await UserView.Current.Update();
                 initializeComponent();
             }
         }

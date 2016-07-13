@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using PhoneTag.SharedCodebase.Views;
 using MongoDB.Bson;
 using PhoneTag.WebServices.Controllers;
+using MongoDB.Driver.GeoJsonObjectModel;
+using PhoneTag.SharedCodebase.Utils;
 
 namespace PhoneTag.WebServices.Models
 {
@@ -16,15 +18,16 @@ namespace PhoneTag.WebServices.Models
     /// </summary>
     public class GameRoom : IViewable
     {
-        public ObjectId _id { get; set; }
+        public ObjectId _id { get; private set; }
 
         public DateTime ExpirationTime { get; set; }
 
-        public GameDetails GameModeDetails { get; set; }
-        public bool Started { get; set; }
-        public bool Finished { get; set; }
-        public int GameTime { get; set; }
-        
+        public GameDetails GameModeDetails { get; private set; }
+        public bool Started { get; private set; }
+        public bool Finished { get; private set; }
+        public int GameTime { get; private set; }
+        public GeoJsonPoint<GeoJson2DCoordinates> RoomLocation { get; private set; }
+
         public List<String> LivingUsers { get; private set; }
         
         public List<String> DeadUsers { get; private set; }
@@ -32,6 +35,7 @@ namespace PhoneTag.WebServices.Models
         public GameRoom(GameDetails i_GameDetails)
         {
             GameModeDetails = i_GameDetails;
+            RoomLocation = i_GameDetails.StartLocation;
             Started = false;
             Finished = false;
             GameTime = 0;
@@ -47,6 +51,7 @@ namespace PhoneTag.WebServices.Models
             GameRoomView roomView = new GameRoomView();
 
             roomView.RoomId = _id.ToString();
+            roomView.RoomLocation = new GeoPoint(RoomLocation.Coordinates.X, RoomLocation.Coordinates.Y);
             roomView.ExpirationTime = ExpirationTime;
             roomView.Finished = Finished;
             roomView.GameTime = GameTime;

@@ -12,6 +12,11 @@ using PhoneTag.WebServices.Models;
 using PhoneTag.SharedCodebase.Views;
 using Nito.AsyncEx;
 using PhoneTag.SharedCodebase.Utils;
+using MongoDB.Driver.GeoJsonObjectModel;
+using MongoDB.Driver.Linq;
+using MongoDB.Driver.Builders;
+using Newtonsoft.Json;
+using System.Linq.Expressions;
 
 namespace PhoneTag.WebServices.Controllers
 {
@@ -156,14 +161,23 @@ namespace PhoneTag.WebServices.Controllers
         /// <param name="i_Location">Location to use as the search base.</param>
         /// <param name="i_SearchRadius">Maximum distance of the play area from the user in km.</param>
         /// <returns>A list of matching room ids</returns>
-        [Route("api/rooms/find/{i_Location}/{i_SearchRadius}")]
+        [Route("api/rooms/find/{i_Lat}/{i_Lng}/{i_SearchRadius}")]
         [HttpGet]
-        public async Task<List<String>> GetRoomsInRange(GeoPoint i_Location, float i_SearchRadius)
+        public async Task<List<String>> GetRoomsInRange(double i_Lat, double i_Lng, float i_SearchRadius)
         {
             List<String> roomIds = new List<string>();
+            GeoPoint location = new GeoPoint(i_Lat, i_Lng);
 
+            //SortDefinition<GameRoom> sort = Builders<GameRoom>.Sort.Ascending(
+            //        room => GeoUtils.GetDistanceBetween(location, new GeoPoint(
+            //        room.RoomLocation.Coordinates.X, room.RoomLocation.Coordinates.Y)));
+
+            FilterDefinition<GameRoom> filter = Builders<GameRoom>.Filter
+                    .NearSphere(room => room.RoomLocation, GeoJson.Point<GeoJson2DGeographicCoordinates>(new GeoJson2DGeographicCoordinates(location.Longitude, location.Latitude)), i_SearchRadius);
+            
             IFindFluent<GameRoom, String> gameModes = Mongo.Database.GetCollection<GameRoom>("Rooms")
-                .Find(Builders<GameRoom>.Filter.Empty)
+                .Find(filter)
+                //.Sort(sort)
                 .Project(room => room._id.ToString());
             roomIds = await gameModes.ToListAsync();
 

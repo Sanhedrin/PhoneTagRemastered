@@ -12,8 +12,8 @@ namespace PhoneTag.SharedCodebase.Utils
     public static class Keys
     {
         public const String AndroidProjectNumber = "232827258785";
-        public const String App42APIKey = "b7cce3f56c238389790ccef2a13c69fe88cb9447523730b6e93c849a6d0bd510";
-        public const String App42SecretKey = "e6672070bad36d0940805bff5d81fa3d9d66e440913301f1f438ad937b5d8502";
+        public const String App42APIKey = "64d65b1206ef3fcefd8983ce8477e07dc773aa742875b3c204989e09fab41ad5";
+        public const String App42SecretKey = "660bb6519dec27d899be8df48cd53636688d1ec3be4a28c2d2ac42ef1e6c86bb";
         public const String FacebookAppId = "1176591352398518";
     }
 }

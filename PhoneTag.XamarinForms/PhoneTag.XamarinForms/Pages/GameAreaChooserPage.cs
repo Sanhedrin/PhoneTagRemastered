@@ -1,4 +1,5 @@
 ﻿using PhoneTag.XamarinForms.Controls.MapControl;
+using Plugin.Geolocator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
+using GpsPosition = Plugin.Geolocator.Abstractions.Position;
+using MapPosition = Xamarin.Forms.Maps.Position;
 
 namespace PhoneTag.XamarinForms.Pages
 {
@@ -19,7 +22,7 @@ namespace PhoneTag.XamarinForms.Pages
         /// <summary>
         /// Holds the game location as chosen by the interactive map.
         /// </summary>
-        public Position ChosenPosition { get; private set; }
+        public MapPosition ChosenPosition { get; private set; }
         /// <summary>
         /// Holds the game radius as chosen by the interactive map.
         /// </summary>
@@ -34,19 +37,25 @@ namespace PhoneTag.XamarinForms.Pages
         public GameAreaChooserPage()
         {
             setupChooserMap();
-
-            initializeComponent();
         }
 
         //Initializes the map to the last chosen location or to your current location.
-        private void setupChooserMap()
+        private async Task setupChooserMap()
         {
-            Position startLocation = new Position(32.0486850, 34.7600850);
+            await startGeoLocationListening();
+
+            GpsPosition userLocation = await CrossGeolocator.Current.GetPositionAsync(timeoutMilliseconds: 3);
+
+            await CrossGeolocator.Current.StopListeningAsync();
+
+            MapPosition startLocation = new MapPosition(userLocation.Latitude, userLocation.Longitude);
             m_GameMap = new GameMapSetup(startLocation, k_DefaultGameRadius, k_DefaultGameZoom);
            
             //Store the values in the static properties for access once we're done.
-            m_GameMap.StartLocation = startLocation;
-            m_GameMap.GameRadius = k_DefaultGameRadius;
+            ChosenPosition = m_GameMap.StartLocation = startLocation;
+            ChosenRadius = m_GameMap.GameRadius = k_DefaultGameRadius;
+
+            initializeComponent();
         }
 
         //When the area is chosen return to the last page.
@@ -55,6 +64,25 @@ namespace PhoneTag.XamarinForms.Pages
             ChosenPosition = m_GameMap.StartLocation;
             ChosenRadius = m_GameMap.GameRadius;
             await Navigation.PopAsync();
+        }
+
+        //Starts listening to the geolocator, while looking for errors.
+        private async Task startGeoLocationListening()
+        {
+            if (!CrossGeolocator.Current.IsListening)
+            {
+                bool isReady = false;
+
+                if (CrossGeolocator.Current.IsGeolocationAvailable && CrossGeolocator.Current.IsGeolocationEnabled)
+                {
+                    isReady = await CrossGeolocator.Current.StartListeningAsync(1, 1);
+                }
+
+                if (!isReady)
+                {
+                    Application.Current.MainPage = new ErrorPage("GPS signal not found, please enable GPS");
+                }
+            }
         }
     }
 }

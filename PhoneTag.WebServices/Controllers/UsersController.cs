@@ -70,6 +70,27 @@ namespace PhoneTag.WebServices.Controllers
         }
 
         /// <summary>
+        /// Sets the player's ready status
+        /// </summary>
+        [Route("api/users/ready/{i_PlayerFBID}")]
+        [HttpPost]
+        public async Task<bool> SetReadyStatus(String i_PlayerFBID, [FromBody]bool i_ReadyStatus)
+        {
+            using (await sr_UserChangeMutex.LockAsync())
+            {
+                //Add the room as the user's current playing room.
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
+                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                    .Set("IsReady", i_ReadyStatus);
+
+                await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+            }
+
+            //TODO: Run check for game start
+            return i_ReadyStatus;
+        }
+
+        /// <summary>
         /// Gets the model of the user whose id is given or null if such doesn't exist.
         /// </summary>
         public static async Task<User> GetUserModel(string i_FBID)
@@ -159,7 +180,8 @@ namespace PhoneTag.WebServices.Controllers
                 //Add the room as the user's current playing room.
                 FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
                 UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
-                    .Set<String>("PlayingIn", null);
+                    .Set<String>("PlayingIn", null)
+                    .Set("IsReady", false);
 
                 await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
             }

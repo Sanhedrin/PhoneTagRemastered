@@ -62,9 +62,19 @@ namespace PhoneTag.WebServices
                 await col.Indexes.CreateOneAsync(keys, creationOptions);
 
                 //Create username index for users.
-                Database.GetCollection<User>("Users").Indexes.CreateOne(
+                await Database.GetCollection<User>("Users").Indexes.CreateOneAsync(
                     Builders<User>.IndexKeys.Ascending("FBID"),
                     new CreateIndexOptions<User>() { Unique = true }
+                );
+
+                //Create a geographic index for our games.
+                await Database.GetCollection<GameRoom>("Rooms").Indexes.CreateOneAsync(
+                    Builders<GameRoom>.IndexKeys.Geo2DSphere(room => room.RoomLocation)
+                );
+
+                //Create a geographic index for our users
+                await Database.GetCollection<User>("Users").Indexes.CreateOneAsync(
+                    Builders<User>.IndexKeys.Geo2DSphere(x => x.CurrentLocation)
                 );
 
                 Database.GetCollection<BsonDocument>("FloatingValues").InsertOne(new BsonDocument { { "Ready", "true" } });

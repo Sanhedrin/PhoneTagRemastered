@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Driver.GeoJsonObjectModel;
 using PhoneTag.SharedCodebase.Utils;
 using PhoneTag.SharedCodebase.Views;
 using PhoneTag.SharedCodebase.Views.GameModes;
@@ -21,7 +22,7 @@ namespace PhoneTag.WebServices.Models
         public String Name { get; set; }
         public int GpsRefreshRate { get; set; }
         public int GameDurationInMins { get; set; }
-        public GeoPoint StartLocation { get; set; }
+        public GeoJsonPoint<GeoJson2DCoordinates> StartLocation { get; set; }
         public double GameRadius { get; set; }
 
         public GameMode Mode { get; set; }
@@ -37,7 +38,11 @@ namespace PhoneTag.WebServices.Models
             detailsView.GpsRefreshRate = GpsRefreshRate;
             detailsView.GameDurationInMins = GameDurationInMins;
             detailsView.GameRadius = GameRadius;
-            detailsView.StartLocation = StartLocation;
+
+            if (StartLocation != null)
+            {
+                detailsView.StartLocation = new GeoPoint(StartLocation.Coordinates.Y, StartLocation.Coordinates.X);
+            }
 
             detailsView.Mode = await Mode.GenerateView();
 
@@ -54,7 +59,8 @@ namespace PhoneTag.WebServices.Models
             details.Name = i_GameDetailsView.Name;
             details.GpsRefreshRate = i_GameDetailsView.GpsRefreshRate;
             details.GameDurationInMins = i_GameDetailsView.GameDurationInMins;
-            details.StartLocation = i_GameDetailsView.StartLocation;
+            details.StartLocation = new GeoJsonPoint<GeoJson2DCoordinates>(
+                new GeoJson2DCoordinates(i_GameDetailsView.StartLocation.Longitude, i_GameDetailsView.StartLocation.Latitude));
             details.GameRadius = i_GameDetailsView.GameRadius;
 
             //We want to invoke the FromView method like so:

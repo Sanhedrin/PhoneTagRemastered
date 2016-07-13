@@ -19,6 +19,7 @@ namespace PhoneTag.SharedCodebase.Views
         public String RoomId { get; set; }
         public DateTime ExpirationTime { get; set; }
         public GameDetailsView GameDetails { get; set; }
+        public GeoPoint RoomLocation { get; set; }
         public bool Started { get; set; }
 
         public bool Finished { get; set; }
@@ -70,7 +71,7 @@ namespace PhoneTag.SharedCodebase.Views
         {
             using (HttpClient client = new HttpClient())
             {
-                return await client.GetMethodAsync<List<String>>(String.Format("rooms/find/{0}/{1}", i_Location, i_SearchRadius));
+                return await client.GetMethodAsync<List<String>>(String.Format("rooms/find/{0}/{1}/{2}", i_Location.Latitude, i_Location.Longitude, i_SearchRadius));
             }
         }
 

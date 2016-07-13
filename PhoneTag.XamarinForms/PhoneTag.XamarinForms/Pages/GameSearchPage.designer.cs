@@ -47,6 +47,8 @@ namespace PhoneTag.XamarinForms.Pages
             AbsoluteLayout.SetLayoutBounds(bottomButtonBatch, new Rectangle(0, 0.9, 1, 0.1));
             AbsoluteLayout.SetLayoutFlags(bottomButtonBatch, AbsoluteLayoutFlags.All);
 
+            pickerSearchRadius.SelectedItem = oldSearchRadius.ToString();
+
             Button refreshButton = new Button
             {
                 Text = "Refresh",
@@ -57,6 +59,7 @@ namespace PhoneTag.XamarinForms.Pages
 
             Title = "Find a game near you";
             Padding = new Thickness(0, 20, 0, 0);
+            
             Content = new AbsoluteLayout()
             {
                 VerticalOptions = new LayoutOptions { Alignment = LayoutAlignment.Fill },
@@ -66,8 +69,6 @@ namespace PhoneTag.XamarinForms.Pages
                     refreshButton
                 }
             };
-
-            pickerSearchRadius.SelectedItem = oldSearchRadius.ToString();
         }
 
         private void initRadiusPicker()

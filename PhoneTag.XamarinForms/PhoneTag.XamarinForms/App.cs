@@ -36,6 +36,7 @@ namespace PhoneTag.XamarinForms
         protected override void OnStart()
         {
             // Handle when your app starts
+            App42API.Initialize(Keys.App42APIKey, Keys.App42SecretKey);
             //CrossPushNotification.Current.Register();
         }
 

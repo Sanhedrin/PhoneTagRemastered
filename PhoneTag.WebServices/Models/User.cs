@@ -7,6 +7,8 @@ using PhoneTag.SharedCodebase.Views;
 using MongoDB.Bson;
 using System.Threading.Tasks;
 using PhoneTag.WebServices.Controllers;
+using MongoDB.Driver.GeoJsonObjectModel;
+using PhoneTag.SharedCodebase.Utils;
 
 namespace PhoneTag.WebServices.Models
 {
@@ -24,6 +26,7 @@ namespace PhoneTag.WebServices.Models
         public bool IsActive { get; set; }
         public int Ammo { get; set; }
         public String PlayingIn { get; set; }
+        public GeoJsonPoint<GeoJson2DCoordinates> CurrentLocation { get; set; }
 
         /// <summary>
         /// Generates a view for this model,
@@ -38,6 +41,11 @@ namespace PhoneTag.WebServices.Models
             userView.IsReady = IsReady;
             userView.IsActive = IsActive;
             userView.Ammo = Ammo;
+
+            if (CurrentLocation != null)
+            {
+                userView.CurrentLocation = new GeoPoint(CurrentLocation.Coordinates.Y, CurrentLocation.Coordinates.X);
+            }
 
             if (PlayingIn != null)
             {
@@ -59,6 +67,11 @@ namespace PhoneTag.WebServices.Models
                 friendView.IsReady = friend.IsReady;
                 friendView.Friends = null;
                 friendView.IsActive = friend.IsActive;
+
+                if (friend.CurrentLocation != null)
+                {
+                    friendView.CurrentLocation = new GeoPoint(friend.CurrentLocation.Coordinates.Y, friend.CurrentLocation.Coordinates.X);
+                }
 
                 userView.Friends.Add(friendView);
             }

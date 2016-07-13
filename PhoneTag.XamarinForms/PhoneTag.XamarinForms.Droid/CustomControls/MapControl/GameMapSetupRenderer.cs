@@ -68,6 +68,7 @@ namespace PhoneTag.XamarinForms.Droid.CustomControls.MapControl
         /// </summary>
         public override void CameraChanged(object sender, GoogleMap.CameraChangeEventArgs e)
         {
+            m_LastZoom = e.Position.Zoom;
         }
     }
 }

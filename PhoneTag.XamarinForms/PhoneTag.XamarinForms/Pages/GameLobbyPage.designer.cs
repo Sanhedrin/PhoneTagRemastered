@@ -21,6 +21,18 @@ namespace PhoneTag.XamarinForms.Pages
 
             Position startLocation = new Position(gameRoom.GameDetails.StartLocation.Latitude, gameRoom.GameDetails.StartLocation.Longitude);
 
+            GameDetailsTile roomTile = new GameDetailsTile();
+            await roomTile.SetupTile(i_GameRoomId);
+
+            buttonReady = new Button()
+            {
+                Text = "Ready",
+                BackgroundColor = Color.Red
+            };
+            buttonReady.BindingContext = this;
+            buttonReady.SetBinding(Button.IsEnabledProperty, "ReadyRequestPending");
+            buttonReady.Clicked += ButtonReady_Clicked;
+
             Title = "Game Lobby";
             Padding = new Thickness(0, 20, 0, 0);
             Content = new StackLayout
@@ -30,7 +42,7 @@ namespace PhoneTag.XamarinForms.Pages
                     Alignment = LayoutAlignment.Fill
                 },
                 Children = {
-                    new GameDetailsTile(i_GameRoomId),
+                    roomTile,
                     //TODO: Insert player list
                     //TODO: Insert chat box.
                     new Button
@@ -41,12 +53,7 @@ namespace PhoneTag.XamarinForms.Pages
                             Navigation.PushAsync(new GameAreaDisplayPage(startLocation, gameRoom.GameDetails.GameRadius)); 
                         })
                     },
-                    new Button
-                    {
-                        Text = "Ready",
-                        BackgroundColor = Color.Red,
-                        Command = new Command(() => { ReadyButton_Clicked(); })
-                    }
+                    buttonReady
                 }
             };
         }
