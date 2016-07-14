@@ -16,6 +16,9 @@ namespace PhoneTag.WebServices
     {
         private const long k_SecondsPerHour = 60*60;
 
+        private const string k_DevDBName = "ptdbdev";
+        private const string k_DBName = "ptdb";
+
         private static IMongoClient s_Client;
         public static IMongoDatabase Database { get; private set; }
         public static bool IsReady { get; private set; }
@@ -31,8 +34,11 @@ namespace PhoneTag.WebServices
             {
                 //s_Client = new MongoClient("mongodb://Sanhedrin123:Sanhedrin123@ds040309.mlab.com:40309/ptdb");
                 s_Client = new MongoClient();
-                Database = s_Client.GetDatabase("ptdb");
-
+#if DEBUG
+                Database = s_Client.GetDatabase(k_DevDBName);
+#else
+                Database = s_Client.GetDatabase(k_DBName);
+#endif
                 IsReady = true;
             }
             catch (Exception e)
