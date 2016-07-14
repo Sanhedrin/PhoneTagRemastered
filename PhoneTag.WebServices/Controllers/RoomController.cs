@@ -62,32 +62,29 @@ namespace PhoneTag.WebServices.Controllers
         [HttpPost]
         public async Task LeaveRoom(string i_RoomId, string i_PlayerFBID)
         {
-            using (await sr_RoomChangeMutex.LockAsync())
+            GameRoom room = await GetRoomModel(i_RoomId);
+
+            //We need to separate between the case a user leaves in the middle of a game or in the lobby
+            //Game case(If the player is already dead we don't need to doy anything)
+            if (room.Started && room.LivingUsers.Contains(i_PlayerFBID))
             {
-                GameRoom room = await GetRoomModel(i_RoomId);
-
-                //We need to separate between the case a user leaves in the middle of a game or in the lobby
-                //Game case(If the player is already dead we don't need to doy anything)
-                if (room.Started && room.LivingUsers.Contains(i_PlayerFBID))
-                {
-                    //In the case the user left in the middle of the game, we'll consider it as the player
-                    //having died.
-                    await KillPlayer(i_RoomId, i_PlayerFBID);
-                }
-                //If the game didn't yet start, we just remove the player
-                else if (!room.Started && room.LivingUsers.Contains(i_PlayerFBID)) { 
-                    room.LivingUsers.Remove(i_PlayerFBID);
+                //In the case the user left in the middle of the game, we'll consider it as the player
+                //having died.
+                await KillPlayer(i_RoomId, i_PlayerFBID);
+            }
+            //If the game didn't yet start, we just remove the player
+            else if (!room.Started && room.LivingUsers.Contains(i_PlayerFBID)) { 
+                room.LivingUsers.Remove(i_PlayerFBID);
                     
-                    //Update the room to add the player to it.
-                    FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(i_RoomId));
-                    UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
-                        .Set<List<String>>("LivingUsers", room.LivingUsers);
+                //Update the room to add the player to it.
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(i_RoomId));
+                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                    .Set<List<String>>("LivingUsers", room.LivingUsers);
 
-                    await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+                await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
 
-                    //Add the room as the user's current playing room.
-                    await UsersController.LeaveRoom(i_PlayerFBID);
-                }
+                //Add the room as the user's current playing room.
+                await UsersController.LeaveRoom(i_PlayerFBID);
             }
         }
 
@@ -168,16 +165,11 @@ namespace PhoneTag.WebServices.Controllers
             List<String> roomIds = new List<string>();
             GeoPoint location = new GeoPoint(i_Lat, i_Lng);
 
-            //SortDefinition<GameRoom> sort = Builders<GameRoom>.Sort.Ascending(
-            //        room => GeoUtils.GetDistanceBetween(location, new GeoPoint(
-            //        room.RoomLocation.Coordinates.X, room.RoomLocation.Coordinates.Y)));
-
             FilterDefinition<GameRoom> filter = Builders<GameRoom>.Filter
                     .NearSphere(room => room.RoomLocation, GeoJson.Point<GeoJson2DGeographicCoordinates>(new GeoJson2DGeographicCoordinates(location.Longitude, location.Latitude)), i_SearchRadius);
             
             IFindFluent<GameRoom, String> gameModes = Mongo.Database.GetCollection<GameRoom>("Rooms")
                 .Find(filter)
-                //.Sort(sort)
                 .Project(room => room._id.ToString());
             roomIds = await gameModes.ToListAsync();
 

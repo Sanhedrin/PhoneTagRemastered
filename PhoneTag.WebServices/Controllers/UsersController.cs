@@ -76,16 +76,13 @@ namespace PhoneTag.WebServices.Controllers
         [HttpPost]
         public async Task<bool> SetReadyStatus(String i_PlayerFBID, [FromBody]bool i_ReadyStatus)
         {
-            using (await sr_UserChangeMutex.LockAsync())
-            {
-                //Add the room as the user's current playing room.
-                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
-                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
-                    .Set("IsReady", i_ReadyStatus);
+            //Add the room as the user's current playing room.
+            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
+            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                .Set("IsReady", i_ReadyStatus);
 
-                await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
-            }
-
+            await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+           
             //TODO: Run check for game start
             return i_ReadyStatus;
         }
@@ -121,16 +118,13 @@ namespace PhoneTag.WebServices.Controllers
         [HttpPost]
         public async Task Quit(string i_PlayerFBID)
         {
-            using (await sr_UserChangeMutex.LockAsync())
-            {
-                //Add the room as the user's current playing room.
-                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
-                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
-                    .Set("IsActive", false);
+            //Add the room as the user's current playing room.
+            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
+            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                .Set("IsActive", false);
 
-                await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
-            }
-
+            await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+           
             await LeaveRoom(i_PlayerFBID);
         }
 
@@ -141,15 +135,12 @@ namespace PhoneTag.WebServices.Controllers
         [HttpPost]
         public async Task Login(string i_PlayerFBID)
         {
-            using (await sr_UserChangeMutex.LockAsync())
-            {
-                //Add the room as the user's current playing room.
-                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
-                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
-                    .Set("IsActive", true);
+            //Add the room as the user's current playing room.
+            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
+            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                .Set("IsActive", true);
 
-                await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
-            }
+            await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
         }
 
         /// <summary>
@@ -159,15 +150,12 @@ namespace PhoneTag.WebServices.Controllers
         //[HttpPost]
         public static async Task JoinRoom(string i_PlayerFBID, string i_RoomId)
         {
-            using (await sr_UserChangeMutex.LockAsync())
-            {
-                //Add the room as the user's current playing room.
-                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
-                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
-                    .Set<String>("PlayingIn", i_RoomId);
+            //Add the room as the user's current playing room.
+            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
+            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                .Set<String>("PlayingIn", i_RoomId);
 
-                await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
-            }
+            await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
         }
 
         /// <summary>
@@ -175,16 +163,13 @@ namespace PhoneTag.WebServices.Controllers
         /// </summary>
         public static async Task LeaveRoom(string i_PlayerFBID)
         {
-            using (await sr_UserChangeMutex.LockAsync())
-            {
-                //Add the room as the user's current playing room.
-                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
-                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
-                    .Set<String>("PlayingIn", null)
-                    .Set("IsReady", false);
+            //Add the room as the user's current playing room.
+            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
+            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                .Set<String>("PlayingIn", null)
+                .Set("IsReady", false);
 
-                await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
-            }
+            await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
         }
     }
 }
