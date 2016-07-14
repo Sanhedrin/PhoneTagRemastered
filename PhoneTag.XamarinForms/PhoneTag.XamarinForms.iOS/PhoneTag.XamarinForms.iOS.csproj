@@ -143,7 +143,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Facebook">
-      <HintPath>..\..\..\..\..\..\Downloads\facebook-sdk-6.2.2\lib\ios-unified\Facebook.dll</HintPath>
+      <HintPath>..\..\packages\facebook-sdk-6.2.2\lib\ios-unified\Facebook.dll</HintPath>
     </Reference>
     <Reference Include="Guards, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ac6aedb73a72f46e, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Guards.1.0.10\lib\xamarin.ios10\Guards.dll</HintPath>
