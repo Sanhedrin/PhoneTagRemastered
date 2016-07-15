@@ -33,8 +33,6 @@ namespace PhoneTag.XamarinForms.Droid
 
             this.Window.SetFlags(WindowManagerFlags.KeepScreenOn, WindowManagerFlags.KeepScreenOn);
 
-            CrossPushNotification.Initialize<CrossPushNotificationListener>(Keys.AndroidProjectNumber);
-
             LoadApplication(new App());
         }
     }

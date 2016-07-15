@@ -38,8 +38,8 @@ namespace PhoneTag.XamarinForms.PushNotifications
                 (i_DeviceType == DeviceType.iOS ? App42DeviceType.iOS : null);
 
             m_PushService = App42API.BuildPushNotificationService();
-            App42API.SetLoggedInUser("TestDude1");
             m_PushService.StoreDeviceToken("TestDude1", i_Token, deviceType);
+            App42API.SetLoggedInUser("TestDude1");
         }
 
         public void OnUnregistered(DeviceType i_DeviceType)

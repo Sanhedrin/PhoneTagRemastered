@@ -37,7 +37,7 @@ namespace PhoneTag.XamarinForms
         {
             // Handle when your app starts
             App42API.Initialize(Keys.App42APIKey, Keys.App42SecretKey);
-            //CrossPushNotification.Current.Register();
+            CrossPushNotification.Current.Register();
         }
 
         protected override void OnSleep()

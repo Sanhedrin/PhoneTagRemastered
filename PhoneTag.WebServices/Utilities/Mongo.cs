@@ -12,16 +12,17 @@ namespace PhoneTag.WebServices
     /// <summary>
     /// Allows access to our database.
     /// </summary>
-    public class Mongo
+    public static class Mongo
     {
         private const long k_SecondsPerHour = 60*60;
-
-        private const string k_DevDBName = "ptdbdev";
+        
         private const string k_DBName = "ptdb";
 
         private static IMongoClient s_Client;
         public static IMongoDatabase Database { get; private set; }
         public static bool IsReady { get; private set; }
+
+        private const String k_ServerVersion = "1.0.0.0";
 
         /// <summary>
         /// Initializes the database connection.
@@ -34,11 +35,9 @@ namespace PhoneTag.WebServices
             {
                 //s_Client = new MongoClient("mongodb://Sanhedrin123:Sanhedrin123@ds040309.mlab.com:40309/ptdb");
                 s_Client = new MongoClient();
-#if DEBUG
-                Database = s_Client.GetDatabase(k_DevDBName);
-#else
+
                 Database = s_Client.GetDatabase(k_DBName);
-#endif
+
                 IsReady = true;
             }
             catch (Exception e)
@@ -46,9 +45,39 @@ namespace PhoneTag.WebServices
                 errorMessage = e.Message;
             }
 
+            updateVersion();
             rebuildIndexes();
 
             return errorMessage;
+        }
+
+        //If installing a fresh copy or uploading a version of the server that's newer than the version
+        //stored in the database, update the database's saved version.
+        private static async Task updateVersion()
+        {
+            FilterDefinition<BsonDocument> serverInfoFilter = Builders<BsonDocument>.Filter.Eq("Type", "ServerInfo");
+            UpdateDefinition<BsonDocument> updateVersion = Builders<BsonDocument>.Update.Set("Version", k_ServerVersion);
+            
+            //If the ServerInfo document doesn't exist, we'll create it.
+            if ((await Database.GetCollection<BsonDocument>("Info").CountAsync(Builders<BsonDocument>.Filter.Empty)) == 0)
+            {
+                await Database.GetCollection<BsonDocument>("Info")
+                    .InsertOneAsync(new BsonDocument() {
+                        { "Type", "ServerInfo" },
+                        { "Version", k_ServerVersion }
+                    });
+            }
+            else
+            {
+                BsonDocument info = await Database.GetCollection<BsonDocument>("Info").Find(serverInfoFilter).FirstAsync();
+
+                //Otherwise, if the version is out of date, update it.
+                if (!info.GetValue("Version").AsString.Equals(k_ServerVersion))
+                {
+                    await Database.GetCollection<BsonDocument>("Info")
+                        .UpdateOneAsync(serverInfoFilter, updateVersion);
+                }
+            }
         }
 
         private static async Task rebuildIndexes()
