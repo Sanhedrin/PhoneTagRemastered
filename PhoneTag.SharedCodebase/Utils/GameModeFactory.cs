@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PhoneTag.SharedCodebase.Views;
-using PhoneTag.SharedCodebase.Views.GameModes;
+using PhoneTag.WebServices.Views;
+using PhoneTag.WebServices.Views.GameModes;
 using System.Reflection;
 
-namespace PhoneTag.SharedCodebase.Utils
+namespace PhoneTag.WebServices.Utils
 {
     public static class GameModeFactory
     {

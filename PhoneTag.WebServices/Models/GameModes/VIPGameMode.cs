@@ -1,4 +1,4 @@
-﻿using PhoneTag.SharedCodebase.Views.GameModes;
+﻿using PhoneTag.WebServices.Views.GameModes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ namespace PhoneTag.WebServices.Models.GameModes
     {
         public int PlayersPerTeam { get; set; }
 
-        public override int NumberOfPlayers
+        public override int TotalNumberOfPlayers
         {
             get
             {

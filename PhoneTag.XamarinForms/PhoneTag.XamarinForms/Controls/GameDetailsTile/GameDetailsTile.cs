@@ -1,4 +1,4 @@
-﻿using PhoneTag.SharedCodebase.Views;
+﻿using PhoneTag.WebServices.Views;
 using PhoneTag.XamarinForms.Pages;
 using Plugin.XamJam.Screen;
 using System;
@@ -26,14 +26,14 @@ namespace PhoneTag.XamarinForms.Controls.GameDetailsTile
 
             Orientation = StackOrientation.Horizontal;
             HorizontalOptions = LayoutOptions.FillAndExpand;
-            
+
             //The game's name goes on the button, clicking tries to join the room.
             Children.Add(new Button() {
                 Text = room.GameDetails.Name,
                 BackgroundColor = Color.Green,
                 WidthRequest = CrossScreen.Current.Size.Width / 4,
                 Command = new Command(() => { Navigation.PushAsync(new GameLobbyPage(m_GameRoomId)); }),
-                IsEnabled = !m_GameRoomId.Equals(UserView.Current.PlayingIn) //Disable if already in room.
+                IsEnabled = !m_GameRoomId.Equals(UserView.Current?.PlayingIn) //Disable if already in room.
             });
 
             Children.Add(new Label() {

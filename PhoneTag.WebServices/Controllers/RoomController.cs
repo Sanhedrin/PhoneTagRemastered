@@ -1,4 +1,4 @@
-﻿using PhoneTag.SharedCodebase;
+﻿using PhoneTag.WebServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +9,19 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using System.IO;
 using PhoneTag.WebServices.Models;
-using PhoneTag.SharedCodebase.Views;
+using PhoneTag.WebServices.Views;
 using Nito.AsyncEx;
-using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.WebServices.Utils;
 using MongoDB.Driver.GeoJsonObjectModel;
 using MongoDB.Driver.Linq;
 using MongoDB.Driver.Builders;
 using Newtonsoft.Json;
 using System.Linq.Expressions;
+using com.shephertz.app42.paas.sdk.csharp;
+using com.shephertz.app42.paas.sdk.csharp.pushNotification;
+using PhoneTag.WebServices.Events.GameEvents;
+using PhoneTag.WebServices.Controllers;
+using PhoneTag.WebServices.Events.OpLogEvents;
 
 namespace PhoneTag.WebServices.Controllers
 {
@@ -26,7 +31,7 @@ namespace PhoneTag.WebServices.Controllers
     public class RoomController : ApiController
     {
         private static readonly AsyncLock sr_RoomChangeMutex = new AsyncLock();
-
+        
         /// <summary>
         /// Creates a new game room.
         /// </summary>
@@ -39,12 +44,17 @@ namespace PhoneTag.WebServices.Controllers
             String roomId = null;
 
             GameRoom gameRoom = new GameRoom(GameDetails.FromView(i_GameDetailsView));
-            gameRoom.ExpirationTime = DateTime.Now;
 
             try
             {
                 await Mongo.Database.GetCollection<GameRoom>("Rooms").InsertOneAsync(gameRoom);
                 roomId = gameRoom._id.ToString();
+
+                //Add the room to the expiration list.
+                ExpirationEntry expiration = new ExpirationEntry();
+                expiration.ExpirationTime = DateTime.Now.AddMinutes(60);
+                expiration._id = gameRoom._id;
+                await Mongo.Database.GetCollection<ExpirationEntry>("RoomExpiration").InsertOneAsync(expiration);
             }
             catch (Exception e)
             {
@@ -89,6 +99,43 @@ namespace PhoneTag.WebServices.Controllers
         }
 
         /// <summary>
+        /// Checks if the given room as all players ready and is ready to start the game.
+        /// In which case a push notification is sent to all participating players to signal them to start.
+        /// </summary>
+        public static async Task CheckGameStart(string i_RoomId)
+        {
+            GameRoom room = await GetRoomModel(i_RoomId);
+
+            bool readyToStart = true;
+            List<String> userFBIDs = new List<String>();
+            PushNotificationService pushService = App42API.BuildPushNotificationService();
+
+            //Important to note:
+            //We allow players to start the game even if not enough players are present if everyone agrees to it.
+            foreach (String userId in room.LivingUsers)
+            {
+                User user = await UsersController.GetUserModel(userId);
+
+                if (!user.IsReady)
+                {
+                    readyToStart = false;
+                    break;
+                }
+
+                userFBIDs.Add(userId);
+            }
+
+            //If all players are ready, start the game.
+            if (readyToStart)
+            {
+                String gameStartEventMessage = JsonConvert.SerializeObject(new GameStartEvent(), new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
+                gameStartEventMessage = gameStartEventMessage.Replace('\"', '\'');
+
+                pushService.SendPushMessageToGroup(gameStartEventMessage, userFBIDs);
+            }
+        }
+
+        /// <summary>
         /// Kills the player from the current game.
         /// </summary>
         public Task KillPlayer(string i_RoomId, string i_PlayerFBID)
@@ -110,7 +157,7 @@ namespace PhoneTag.WebServices.Controllers
             {
                 GameRoom room = await GetRoomModel(i_RoomId);
 
-                if (!room.Started && room.LivingUsers.Count < room.GameModeDetails.Mode.NumberOfPlayers)
+                if (!room.Started && room.LivingUsers.Count < room.GameModeDetails.Mode.TotalNumberOfPlayers)
                 {
                     room.LivingUsers.Add(i_PlayerFBID);
                     

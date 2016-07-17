@@ -1,4 +1,4 @@
-﻿using PhoneTag.SharedCodebase.Views;
+﻿using PhoneTag.WebServices.Views;
 using PhoneTag.XamarinForms.Controls.MapControl;
 using System;
 using System.Collections.Generic;

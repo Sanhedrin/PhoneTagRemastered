@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhoneTag.SharedCodebase.Utils
+namespace PhoneTag.WebServices.Utils
 {
     /// <summary>
     /// Provides basic geographical location operations.

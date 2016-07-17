@@ -1,4 +1,4 @@
-﻿using PhoneTag.SharedCodebase;
+﻿using PhoneTag.WebServices;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,8 +12,13 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
-using PhoneTag.SharedCodebase.Views;
+using PhoneTag.WebServices.Views;
 using Newtonsoft.Json.Linq;
+using com.shephertz.app42.paas.sdk.csharp;
+using Keys = PhoneTag.WebServices.Utils.Keys;
+using com.shephertz.app42.paas.sdk.csharp.pushNotification;
+using PhoneTag.WebServices.Events;
+using PhoneTag.WebServices.Events.GameEvents;
 
 namespace PhoneTag.WSTest
 {
@@ -21,6 +26,7 @@ namespace PhoneTag.WSTest
     {
         public Form1()
         {
+            App42API.Initialize(Keys.App42APIKey, Keys.App42SecretKey);
             InitializeComponent();
         }
 
@@ -67,6 +73,22 @@ namespace PhoneTag.WSTest
             UserView user = await UserView.GetUser("000000000000000");
 
             tbResult.Text = JsonConvert.SerializeObject(user);
+        }
+
+        private void buttonPush_Click(object sender, EventArgs e)
+        {
+            testPush();
+        }
+
+        private void testPush()
+        {
+            PushNotificationService pushService = App42API.BuildPushNotificationService();
+
+            String gameStartEventMessage = JsonConvert.SerializeObject(new MessageEvent() { Message = "Helloworld" }, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
+            gameStartEventMessage = gameStartEventMessage.Replace('\"', '\'');
+
+            List<String> userPushTokens = new List<string>() { "1205536756157623" };
+            pushService.SendPushMessageToGroup(gameStartEventMessage, userPushTokens);
         }
     }
 }

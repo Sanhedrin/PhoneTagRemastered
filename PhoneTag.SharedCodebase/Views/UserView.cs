@@ -1,23 +1,28 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PhoneTag.SharedCodebase;
-using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.WebServices;
+using PhoneTag.WebServices.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace PhoneTag.SharedCodebase.Views
+namespace PhoneTag.WebServices.Views
 {
     /// <summary>
     /// A view representing a user, allows interaction with the server on per user basis.
     /// </summary>
     public class UserView : IUpdateable
     {
+        private const int k_HalfAMinuteInMS = 1000 * 30;
+
         public static UserView Current { get; private set; }
+
+        private CancellationTokenSource m_UserActivityCancellationToken;
         
         public String FBID { get; set; }
         public String Username { get; set; }
@@ -50,47 +55,63 @@ namespace PhoneTag.SharedCodebase.Views
         {
             using (HttpClient client = new HttpClient())
             {
-                bool playerReady = await client.PostMethodAsync<bool>(String.Format("users/ready/{0}", FBID), i_ReadyStatus);
+                bool playerReady = await client.PostMethodAsync(String.Format("users/ready/{0}", FBID), i_ReadyStatus);
 
                 return playerReady;
             }
         }
 
         /// <summary>
-        /// The user quits the game, removes them from all active rooms and marks as inactive.
+        /// Forces the current user to quit.
+        /// Only works if already logged in.
         /// </summary>
-        public async Task Quit()
+        public void Quit()
         {
-            await this.Update();
-
-            //If the user is in a room, leave it.
-            //The room will handle the rest.
-            if(this.PlayingIn != null)
+            if(m_UserActivityCancellationToken != null)
             {
-                await (await GameRoomView.GetRoom(PlayingIn)).LeaveRoom(FBID);
+                m_UserActivityCancellationToken.Cancel();
             }
-
-            //Either way, we need to set this user as offline for the server.
-            using (HttpClient client = new HttpClient())
+            else
             {
-                await client.PostMethodAsync(String.Format("users/quit/{0}", FBID));
+                throw new InvalidOperationException("Can't quit on a user that's not connected.");
             }
-
-            await this.Update();
         }
 
         /// <summary>
-        /// Sets the user as active for other users to see.
+        /// Sets the user as active for other users to see them as online.
+        /// This method continuously pings the server to make sure that we don't timeout.
+        /// This also tries to keep the view up to date.
+        /// DO NOT call this method more than once in the app's lifetime for a single user.
         /// </summary>
         public async Task Login()
         {
-            //Either way, we need to set this user as offline for the server.
-            using (HttpClient client = new HttpClient())
+            if (m_UserActivityCancellationToken == null)
             {
-                await client.PostMethodAsync(String.Format("users/login/{0}", FBID));
-            }
+                m_UserActivityCancellationToken = new CancellationTokenSource();
+                
+                //Unless we get cancelled, we'll keep pinging the server forever on occasion.
+                for (;;)
+                {
+                    if (m_UserActivityCancellationToken.IsCancellationRequested)
+                    {
+                        m_UserActivityCancellationToken = null;
+                        break;
+                    }
+                    
+                    using (HttpClient client = new HttpClient())
+                    {
+                        await client.PostMethodAsync(String.Format("users/{0}/ping", FBID));
+                    }
 
-            await this.Update();
+                    await this.Update();
+
+                    await Task.Delay(k_HalfAMinuteInMS);
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException("Trying to log in with a user that's already logged in.");
+            }
         }
 
         /// <summary>

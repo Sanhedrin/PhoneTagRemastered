@@ -21,7 +21,7 @@ using Xamarin.Forms.Platform.Android;
 using Android.Gms.Maps.Model;
 using System.Threading.Tasks;
 using Xamarin.Forms.Maps;
-using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.WebServices.Utils;
 
 [assembly: ExportRenderer(typeof(GameMapDisplay), typeof(GameMapDisplayRenderer))]
 namespace PhoneTag.XamarinForms.Droid

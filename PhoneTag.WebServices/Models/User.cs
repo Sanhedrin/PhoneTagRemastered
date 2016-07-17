@@ -1,14 +1,14 @@
-﻿using PhoneTag.SharedCodebase;
+﻿using PhoneTag.WebServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using PhoneTag.SharedCodebase.Views;
+using PhoneTag.WebServices.Views;
 using MongoDB.Bson;
 using System.Threading.Tasks;
 using PhoneTag.WebServices.Controllers;
 using MongoDB.Driver.GeoJsonObjectModel;
-using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.WebServices.Utils;
 
 namespace PhoneTag.WebServices.Models
 {
@@ -27,6 +27,7 @@ namespace PhoneTag.WebServices.Models
         public int Ammo { get; set; }
         public String PlayingIn { get; set; }
         public GeoJsonPoint<GeoJson2DCoordinates> CurrentLocation { get; set; }
+
 
         /// <summary>
         /// Generates a view for this model,

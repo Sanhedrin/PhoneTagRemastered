@@ -15,10 +15,10 @@ using PhoneTag.XamarinForms.Pages;
 using Xamarin.Forms;
 using Android.Graphics;
 using Xamarin.Auth;
-using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.WebServices.Utils;
 using PhoneTag.XamarinForms.Controls.Login;
 using Facebook;
-using PhoneTag.SharedCodebase.Views;
+using PhoneTag.WebServices.Views;
 using Plugin.Settings;
 using System.Threading.Tasks;
 

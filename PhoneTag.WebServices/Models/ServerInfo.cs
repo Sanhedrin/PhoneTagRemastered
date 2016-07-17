@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using PhoneTag.SharedCodebase.Views;
+using PhoneTag.WebServices.Views;
 using System.Threading.Tasks;
 
 namespace PhoneTag.WebServices.Models

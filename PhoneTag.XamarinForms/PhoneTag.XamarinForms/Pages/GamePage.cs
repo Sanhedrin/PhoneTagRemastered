@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
-using PhoneTag.SharedCodebase.Views;
+using PhoneTag.WebServices.Views;
 
 namespace PhoneTag.XamarinForms.Pages
 {

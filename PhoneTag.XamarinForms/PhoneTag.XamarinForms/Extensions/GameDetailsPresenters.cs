@@ -1,7 +1,7 @@
 ﻿using FreshEssentials;
-using PhoneTag.SharedCodebase.Utils;
-using PhoneTag.SharedCodebase.Views;
-using PhoneTag.SharedCodebase.Views.GameModes;
+using PhoneTag.WebServices.Utils;
+using PhoneTag.WebServices.Views;
+using PhoneTag.WebServices.Views.GameModes;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -5,11 +5,11 @@ using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using PhoneTag.SharedCodebase.Views;
+using PhoneTag.WebServices.Views;
 using MongoDB.Bson;
 using PhoneTag.WebServices.Controllers;
 using MongoDB.Driver.GeoJsonObjectModel;
-using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.WebServices.Utils;
 
 namespace PhoneTag.WebServices.Models
 {
@@ -19,8 +19,6 @@ namespace PhoneTag.WebServices.Models
     public class GameRoom : IViewable
     {
         public ObjectId _id { get; private set; }
-
-        public DateTime ExpirationTime { get; set; }
 
         public GameDetails GameModeDetails { get; private set; }
         public bool Started { get; private set; }
@@ -52,7 +50,6 @@ namespace PhoneTag.WebServices.Models
 
             roomView.RoomId = _id.ToString();
             roomView.RoomLocation = new GeoPoint(RoomLocation.Coordinates.X, RoomLocation.Coordinates.Y);
-            roomView.ExpirationTime = ExpirationTime;
             roomView.Finished = Finished;
             roomView.GameTime = GameTime;
             roomView.Started = Started;

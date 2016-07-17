@@ -1,7 +1,7 @@
 ﻿using FreshEssentials;
 using Nito.AsyncEx;
-using PhoneTag.SharedCodebase.Utils;
-using PhoneTag.SharedCodebase.Views;
+using PhoneTag.WebServices.Utils;
+using PhoneTag.WebServices.Views;
 using PhoneTag.XamarinForms.Controls.GameDetailsTile;
 using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;

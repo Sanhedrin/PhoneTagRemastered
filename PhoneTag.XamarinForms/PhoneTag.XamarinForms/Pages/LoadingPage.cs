@@ -1,7 +1,7 @@
 ﻿using com.shephertz.app42.paas.sdk.csharp;
-using PhoneTag.SharedCodebase.StaticInfo;
-using PhoneTag.SharedCodebase.Utils;
-using PhoneTag.SharedCodebase.Views;
+using PhoneTag.WebServices.StaticInfo;
+using PhoneTag.WebServices.Utils;
+using PhoneTag.WebServices.Views;
 using PhoneTag.XamarinForms.Controls.Login;
 using System;
 using System.Collections.Generic;
@@ -29,13 +29,19 @@ namespace PhoneTag.XamarinForms.Pages
         //update their app.
         private async Task initGame()
         {
-            if (await PhoneTagInfo.ValidateVersion())
-            {
-                promptUserLogin();
+            try {
+                if (await PhoneTagInfo.ValidateVersion())
+                {
+                    promptUserLogin();
+                }
+                else
+                {
+                    Application.Current.MainPage = new ErrorPage(String.Format("Version mismatch. {0}Please update your game to the latest version.", Environment.NewLine));
+                }
             }
-            else
+            catch(Exception e)
             {
-                Application.Current.MainPage = new ErrorPage(String.Format("Version mismatch. {0}Please update your game to the latest version.", Environment.NewLine));
+                Application.Current.MainPage = new ErrorPage(e.Message);
             }
         }
 

@@ -5,9 +5,10 @@ using Android.OS;
 using Android.Runtime;
 using Plugin.CurrentActivity;
 using Android.Content;
-using PushNotification.Plugin;
-using PhoneTag.XamarinForms.PushNotifications;
-using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.WebServices.Utils;
+using Gcm.Client;
+using PhoneTag.XamarinForms.Droid.Helpers;
+using PhoneTag.WebServices.Views;
 
 namespace PhoneTag.XamarinForms.Droid
 {
@@ -31,32 +32,20 @@ namespace PhoneTag.XamarinForms.Droid
             RegisterActivityLifecycleCallbacks(this);
             //A great place to initialize Xamarin.Insights and Dependency Services!
 
-            CrossPushNotification.Initialize<CrossPushNotificationListener>(Keys.AndroidProjectNumber);
+            //Check to ensure everything's setup right
+            GcmClient.CheckDevice(this);
+            GcmClient.CheckManifest(this);
+            
+            string registrationId = GcmClient.GetRegistrationId(this);
 
-            StartPushService();
-        }
-
-        public static void StartPushService()
-        {
-            AppContext.StartService(new Intent(AppContext, typeof(PushNotificationService)));
-
-            if (Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.Kitkat)
+            //GcmClient.UnRegister(this);
+            if (!GcmClient.IsRegistered(this) || String.IsNullOrEmpty(registrationId))
             {
-                PendingIntent pintent = PendingIntent.GetService(AppContext, 0, new Intent(AppContext, typeof(PushNotificationService)), 0);
-                AlarmManager alarm = (AlarmManager)AppContext.GetSystemService(Context.AlarmService);
-                alarm.Cancel(pintent);
+                GcmClient.Register(this, GcmBroadcastReceiver.SENDER_IDS);
             }
-        }
-
-        public static void StopPushService()
-        {
-            AppContext.StopService(new Intent(AppContext, typeof(PushNotificationService)));
-
-            if (Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.Kitkat)
+            else
             {
-                PendingIntent pintent = PendingIntent.GetService(AppContext, 0, new Intent(AppContext, typeof(PushNotificationService)), 0);
-                AlarmManager alarm = (AlarmManager)AppContext.GetSystemService(Context.AlarmService);
-                alarm.Cancel(pintent);
+                PushHandlerService.StoreRegistrationToken(registrationId);
             }
         }
 

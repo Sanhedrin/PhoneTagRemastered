@@ -10,16 +10,15 @@ using Xamarin.Forms;
 using Plugin.Media.Abstractions;
 
 using PhoneTag.XamarinForms.Pages;
-using PushNotification.Plugin;
 using com.shephertz.app42.paas.sdk.csharp;
-using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.WebServices.Utils;
 using System.Threading.Tasks;
-using PhoneTag.SharedCodebase.StaticInfo;
+using PhoneTag.WebServices.StaticInfo;
 using Plugin.Geolocator;
 using System.Threading;
 using System.Net.Http;
-using PhoneTag.SharedCodebase;
-using PhoneTag.SharedCodebase.Views;
+using PhoneTag.WebServices;
+using PhoneTag.WebServices.Views;
 
 namespace PhoneTag.XamarinForms
 {
@@ -37,13 +36,11 @@ namespace PhoneTag.XamarinForms
         {
             // Handle when your app starts
             App42API.Initialize(Keys.App42APIKey, Keys.App42SecretKey);
-            CrossPushNotification.Current.Register();
         }
 
         protected override void OnSleep()
         {
             // Handle when your app sleeps
-            UserView.Current?.Quit();
         }
 
         protected override void OnResume()

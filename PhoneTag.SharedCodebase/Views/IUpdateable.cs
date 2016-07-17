@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhoneTag.SharedCodebase.Views
+namespace PhoneTag.WebServices.Views
 {
     /// <summary>
     /// Views implementing this interface support updating their stored info to current server values 

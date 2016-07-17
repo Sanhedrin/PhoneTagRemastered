@@ -5,9 +5,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using PhoneTag.SharedCodebase.Views;
+using PhoneTag.WebServices.Views;
 
-namespace PhoneTag.SharedCodebase.StaticInfo
+namespace PhoneTag.WebServices.StaticInfo
 {
     /// <summary>
     /// Contains all static info about the game that isn't tied to any specific instances but 
@@ -37,6 +37,11 @@ namespace PhoneTag.SharedCodebase.StaticInfo
         public static async Task<bool> ValidateVersion()
         {
             String serverVersion = await GetServerVersion();
+
+            if (serverVersion == null)
+            {
+                throw new Exception(String.Format("Could not reach game server.{0}Please check your connection or try again later.", Environment.NewLine));
+            }
 
             return String.Equals(ClientVersion, serverVersion);
         }

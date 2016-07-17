@@ -32,6 +32,7 @@
             this.btnGetUser = new System.Windows.Forms.Button();
             this.tbResult = new System.Windows.Forms.TextBox();
             this.btnClearUser = new System.Windows.Forms.Button();
+            this.buttonPush = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnCreateUser
@@ -73,11 +74,22 @@
             this.btnClearUser.UseVisualStyleBackColor = true;
             this.btnClearUser.Click += new System.EventHandler(this.btnClearUser_Click);
             // 
+            // buttonPush
+            // 
+            this.buttonPush.Location = new System.Drawing.Point(13, 22);
+            this.buttonPush.Name = "buttonPush";
+            this.buttonPush.Size = new System.Drawing.Size(41, 23);
+            this.buttonPush.TabIndex = 3;
+            this.buttonPush.Text = "Push";
+            this.buttonPush.UseVisualStyleBackColor = true;
+            this.buttonPush.Click += new System.EventHandler(this.buttonPush_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 262);
+            this.Controls.Add(this.buttonPush);
             this.Controls.Add(this.tbResult);
             this.Controls.Add(this.btnClearUser);
             this.Controls.Add(this.btnGetUser);
@@ -95,6 +107,7 @@
         private System.Windows.Forms.Button btnGetUser;
         private System.Windows.Forms.TextBox tbResult;
         private System.Windows.Forms.Button btnClearUser;
+        private System.Windows.Forms.Button buttonPush;
     }
 }
 

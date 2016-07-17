@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhoneTag.SharedCodebase.Views
+namespace PhoneTag.WebServices.Views
 {
     /// <summary>
     /// This is a POCO class that holds the user's social information.

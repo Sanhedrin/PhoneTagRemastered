@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using PhoneTag.SharedCodebase.Views;
-using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.WebServices.Views;
+using PhoneTag.WebServices.Utils;
 using PhoneTag.WebServices.Models.GameModes;
 using System.Threading.Tasks;
 
@@ -18,7 +18,7 @@ namespace PhoneTag.WebServices.Models
         public ObjectId _id { get; set; }
         public String Name { get; set; }
 
-        public abstract int NumberOfPlayers { get; }
+        public abstract int TotalNumberOfPlayers { get; }
 
         public GameMode()
         {

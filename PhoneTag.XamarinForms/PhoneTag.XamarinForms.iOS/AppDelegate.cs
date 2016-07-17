@@ -7,7 +7,6 @@ using UIKit;
 
 using PhoneTag.XamarinForms;
 using PushNotification.Plugin;
-using PhoneTag.XamarinForms.PushNotifications;
 
 namespace PhoneTag.XamarinForms.iOS
 {
@@ -29,9 +28,9 @@ namespace PhoneTag.XamarinForms.iOS
             global::Xamarin.Forms.Forms.Init();
             Xamarin.FormsMaps.Init();
 
-            CrossPushNotification.Initialize<CrossPushNotificationListener>();
-
             UIApplication.SharedApplication.IdleTimerDisabled = true;
+            
+            //TODO: Add push notification support.
 
             LoadApplication(new App());
 

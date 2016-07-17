@@ -1,11 +1,14 @@
-﻿using MongoDB.Bson;
+﻿using com.shephertz.app42.paas.sdk.csharp;
+using MongoDB.Bson;
 using MongoDB.Driver;
+using PhoneTag.WebServices.Utils;
 using PhoneTag.WebServices.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using PhoneTag.WebServices.Events.OpLogEvents;
 
 namespace PhoneTag.WebServices
 {
@@ -15,11 +18,14 @@ namespace PhoneTag.WebServices
     public static class Mongo
     {
         private const long k_SecondsPerHour = 60*60;
+        private const long k_SecondsPerMinute = 60;
         
         private const string k_DBName = "ptdb";
+        private const string k_LocalDBName = "local";
 
         private static IMongoClient s_Client;
         public static IMongoDatabase Database { get; private set; }
+        public static IMongoDatabase LocalDatabase { get; private set; }
         public static bool IsReady { get; private set; }
 
         private const String k_ServerVersion = "1.0.0.0";
@@ -37,6 +43,7 @@ namespace PhoneTag.WebServices
                 s_Client = new MongoClient();
 
                 Database = s_Client.GetDatabase(k_DBName);
+                LocalDatabase = s_Client.GetDatabase(k_LocalDBName);
 
                 IsReady = true;
             }
@@ -44,7 +51,7 @@ namespace PhoneTag.WebServices
             {
                 errorMessage = e.Message;
             }
-
+            
             updateVersion();
             rebuildIndexes();
 
@@ -85,31 +92,33 @@ namespace PhoneTag.WebServices
             //If the database is out of date, rebuild the indexes.
             if (!(await Mongo.Database.GetCollection<BsonDocument>("FloatingValues").FindAsync(Builders<BsonDocument>.Filter.Eq("Ready", "true"))).Any())
             {
-                IMongoCollection<GameRoom> col = Mongo.Database.GetCollection<GameRoom>("Rooms");
-
+                await Database.GetCollection<ExpirationEntry>("RoomExpiration").Indexes.DropAllAsync();
+                await Database.GetCollection<ExpirationEntry>("UserExpiration").Indexes.DropAllAsync();
                 await Database.GetCollection<User>("Users").Indexes.DropAllAsync();
-                await col.Indexes.DropAllAsync();
+                await Database.GetCollection<GameRoom>("Rooms").Indexes.DropAllAsync();
 
                 //Create timed index for rooms
                 CreateIndexOptions creationOptions = new CreateIndexOptions();
-                creationOptions.ExpireAfter = new TimeSpan(TimeSpan.TicksPerSecond * k_SecondsPerHour);
-                IndexKeysDefinition<GameRoom> keys = Builders<GameRoom>.IndexKeys.Ascending("ExpirationTime");
-                await col.Indexes.CreateOneAsync(keys, creationOptions);
+                IndexKeysDefinition<ExpirationEntry> keys = Builders<ExpirationEntry>.IndexKeys.Ascending("ExpirationTime");
+                creationOptions.ExpireAfter = new TimeSpan(0);
+                //Adding expiration indexes for rooms.
+                await Database.GetCollection<ExpirationEntry>("RoomExpiration").Indexes.CreateOneAsync(keys, creationOptions);
+                //Adding expiration indexes for users.
+                await Database.GetCollection<ExpirationEntry>("UserExpiration").Indexes.CreateOneAsync(keys, creationOptions);
 
                 //Create username index for users.
                 await Database.GetCollection<User>("Users").Indexes.CreateOneAsync(
                     Builders<User>.IndexKeys.Ascending("FBID"),
                     new CreateIndexOptions<User>() { Unique = true }
                 );
+                //Create a geographic index for our users
+                await Database.GetCollection<User>("Users").Indexes.CreateOneAsync(
+                    Builders<User>.IndexKeys.Geo2DSphere(x => x.CurrentLocation)
+                );
 
                 //Create a geographic index for our games.
                 await Database.GetCollection<GameRoom>("Rooms").Indexes.CreateOneAsync(
                     Builders<GameRoom>.IndexKeys.Geo2DSphere(room => room.RoomLocation)
-                );
-
-                //Create a geographic index for our users
-                await Database.GetCollection<User>("Users").Indexes.CreateOneAsync(
-                    Builders<User>.IndexKeys.Geo2DSphere(x => x.CurrentLocation)
                 );
 
                 Database.GetCollection<BsonDocument>("FloatingValues").InsertOne(new BsonDocument { { "Ready", "true" } });

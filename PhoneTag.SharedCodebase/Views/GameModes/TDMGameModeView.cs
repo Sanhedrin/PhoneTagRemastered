@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhoneTag.SharedCodebase.Views.GameModes
+namespace PhoneTag.WebServices.Views.GameModes
 {
     public class TDMGameModeView : GameModeView
     {

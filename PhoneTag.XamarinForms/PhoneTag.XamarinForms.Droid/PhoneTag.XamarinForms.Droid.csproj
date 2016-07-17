@@ -59,6 +59,10 @@
     <AndroidLinkMode>SdkOnly</AndroidLinkMode>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="App42_CSHARP_SDK_2.0, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\App42\App42_CSHARP_SDK_2.0.dll</HintPath>
+    </Reference>
     <Reference Include="CrossPlatformLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CrossPlatformLibrary.1.0.73\lib\MonoAndroid10\CrossPlatformLibrary.dll</HintPath>
       <Private>True</Private>
@@ -75,6 +79,9 @@
       <HintPath>..\..\packages\Xamarin.Forms.2.3.0.46-pre3\lib\MonoAndroid10\FormsViewGroup.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="GCM.Client">
+      <HintPath>..\..\packages\GCMClient-1.0\lib\android\GCM.Client.dll</HintPath>
+    </Reference>
     <Reference Include="Guards, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ac6aedb73a72f46e, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Guards.1.0.10\lib\MonoAndroid10\Guards.dll</HintPath>
       <Private>True</Private>
@@ -85,6 +92,10 @@
     </Reference>
     <Reference Include="Mono.Android" />
     <Reference Include="mscorlib" />
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Nito.AsyncEx, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Nito.AsyncEx.3.0.1\lib\MonoAndroid\Nito.AsyncEx.dll</HintPath>
       <Private>True</Private>
@@ -151,14 +162,6 @@
     </Reference>
     <Reference Include="Plugin.XamJam.Screen.Abstractions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xam.Plugins.XamJam.Screen.1.0.5-beta\lib\MonoAndroid10\Plugin.XamJam.Screen.Abstractions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="PushNotification.Plugin, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Xam.Plugin.PushNotification.1.2.2\lib\MonoAndroid10\PushNotification.Plugin.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="PushNotification.Plugin.Abstractions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Xam.Plugin.PushNotification.1.2.2\lib\MonoAndroid10\PushNotification.Plugin.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -249,7 +252,7 @@
     <Compile Include="CustomControls\CameraControl\UICameraPreview.cs" />
     <Compile Include="CustomControls\CameraControl\CameraPreviewRenderer.cs" />
     <Compile Include="CustomControls\MapControl\GameMapSetupRenderer.cs" />
-    <Compile Include="Helpers\PushNotificationAppStarter.cs" />
+    <Compile Include="Helpers\GcmService.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MainApplication.cs" />

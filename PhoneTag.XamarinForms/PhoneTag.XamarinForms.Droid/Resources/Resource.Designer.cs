@@ -27,6 +27,7 @@ namespace PhoneTag.XamarinForms.Droid
 		public static void UpdateIdValues()
 		{
 			global::FacebookMonoDroid.Resource.String.library_name = global::PhoneTag.XamarinForms.Droid.Resource.String.library_name;
+			global::Gcm.Client.Resource.String.library_name = global::PhoneTag.XamarinForms.Droid.Resource.String.library_name;
 			global::PCLStorage.Resource.String.ApplicationName = global::PhoneTag.XamarinForms.Droid.Resource.String.ApplicationName;
 			global::PCLStorage.Resource.String.Hello = global::PhoneTag.XamarinForms.Droid.Resource.String.Hello;
 			global::Xamarin.Forms.Platform.Android.Resource.Attribute.actionBarSize = global::PhoneTag.XamarinForms.Droid.Resource.Attribute.actionBarSize;

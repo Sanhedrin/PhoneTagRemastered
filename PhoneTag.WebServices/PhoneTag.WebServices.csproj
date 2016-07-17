@@ -202,11 +202,14 @@
     <Compile Include="App_Start\OwinConfig.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\ExpirationControllers\RoomExpirationController.cs" />
+    <Compile Include="Controllers\ExpirationControllers\UserExpirationController.cs" />
     <Compile Include="Controllers\InfoController.cs" />
     <Compile Include="Controllers\RoomController.cs" />
     <Compile Include="Controllers\ServiceController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="Events\OpLogEvents\ExpirationEntry.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -219,6 +222,8 @@
     <Compile Include="Models\IViewable.cs" />
     <Compile Include="Models\ServerInfo.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Events\OpLogEvents\DocumentDeletedEventArgs.cs" />
+    <Compile Include="Events\OpLogEvents\OpLogEventDispatcher.cs" />
     <Compile Include="Utilities\Mongo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

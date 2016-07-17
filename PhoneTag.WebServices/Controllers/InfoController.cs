@@ -1,4 +1,4 @@
-﻿using PhoneTag.SharedCodebase;
+﻿using PhoneTag.WebServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using System.IO;
 using PhoneTag.WebServices.Models;
-using PhoneTag.SharedCodebase.Views;
+using PhoneTag.WebServices.Views;
 using System.Linq.Expressions;
 
 namespace PhoneTag.WebServices.Controllers

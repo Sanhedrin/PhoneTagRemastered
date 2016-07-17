@@ -14,9 +14,7 @@ using Android.Net;
 
 using Environment = Android.OS.Environment;
 using Uri = Android.Net.Uri;
-using PushNotification.Plugin;
-using PhoneTag.XamarinForms.PushNotifications;
-using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.WebServices.Utils;
 
 namespace PhoneTag.XamarinForms.Droid
 {

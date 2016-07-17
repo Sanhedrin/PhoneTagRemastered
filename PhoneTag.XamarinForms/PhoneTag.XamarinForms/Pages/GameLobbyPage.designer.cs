@@ -1,5 +1,5 @@
-﻿using PhoneTag.SharedCodebase.Utils;
-using PhoneTag.SharedCodebase.Views;
+﻿using PhoneTag.WebServices.Utils;
+using PhoneTag.WebServices.Views;
 using PhoneTag.XamarinForms.Controls.GameDetailsTile;
 using PhoneTag.XamarinForms.Controls.MapControl;
 using System;
