@@ -1,7 +1,8 @@
 ﻿using com.shephertz.app42.paas.sdk.csharp;
-using PhoneTag.WebServices.StaticInfo;
-using PhoneTag.WebServices.Utils;
-using PhoneTag.WebServices.Views;
+using PhoneTag.SharedCodebase.Events.GameEvents;
+using PhoneTag.SharedCodebase.StaticInfo;
+using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.SharedCodebase.Views;
 using PhoneTag.XamarinForms.Controls.Login;
 using System;
 using System.Collections.Generic;
@@ -16,9 +17,9 @@ namespace PhoneTag.XamarinForms.Pages
     /// <summary>
     /// The loading screen for the game.
     /// </summary>
-    public partial class LoadingPage : ContentPage
+    public partial class LoadingPage : TrailableContentPage
     {
-        public LoadingPage()
+        public LoadingPage() : base()
         {
             initializeComponent();
             initGame();
@@ -75,6 +76,11 @@ namespace PhoneTag.XamarinForms.Pages
         public static void LoginFailedAction()
         {
             Application.Current.MainPage = new ErrorPage(String.Format("Login failed. {0}Please try logging in again.", Environment.NewLine));
+        }
+
+        public override void ParseEvent(Event i_EventDetails)
+        {
+            throw new NotImplementedException();
         }
     }
 }

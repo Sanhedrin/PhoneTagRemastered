@@ -1,7 +1,8 @@
 ﻿using FreshEssentials;
 using Nito.AsyncEx;
-using PhoneTag.WebServices.Utils;
-using PhoneTag.WebServices.Views;
+using PhoneTag.SharedCodebase.Events.GameEvents;
+using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.SharedCodebase.Views;
 using PhoneTag.XamarinForms.Controls.GameDetailsTile;
 using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
@@ -14,7 +15,7 @@ using Xamarin.Forms;
 
 namespace PhoneTag.XamarinForms.Pages
 {
-    public partial class GameSearchPage : ContentPage
+    public partial class GameSearchPage : TrailableContentPage
     {
         public int SearchRadius { get; set; }
 
@@ -24,7 +25,7 @@ namespace PhoneTag.XamarinForms.Pages
 
         private static readonly AsyncLock sr_PopulateRoomMutex = new AsyncLock();
 
-        public GameSearchPage()
+        public GameSearchPage() : base()
         {
             initRadiusPicker();
             initializeComponent();
@@ -32,9 +33,24 @@ namespace PhoneTag.XamarinForms.Pages
 
         protected override void OnAppearing()
         {
+            base.OnAppearing();
+
+            leaveCurrentRoom();
+
             CrossGeolocator.Current.PositionError += Current_PositionError;
 
             populateRoomList();
+        }
+
+        private async Task leaveCurrentRoom()
+        {
+            await UserView.Current.Update();
+
+            if (String.IsNullOrEmpty(UserView.Current.PlayingIn))
+            {
+                GameRoomView room = await GameRoomView.GetRoom(UserView.Current.PlayingIn);
+                await room.LeaveRoom(UserView.Current.FBID);
+            }
         }
 
         private void Current_PositionError(object sender, PositionErrorEventArgs e)
@@ -92,6 +108,11 @@ namespace PhoneTag.XamarinForms.Pages
                     Application.Current.MainPage = new ErrorPage("GPS signal not found, please enable GPS");
                 }
             }
+        }
+
+        public override void ParseEvent(Event i_EventDetails)
+        {
+            throw new NotImplementedException();
         }
     }
 }

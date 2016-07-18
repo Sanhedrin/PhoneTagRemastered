@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson;
 using System;
 
-namespace PhoneTag.WebServices.Events.OpLogEvents
+namespace PhoneTag.SharedCodebase.Events.OpLogEvents
 {
     public class DocumentDeletedEventArgs : EventArgs
     {

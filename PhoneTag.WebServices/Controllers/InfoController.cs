@@ -1,4 +1,4 @@
-﻿using PhoneTag.WebServices;
+﻿using PhoneTag.SharedCodebase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +8,11 @@ using System.Web.Http;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System.IO;
-using PhoneTag.WebServices.Models;
-using PhoneTag.WebServices.Views;
+using PhoneTag.SharedCodebase.Models;
+using PhoneTag.SharedCodebase.Views;
 using System.Linq.Expressions;
 
-namespace PhoneTag.WebServices.Controllers
+namespace PhoneTag.SharedCodebase.Controllers
 {
     /// <summary>
     /// Obtains statics information about the server that isn't related to any specific instances.

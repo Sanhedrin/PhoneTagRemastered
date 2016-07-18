@@ -5,9 +5,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using PhoneTag.WebServices.Views;
+using PhoneTag.SharedCodebase.Views;
 
-namespace PhoneTag.WebServices.StaticInfo
+namespace PhoneTag.SharedCodebase.StaticInfo
 {
     /// <summary>
     /// Contains all static info about the game that isn't tied to any specific instances but 

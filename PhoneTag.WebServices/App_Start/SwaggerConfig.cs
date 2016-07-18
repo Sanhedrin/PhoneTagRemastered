@@ -5,11 +5,11 @@ using System.Web.Http.Description;
 using Swashbuckle.Application;
 using Swashbuckle.Swagger;
 using WebActivatorEx;
-using PhoneTag.WebServices;
+using PhoneTag.SharedCodebase;
 
 [assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
-namespace PhoneTag.WebServices
+namespace PhoneTag.SharedCodebase
 {
     public class SwaggerConfig
     {

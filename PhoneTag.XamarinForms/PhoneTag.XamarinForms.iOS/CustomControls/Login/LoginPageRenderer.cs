@@ -1,6 +1,6 @@
 ﻿using Facebook;
-using PhoneTag.WebServices.Utils;
-using PhoneTag.WebServices.Views;
+using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.SharedCodebase.Views;
 using PhoneTag.XamarinForms.Controls.Login;
 using PhoneTag.XamarinForms.iOS.CustomControls.Login;
 using PhoneTag.XamarinForms.Pages;

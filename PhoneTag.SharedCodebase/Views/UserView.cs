@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PhoneTag.WebServices;
-using PhoneTag.WebServices.Utils;
+using PhoneTag.SharedCodebase;
+using PhoneTag.SharedCodebase.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PhoneTag.WebServices.Views
+namespace PhoneTag.SharedCodebase.Views
 {
     /// <summary>
     /// A view representing a user, allows interaction with the server on per user basis.
@@ -100,7 +100,7 @@ namespace PhoneTag.WebServices.Views
                     
                     using (HttpClient client = new HttpClient())
                     {
-                        await client.PostMethodAsync(String.Format("users/{0}/ping", FBID));
+                        UserView.SetLoggedInUser(await client.PostMethodAsync(String.Format("users/{0}/ping", FBID)));
                     }
 
                     await this.Update();

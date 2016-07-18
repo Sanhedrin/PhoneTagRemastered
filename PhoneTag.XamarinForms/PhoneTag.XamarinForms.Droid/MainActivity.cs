@@ -14,7 +14,7 @@ using Android.Net;
 
 using Environment = Android.OS.Environment;
 using Uri = Android.Net.Uri;
-using PhoneTag.WebServices.Utils;
+using PhoneTag.SharedCodebase.Utils;
 
 namespace PhoneTag.XamarinForms.Droid
 {

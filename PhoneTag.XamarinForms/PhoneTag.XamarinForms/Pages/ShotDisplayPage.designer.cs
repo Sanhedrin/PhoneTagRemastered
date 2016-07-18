@@ -8,7 +8,7 @@ using Xamarin.Forms;
 
 namespace PhoneTag.XamarinForms.Pages
 {
-    public partial class ShotDisplayPage
+    public partial class ShotDisplayPage : TrailableContentPage
     {
         private Image m_ShotView;
 

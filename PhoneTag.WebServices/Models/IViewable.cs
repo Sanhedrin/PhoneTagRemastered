@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhoneTag.WebServices.Models
+namespace PhoneTag.SharedCodebase.Models
 {
     /// <summary>
     /// Model classes implementing this must support a way to view them.

@@ -1,4 +1,5 @@
-﻿using PhoneTag.XamarinForms.Controls.MapControl;
+﻿using PhoneTag.SharedCodebase.Events.GameEvents;
+using PhoneTag.XamarinForms.Controls.MapControl;
 using Plugin.Geolocator;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace PhoneTag.XamarinForms.Pages
     /// up a game.
     /// The chosen area is accessible via the static properties after returning from this page.
     /// </summary>
-    public partial class GameAreaChooserPage : ContentPage
+    public partial class GameAreaChooserPage : TrailableContentPage
     {
         /// <summary>
         /// Holds the game location as chosen by the interactive map.
@@ -34,7 +35,7 @@ namespace PhoneTag.XamarinForms.Pages
 
         private GameMapSetup m_GameMap;
         
-        public GameAreaChooserPage()
+        public GameAreaChooserPage() : base()
         {
             setupChooserMap();
         }
@@ -83,6 +84,11 @@ namespace PhoneTag.XamarinForms.Pages
                     Application.Current.MainPage = new ErrorPage("GPS signal not found, please enable GPS");
                 }
             }
+        }
+
+        public override void ParseEvent(Event i_EventDetails)
+        {
+            throw new NotImplementedException();
         }
     }
 }

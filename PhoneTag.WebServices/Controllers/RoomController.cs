@@ -1,4 +1,4 @@
-﻿using PhoneTag.WebServices;
+﻿using PhoneTag.SharedCodebase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +8,10 @@ using System.Web.Http;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System.IO;
-using PhoneTag.WebServices.Models;
-using PhoneTag.WebServices.Views;
+using PhoneTag.SharedCodebase.Models;
+using PhoneTag.SharedCodebase.Views;
 using Nito.AsyncEx;
-using PhoneTag.WebServices.Utils;
+using PhoneTag.SharedCodebase.Utils;
 using MongoDB.Driver.GeoJsonObjectModel;
 using MongoDB.Driver.Linq;
 using MongoDB.Driver.Builders;
@@ -19,11 +19,11 @@ using Newtonsoft.Json;
 using System.Linq.Expressions;
 using com.shephertz.app42.paas.sdk.csharp;
 using com.shephertz.app42.paas.sdk.csharp.pushNotification;
-using PhoneTag.WebServices.Events.GameEvents;
-using PhoneTag.WebServices.Controllers;
-using PhoneTag.WebServices.Events.OpLogEvents;
+using PhoneTag.SharedCodebase.Events.GameEvents;
+using PhoneTag.SharedCodebase.Controllers;
+using PhoneTag.SharedCodebase.Events.OpLogEvents;
 
-namespace PhoneTag.WebServices.Controllers
+namespace PhoneTag.SharedCodebase.Controllers
 {
     /// <summary>
     /// The controller to manage game room specific operations.
@@ -52,7 +52,7 @@ namespace PhoneTag.WebServices.Controllers
 
                 //Add the room to the expiration list.
                 ExpirationEntry expiration = new ExpirationEntry();
-                expiration.ExpirationTime = DateTime.Now.AddMinutes(60);
+                expiration.ExpirationTime = DateTime.Now.AddMinutes(1);
                 expiration._id = gameRoom._id;
                 await Mongo.Database.GetCollection<ExpirationEntry>("RoomExpiration").InsertOneAsync(expiration);
             }
@@ -99,7 +99,7 @@ namespace PhoneTag.WebServices.Controllers
         }
 
         /// <summary>
-        /// Checks if the given room as all players ready and is ready to start the game.
+        /// Checks if the given room has all players ready and is ready to start the game.
         /// In which case a push notification is sent to all participating players to signal them to start.
         /// </summary>
         public static async Task CheckGameStart(string i_RoomId)
@@ -107,8 +107,6 @@ namespace PhoneTag.WebServices.Controllers
             GameRoom room = await GetRoomModel(i_RoomId);
 
             bool readyToStart = true;
-            List<String> userFBIDs = new List<String>();
-            PushNotificationService pushService = App42API.BuildPushNotificationService();
 
             //Important to note:
             //We allow players to start the game even if not enough players are present if everyone agrees to it.
@@ -121,18 +119,32 @@ namespace PhoneTag.WebServices.Controllers
                     readyToStart = false;
                     break;
                 }
-
-                userFBIDs.Add(userId);
             }
 
             //If all players are ready, start the game.
             if (readyToStart)
             {
-                String gameStartEventMessage = JsonConvert.SerializeObject(new GameStartEvent(), new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
-                gameStartEventMessage = gameStartEventMessage.Replace('\"', '\'');
-
-                pushService.SendPushMessageToGroup(gameStartEventMessage, userFBIDs);
+                startGame(room);
             }
+        }
+
+        //Starts the game on the given room.
+        private static async Task startGame(GameRoom i_Room)
+        {
+            //Update the room to set it as started.
+            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", i_Room._id);
+            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update.Set("Started", true);
+
+            await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+
+            update = Builders<BsonDocument>.Update.Set("ExpriationTime", DateTime.Now.AddMinutes(i_Room.GameModeDetails.GameDurationInMins));
+
+            //Notify all players in the room that the game started.
+            String gameStartEventMessage = JsonConvert.SerializeObject(new GameStartEvent(i_Room._id.ToString()), new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
+            gameStartEventMessage = gameStartEventMessage.Replace('\"', '\'');
+
+            PushNotificationService pushService = App42API.BuildPushNotificationService();
+            pushService.SendPushMessageToGroup(gameStartEventMessage, i_Room.LivingUsers);
         }
 
         /// <summary>

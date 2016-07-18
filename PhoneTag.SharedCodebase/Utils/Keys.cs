@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhoneTag.WebServices.Utils
+namespace PhoneTag.SharedCodebase.Utils
 {
     /// <summary>
     /// Contains all constant strings representing keys required by our various plugins.

@@ -1,4 +1,4 @@
-﻿namespace PhoneTag.WebServices.Utils
+﻿namespace PhoneTag.SharedCodebase.Utils
 {
     /// <summary>
     /// POCO representation of a geographical point.

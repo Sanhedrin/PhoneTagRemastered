@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using PhoneTag.WebServices.Views;
+using PhoneTag.SharedCodebase.Views;
 using System.Threading.Tasks;
 
-namespace PhoneTag.WebServices.Models
+namespace PhoneTag.SharedCodebase.Models
 {
     /// <summary>
     /// The server info model.

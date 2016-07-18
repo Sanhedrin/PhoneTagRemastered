@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PhoneTag.WebServices.Utils;
+using PhoneTag.SharedCodebase.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhoneTag.WebServices.Views
+namespace PhoneTag.SharedCodebase.Views
 {
     /// <summary>
     /// A view representing a game room, allows interaction with the server on per room basis.

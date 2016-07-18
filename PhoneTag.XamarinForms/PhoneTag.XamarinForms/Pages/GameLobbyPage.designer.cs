@@ -1,5 +1,5 @@
-﻿using PhoneTag.WebServices.Utils;
-using PhoneTag.WebServices.Views;
+﻿using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.SharedCodebase.Views;
 using PhoneTag.XamarinForms.Controls.GameDetailsTile;
 using PhoneTag.XamarinForms.Controls.MapControl;
 using System;
@@ -12,8 +12,27 @@ using Xamarin.Forms.Maps;
 
 namespace PhoneTag.XamarinForms.Pages
 {
-    public partial class GameLobbyPage : ContentPage
+    public partial class GameLobbyPage : TrailableContentPage
     {
+        private void initializeLoadingComponent()
+        {
+            Title = "Loading";
+            Padding = new Thickness(0, 20, 0, 0);
+            Content = new StackLayout
+            {
+                VerticalOptions = new LayoutOptions
+                {
+                    Alignment = LayoutAlignment.Center
+                },
+                Children = {
+                    new Label
+                    {
+                        Text = "Loading..."
+                    }
+                }
+            };
+        }
+
         private async void initializeComponent(String i_GameRoomId)
         {
             NavigationPage.SetHasBackButton(this, true);
@@ -30,7 +49,7 @@ namespace PhoneTag.XamarinForms.Pages
                 BackgroundColor = Color.Red
             };
             buttonReady.BindingContext = this;
-            buttonReady.SetBinding(Button.IsEnabledProperty, "ReadyRequestPending");
+            //buttonReady.SetBinding(Button.IsEnabledProperty, "ReadyRequestComplete");
             buttonReady.Clicked += ButtonReady_Clicked;
 
             Title = "Game Lobby";

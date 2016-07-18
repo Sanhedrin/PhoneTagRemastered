@@ -1,16 +1,16 @@
-﻿using PhoneTag.WebServices;
+﻿using PhoneTag.SharedCodebase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using PhoneTag.WebServices.Views;
+using PhoneTag.SharedCodebase.Views;
 using MongoDB.Bson;
 using System.Threading.Tasks;
-using PhoneTag.WebServices.Controllers;
+using PhoneTag.SharedCodebase.Controllers;
 using MongoDB.Driver.GeoJsonObjectModel;
-using PhoneTag.WebServices.Utils;
+using PhoneTag.SharedCodebase.Utils;
 
-namespace PhoneTag.WebServices.Models
+namespace PhoneTag.SharedCodebase.Models
 {
     /// <summary>
     /// The user model.

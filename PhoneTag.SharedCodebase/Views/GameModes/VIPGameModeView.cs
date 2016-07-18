@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhoneTag.WebServices.Views.GameModes
+namespace PhoneTag.SharedCodebase.Views.GameModes
 {
     public class VIPGameModeView : GameModeView
     {

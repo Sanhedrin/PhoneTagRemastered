@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Auth;
 using Newtonsoft.Json;
-using PhoneTag.WebServices.Views;
+using PhoneTag.SharedCodebase.Views;
 
 namespace PhoneTag.XamarinForms.Controls.Login
 {

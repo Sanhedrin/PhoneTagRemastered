@@ -1,14 +1,14 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
-using PhoneTag.WebServices.Events.OpLogEvents;
-using PhoneTag.WebServices.Models;
+using PhoneTag.SharedCodebase.Events.OpLogEvents;
+using PhoneTag.SharedCodebase.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace PhoneTag.WebServices.Controllers.ExpirationControllers
+namespace PhoneTag.SharedCodebase.Controllers.ExpirationControllers
 {
     public class RoomExpirationController
     {

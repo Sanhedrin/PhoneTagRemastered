@@ -1,4 +1,4 @@
-﻿using PhoneTag.WebServices;
+﻿using PhoneTag.SharedCodebase;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,13 +12,13 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
-using PhoneTag.WebServices.Views;
+using PhoneTag.SharedCodebase.Views;
 using Newtonsoft.Json.Linq;
 using com.shephertz.app42.paas.sdk.csharp;
-using Keys = PhoneTag.WebServices.Utils.Keys;
+using Keys = PhoneTag.SharedCodebase.Utils.Keys;
 using com.shephertz.app42.paas.sdk.csharp.pushNotification;
-using PhoneTag.WebServices.Events;
-using PhoneTag.WebServices.Events.GameEvents;
+using PhoneTag.SharedCodebase.Events;
+using PhoneTag.SharedCodebase.Events.GameEvents;
 
 namespace PhoneTag.WSTest
 {

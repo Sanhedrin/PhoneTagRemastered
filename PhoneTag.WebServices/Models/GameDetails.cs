@@ -1,16 +1,16 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver.GeoJsonObjectModel;
-using PhoneTag.WebServices.Utils;
-using PhoneTag.WebServices.Views;
-using PhoneTag.WebServices.Views.GameModes;
-using PhoneTag.WebServices.Models.GameModes;
+using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.SharedCodebase.Views;
+using PhoneTag.SharedCodebase.Views.GameModes;
+using PhoneTag.SharedCodebase.Models.GameModes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhoneTag.WebServices.Models
+namespace PhoneTag.SharedCodebase.Models
 {
     /// <summary>
     /// The game details model.
@@ -70,8 +70,8 @@ namespace PhoneTag.WebServices.Models
             //use reflection to invoke the FromView method of the correct type.
             //Null in the first argument means that we're using a static method(Since there's no instance).
             object castedMode = Convert.ChangeType(i_GameDetailsView.Mode, i_GameDetailsView.Mode.GetType());
-            Type modeView = GameModeModelViewRelation.GetModelTypeForView(i_GameDetailsView.Mode.GetType());
-            details.Mode = (GameMode)modeView.GetMethod("FromView").Invoke(null, new object[] { castedMode });
+            Type modeModel= GameModeModelViewRelation.GetModelTypeForView(i_GameDetailsView.Mode.GetType());
+            details.Mode = (GameMode)modeModel.GetMethod("FromView").Invoke(null, new object[] { castedMode });
 
             return details;
         }

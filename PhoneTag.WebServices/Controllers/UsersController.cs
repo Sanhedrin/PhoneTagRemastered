@@ -1,4 +1,4 @@
-﻿using PhoneTag.WebServices;
+﻿using PhoneTag.SharedCodebase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,14 +11,14 @@ using MongoDB.Driver.Linq;
 using System.IO;
 using Newtonsoft.Json;
 using MongoDB.Bson.Serialization;
-using PhoneTag.WebServices.Views;
-using PhoneTag.WebServices.Models;
+using PhoneTag.SharedCodebase.Views;
+using PhoneTag.SharedCodebase.Models;
 using Nito.AsyncEx;
 using com.shephertz.app42.paas.sdk.csharp.pushNotification;
 using com.shephertz.app42.paas.sdk.csharp;
-using PhoneTag.WebServices.Events.OpLogEvents;
+using PhoneTag.SharedCodebase.Events.OpLogEvents;
 
-namespace PhoneTag.WebServices.Controllers
+namespace PhoneTag.SharedCodebase.Controllers
 {
     /// <summary>
     /// The controller to manage user specific operations.
@@ -87,7 +87,6 @@ namespace PhoneTag.WebServices.Controllers
                 .Set("IsReady", i_ReadyStatus);
 
             IMongoCollection<BsonDocument> users = Mongo.Database.GetCollection<BsonDocument>("Users");
-            await users.UpdateOneAsync(filter, update);
 
             //Checks if the game should start.
             BsonDocument room = (await users.FindAsync(filter)).First();
@@ -100,6 +99,7 @@ namespace PhoneTag.WebServices.Controllers
             }
             else if (newReadyStatus)
             {
+                await users.UpdateOneAsync(filter, update);
                 RoomController.CheckGameStart(roomId);
             }
 
@@ -135,7 +135,7 @@ namespace PhoneTag.WebServices.Controllers
         /// </summary>
         [Route("api/users/{i_PlayerFBID}/ping")]
         [HttpPost]
-        public async Task PingAsActive(String i_PlayerFBID)
+        public async Task<UserView> PingAsActive(String i_PlayerFBID)
         {
             //Set the user's activity state.
             FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
@@ -161,6 +161,8 @@ namespace PhoneTag.WebServices.Controllers
             //operation to tell if it was an insert or an update.
             //This helps in determining whether the user just logged on or if we're just pinging.
             //As a result, we can use that info to update the user's friends about them logging on.
+
+            return await user.GenerateView();
         }
 
         /// <summary>

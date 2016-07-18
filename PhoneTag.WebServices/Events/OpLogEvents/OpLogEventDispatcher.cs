@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhoneTag.WebServices.Events.OpLogEvents
+namespace PhoneTag.SharedCodebase.Events.OpLogEvents
 {
     /// <summary>
     /// A dispatcher for oplog events in the database.

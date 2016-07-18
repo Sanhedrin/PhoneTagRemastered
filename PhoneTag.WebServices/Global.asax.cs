@@ -1,16 +1,16 @@
 ﻿using com.shephertz.app42.paas.sdk.csharp;
-using PhoneTag.WebServices.Events.OpLogEvents;
-using PhoneTag.WebServices.Utils;
-using PhoneTag.WebServices.Controllers;
+using PhoneTag.SharedCodebase.Events.OpLogEvents;
+using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.SharedCodebase.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
 using System.Web.Routing;
-using PhoneTag.WebServices.Controllers.ExpirationControllers;
+using PhoneTag.SharedCodebase.Controllers.ExpirationControllers;
 
-namespace PhoneTag.WebServices
+namespace PhoneTag.SharedCodebase
 {
     public class WebApiApplication : System.Web.HttpApplication
     {

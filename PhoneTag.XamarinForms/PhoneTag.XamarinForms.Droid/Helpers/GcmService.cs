@@ -14,12 +14,12 @@ using com.shephertz.app42.paas.sdk.csharp;
 using com.shephertz.app42.paas.sdk.csharp.pushNotification;
 using Android.Util;
 using System.Threading.Tasks;
-using PhoneTag.WebServices.Views;
+using PhoneTag.SharedCodebase.Views;
 using System.Threading;
 using PhoneTag.XamarinForms.Helpers;
-using PhoneTag.WebServices.Events;
+using PhoneTag.SharedCodebase.Events;
 using Newtonsoft.Json;
-using PhoneTag.WebServices.Events.GameEvents;
+using PhoneTag.SharedCodebase.Events.GameEvents;
 
 namespace PhoneTag.XamarinForms.Droid.Helpers
 {
@@ -92,7 +92,7 @@ namespace PhoneTag.XamarinForms.Droid.Helpers
         protected override void OnMessage(Context i_Context, Intent i_Intent)
         {
             Log.Info(TAG, i_Intent.Extras.Get("message").ToString());
-            createNotification("This", i_Intent.Extras.Get("message").ToString());
+            //createNotification("This", i_Intent.Extras.Get("message").ToString());
 
             try
             {

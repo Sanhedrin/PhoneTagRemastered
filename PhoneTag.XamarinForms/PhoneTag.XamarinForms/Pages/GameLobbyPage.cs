@@ -1,4 +1,5 @@
-﻿using PhoneTag.WebServices.Views;
+﻿using PhoneTag.SharedCodebase.Events.GameEvents;
+using PhoneTag.SharedCodebase.Views;
 using PhoneTag.XamarinForms.Controls.MapControl;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using Xamarin.Forms;
 
 namespace PhoneTag.XamarinForms.Pages
 {
-    public partial class GameLobbyPage : ContentPage
+    public partial class GameLobbyPage : TrailableContentPage
     {
         private bool ReadyRequestComplete { get; set; }
 
@@ -17,25 +18,12 @@ namespace PhoneTag.XamarinForms.Pages
 
         private Button buttonReady;
 
-        public GameLobbyPage(String i_GameRoomId)
+        public GameLobbyPage(String i_GameRoomId) : base()
         {
+            initializeLoadingComponent();
             joinRoom(i_GameRoomId);
         }
-
-        protected override void OnDisappearing()
-        {
-            leaveRoom();
-
-            base.OnDisappearing();
-        }
-
-        private async void leaveRoom()
-        {
-            if (m_GameRoom == null) await Task.Delay(5000);
-
-            m_GameRoom?.LeaveRoom(UserView.Current.FBID);
-        }
-
+        
         //Upon opening a room's lobby page, we essentialy enter it.
         private async Task joinRoom(String i_GameRoomId)
         {
@@ -62,8 +50,21 @@ namespace PhoneTag.XamarinForms.Pages
 
             buttonReady.IsEnabled = true;
             buttonReady.Text = UserView.Current.IsReady ? "Unready" : "Ready";
-            
-            //Application.Current.MainPage = new NavigationPage(new GamePage(m_GameRoom));
+        }
+
+        public override void ParseEvent(Event i_Event)
+        {
+            if (i_Event is GameStartEvent)
+            {
+                startGame(i_Event as GameStartEvent);
+            }
+        }
+
+        private async Task startGame(GameStartEvent i_GameStartEvent)
+        {
+            GameRoomView roomView = await GameRoomView.GetRoom(i_GameStartEvent.GameId);
+
+            Device.BeginInvokeOnMainThread(() => Application.Current.MainPage = new GamePage(roomView));
         }
     }
 }

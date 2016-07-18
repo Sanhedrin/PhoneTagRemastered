@@ -11,14 +11,14 @@ using Plugin.Media.Abstractions;
 
 using PhoneTag.XamarinForms.Pages;
 using com.shephertz.app42.paas.sdk.csharp;
-using PhoneTag.WebServices.Utils;
+using PhoneTag.SharedCodebase.Utils;
 using System.Threading.Tasks;
-using PhoneTag.WebServices.StaticInfo;
+using PhoneTag.SharedCodebase.StaticInfo;
 using Plugin.Geolocator;
 using System.Threading;
 using System.Net.Http;
-using PhoneTag.WebServices;
-using PhoneTag.WebServices.Views;
+using PhoneTag.SharedCodebase;
+using PhoneTag.SharedCodebase.Views;
 
 namespace PhoneTag.XamarinForms
 {
@@ -27,7 +27,7 @@ namespace PhoneTag.XamarinForms
         public App()
         {
             CrossGeolocator.Current.DesiredAccuracy = 5;
-
+            
             MainPage = new LoadingPage();
             //MainPage = new NavigationPage(new GamePage());
         }
@@ -46,7 +46,6 @@ namespace PhoneTag.XamarinForms
         protected override void OnResume()
         {
             // Handle when your app resumes
-            MainPage = new LoadingPage();
         }
     }
 }

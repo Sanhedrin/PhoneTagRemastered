@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhoneTag.WebServices.Views
+namespace PhoneTag.SharedCodebase.Views
 {
     /// <summary>
     /// A view containing info about the server.

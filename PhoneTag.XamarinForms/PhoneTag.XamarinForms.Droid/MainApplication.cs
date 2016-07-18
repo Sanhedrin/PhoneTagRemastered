@@ -5,10 +5,10 @@ using Android.OS;
 using Android.Runtime;
 using Plugin.CurrentActivity;
 using Android.Content;
-using PhoneTag.WebServices.Utils;
+using PhoneTag.SharedCodebase.Utils;
 using Gcm.Client;
 using PhoneTag.XamarinForms.Droid.Helpers;
-using PhoneTag.WebServices.Views;
+using PhoneTag.SharedCodebase.Views;
 
 namespace PhoneTag.XamarinForms.Droid
 {

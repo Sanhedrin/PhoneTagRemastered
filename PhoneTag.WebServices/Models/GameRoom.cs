@@ -5,13 +5,13 @@ using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using PhoneTag.WebServices.Views;
+using PhoneTag.SharedCodebase.Views;
 using MongoDB.Bson;
-using PhoneTag.WebServices.Controllers;
+using PhoneTag.SharedCodebase.Controllers;
 using MongoDB.Driver.GeoJsonObjectModel;
-using PhoneTag.WebServices.Utils;
+using PhoneTag.SharedCodebase.Utils;
 
-namespace PhoneTag.WebServices.Models
+namespace PhoneTag.SharedCodebase.Models
 {
     /// <summary>
     /// The game room model.

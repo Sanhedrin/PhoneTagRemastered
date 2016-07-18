@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhoneTag.WebServices.Events.GameEvents
+namespace PhoneTag.SharedCodebase.Events.GameEvents
 {
     /// <summary>
     /// The base class for game based events.

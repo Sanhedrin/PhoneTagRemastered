@@ -12,7 +12,7 @@ using Xamarin.Forms;
 
 namespace PhoneTag.XamarinForms.Pages
 {
-    public partial class GameSearchPage : ContentPage
+    public partial class GameSearchPage : TrailableContentPage
     {
         private int k_MaxSearchDistance = 10;
 

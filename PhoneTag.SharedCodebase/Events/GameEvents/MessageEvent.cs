@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhoneTag.WebServices.Events.GameEvents
+namespace PhoneTag.SharedCodebase.Events.GameEvents
 {
     /// <summary>
     /// An event that occurs when a player receives a message.

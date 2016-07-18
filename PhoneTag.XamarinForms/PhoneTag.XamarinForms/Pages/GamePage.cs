@@ -9,14 +9,15 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
-using PhoneTag.WebServices.Views;
+using PhoneTag.SharedCodebase.Views;
+using PhoneTag.SharedCodebase.Events.GameEvents;
 
 namespace PhoneTag.XamarinForms.Pages
 {
     /// <summary>
     /// The game page, 
     /// </summary>
-    public partial class GamePage : ContentPage
+    public partial class GamePage : TrailableContentPage
     {
         private const double k_DefaultGameRadius = 0.5;
         private const double k_DefaultGameZoom = 1;
@@ -26,7 +27,7 @@ namespace PhoneTag.XamarinForms.Pages
         private CameraPreview m_Camera;
         private GameRoomView m_GameRoomView;
 
-        public GamePage(GameRoomView i_GameRoomView)
+        public GamePage(GameRoomView i_GameRoomView) : base()
         {
             m_GameRoomView = i_GameRoomView;
             Position startLocation = new Position(m_GameRoomView.GameDetails.StartLocation.Latitude, m_GameRoomView.GameDetails.StartLocation.Longitude);
@@ -55,6 +56,11 @@ namespace PhoneTag.XamarinForms.Pages
         private void ShootButton_Clicked()
         {
             m_Camera.TakePicture();
+        }
+
+        public override void ParseEvent(Event i_EventDetails)
+        {
+            throw new NotImplementedException();
         }
     }
 }

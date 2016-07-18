@@ -1,11 +1,11 @@
-﻿using PhoneTag.WebServices.Utils;
+﻿using PhoneTag.SharedCodebase.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhoneTag.WebServices.Views
+namespace PhoneTag.SharedCodebase.Views
 {
     public abstract class GameModeView
     {

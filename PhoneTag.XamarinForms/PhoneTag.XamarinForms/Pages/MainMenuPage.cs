@@ -1,4 +1,5 @@
-﻿using PhoneTag.WebServices.Views;
+﻿using PhoneTag.SharedCodebase.Events.GameEvents;
+using PhoneTag.SharedCodebase.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,9 @@ namespace PhoneTag.XamarinForms.Pages
     /// <summary>
     /// The main menu.
     /// </summary>
-    public partial class MainMenuPage : ContentPage
+    public partial class MainMenuPage : TrailableContentPage
     {
-        public MainMenuPage()
+        public MainMenuPage() : base()
         {
             initializeComponent();
             UserView.Current.Login();
@@ -27,6 +28,11 @@ namespace PhoneTag.XamarinForms.Pages
         private void FindGameButton_Clicked()
         {
             Navigation.PushAsync(new GameSearchPage());
+        }
+
+        public override void ParseEvent(Event i_EventDetails)
+        {
+            throw new NotImplementedException();
         }
     }
 }

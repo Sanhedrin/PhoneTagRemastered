@@ -1,4 +1,5 @@
-﻿using PhoneTag.WebServices.Utils;
+﻿using PhoneTag.SharedCodebase.Events.GameEvents;
+using PhoneTag.SharedCodebase.Utils;
 using PhoneTag.XamarinForms.Controls.MapControl;
 using System;
 using System.Collections.Generic;
@@ -13,13 +14,13 @@ namespace PhoneTag.XamarinForms.Pages
     /// <summary>
     /// Displays the map that was chosen for the current game without enabling any game features on it
     /// </summary>
-    public partial class GameAreaDisplayPage : ContentPage
+    public partial class GameAreaDisplayPage : TrailableContentPage
     {        
         private const double k_DefaultZoomRatio = 2;
 
         private GameMapDisplay m_GameMap;
 
-        public GameAreaDisplayPage(Position i_StartLocation, double i_Radius)
+        public GameAreaDisplayPage(Position i_StartLocation, double i_Radius) : base()
         {
             setupChooserMap(i_StartLocation, i_Radius);
 
@@ -36,6 +37,11 @@ namespace PhoneTag.XamarinForms.Pages
         private async Task DoneButton_Clicked()
         {
             await Navigation.PopAsync();
+        }
+
+        public override void ParseEvent(Event i_EventDetails)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -3,12 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using PhoneTag.WebServices.Views;
-using PhoneTag.WebServices.Utils;
-using PhoneTag.WebServices.Models.GameModes;
+using PhoneTag.SharedCodebase.Views;
+using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.SharedCodebase.Models.GameModes;
 using System.Threading.Tasks;
 
-namespace PhoneTag.WebServices.Models
+namespace PhoneTag.SharedCodebase.Models
 {
     /// <summary>
     /// The game mode model.

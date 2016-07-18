@@ -7,7 +7,7 @@ using Xamarin.Forms;
 
 namespace PhoneTag.XamarinForms.Pages
 {
-    public partial class ErrorPage : ContentPage
+    public partial class ErrorPage : TrailableContentPage
     {
         private void initializeComponent(string i_ErrorMessage)
         {

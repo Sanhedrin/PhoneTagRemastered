@@ -7,7 +7,7 @@ using Xamarin.Forms;
 
 namespace PhoneTag.XamarinForms.Pages
 {
-    public partial class GameAreaChooserPage : ContentPage
+    public partial class GameAreaChooserPage : TrailableContentPage
     {
         private void initializeComponent()
         {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Http;
 
-namespace PhoneTag.WebServices.Controllers
+namespace PhoneTag.SharedCodebase.Controllers
 {
     /// <summary>
     /// Controller to access service operations.

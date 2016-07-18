@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace PhoneTag.WebServices.Events.OpLogEvents
+namespace PhoneTag.SharedCodebase.Events.OpLogEvents
 {
     public class ExpirationEntry
     {

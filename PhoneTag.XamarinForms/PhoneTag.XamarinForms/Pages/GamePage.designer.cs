@@ -10,7 +10,7 @@ using Xamarin.Forms.Maps;
 
 namespace PhoneTag.XamarinForms.Pages
 {
-    public partial class GamePage : ContentPage
+    public partial class GamePage : TrailableContentPage
     {
         private void initializeComponent()
         {

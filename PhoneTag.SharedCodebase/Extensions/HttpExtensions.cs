@@ -7,7 +7,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhoneTag.WebServices
+namespace PhoneTag.SharedCodebase
 {
     public static class HttpExtensions
     {
@@ -34,6 +34,8 @@ namespace PhoneTag.WebServices
 
             if (!response.IsSuccessStatusCode)
             {
+                System.Diagnostics.Debug.WriteLine("EXCEPTION!");
+                System.Diagnostics.Debug.WriteLine(jsonResponse);
                 throw new HttpRequestException(jsonResponse);
             }
 
@@ -56,6 +58,8 @@ namespace PhoneTag.WebServices
 
             if (!response.IsSuccessStatusCode)
             {
+                System.Diagnostics.Debug.WriteLine("EXCEPTION!");
+                System.Diagnostics.Debug.WriteLine(jsonResponse);
                 throw new HttpRequestException(jsonResponse);
             }
 
@@ -78,6 +82,8 @@ namespace PhoneTag.WebServices
 
             if (!response.IsSuccessStatusCode)
             {
+                System.Diagnostics.Debug.WriteLine("EXCEPTION!");
+                System.Diagnostics.Debug.WriteLine(jsonResponse);
                 throw new HttpRequestException(jsonResponse);
             }
 
@@ -101,6 +107,8 @@ namespace PhoneTag.WebServices
 
             if (!response.IsSuccessStatusCode)
             {
+                System.Diagnostics.Debug.WriteLine("EXCEPTION!");
+                System.Diagnostics.Debug.WriteLine(jsonResponse);
                 throw new HttpRequestException(jsonResponse);
             }
 

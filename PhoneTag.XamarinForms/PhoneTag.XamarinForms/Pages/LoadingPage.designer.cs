@@ -7,7 +7,7 @@ using Xamarin.Forms;
 
 namespace PhoneTag.XamarinForms.Pages
 {
-    public partial class LoadingPage : ContentPage
+    public partial class LoadingPage : TrailableContentPage
     {
         private void initializeComponent()
         {

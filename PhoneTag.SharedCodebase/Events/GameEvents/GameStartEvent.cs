@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhoneTag.WebServices.Events.GameEvents
+namespace PhoneTag.SharedCodebase.Events.GameEvents
 {
     /// <summary>
     /// An event that occurs when the game starts from the lobby page.
@@ -12,5 +12,11 @@ namespace PhoneTag.WebServices.Events.GameEvents
     /// </summary>
     public class GameStartEvent : Event
     {
+        public string GameId { get; set; }
+
+        public GameStartEvent(string i_RoomId)
+        {
+            GameId = i_RoomId;
+        }
     }
 }

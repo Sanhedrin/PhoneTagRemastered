@@ -1,4 +1,4 @@
-﻿using PhoneTag.WebServices.Views;
+﻿using PhoneTag.SharedCodebase.Views;
 using PhoneTag.XamarinForms.Pages;
 using Plugin.XamJam.Screen;
 using System;

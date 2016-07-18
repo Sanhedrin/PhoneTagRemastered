@@ -5,9 +5,9 @@ using Owin;
 using System.Web.Http;
 using Microsoft.Azure.Mobile.Server.Config;
 
-[assembly: OwinStartup(typeof(PhoneTag.WebServices.OwinConfig))]
+[assembly: OwinStartup(typeof(PhoneTag.SharedCodebase.OwinConfig))]
 
-namespace PhoneTag.WebServices
+namespace PhoneTag.SharedCodebase
 {
     public class OwinConfig
     {

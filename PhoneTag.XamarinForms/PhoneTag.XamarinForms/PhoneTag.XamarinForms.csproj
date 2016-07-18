@@ -47,7 +47,7 @@
     <Compile Include="Controls\CameraControl\PictureReadyEventArgs.cs" />
     <Compile Include="Controls\CameraControl\TakePictureEventArgs.cs" />
     <Compile Include="Extensions\GameDetailsPresenters.cs" />
-    <Compile Include="Helpers\EventParser.cs" />
+    <Compile Include="Helpers\GameEventDispatcher.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Pages\CreateGamePage.cs" />
     <Compile Include="Pages\CreateGamePage.designer.cs">
@@ -77,6 +77,7 @@
     <Compile Include="Pages\GameSearchPage.designer.cs">
       <DependentUpon>GameSearchPage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Pages\IEventParsable.cs" />
     <Compile Include="Pages\LoadingPage.cs" />
     <Compile Include="Pages\LoadingPage.designer.cs">
       <DependentUpon>LoadingPage.cs</DependentUpon>
@@ -93,6 +94,7 @@
     <Compile Include="Pages\ShotDisplayPage.designer.cs">
       <DependentUpon>ShotDisplayPage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Pages\TrailableContentPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

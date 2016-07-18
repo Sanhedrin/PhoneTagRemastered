@@ -1,6 +1,6 @@
-﻿using PhoneTag.WebServices;
-using PhoneTag.WebServices.StaticInfo;
-using PhoneTag.WebServices.Views;
+﻿using PhoneTag.SharedCodebase;
+using PhoneTag.SharedCodebase.StaticInfo;
+using PhoneTag.SharedCodebase.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +9,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using PhoneTag.XamarinForms.Extensions;
-using PhoneTag.WebServices.Utils;
+using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.SharedCodebase.Events.GameEvents;
 
 namespace PhoneTag.XamarinForms.Pages
 {
     /// <summary>
     /// The game creation page.
     /// </summary>
-    public partial class CreateGamePage : ContentPage
+    public partial class CreateGamePage : TrailableContentPage
     {
         private Entry textBoxGameName = new Entry();
         private Picker pickerGameMode = new Picker();
@@ -27,7 +28,7 @@ namespace PhoneTag.XamarinForms.Pages
 
         private GameDetailsView m_GameDetails = null;
 
-        public CreateGamePage()
+        public CreateGamePage() : base()
         {
             initializeGameModeList();
 
@@ -110,6 +111,11 @@ namespace PhoneTag.XamarinForms.Pages
 
             initializeComponent();
             pickerGameMode.IsEnabled = true;
+        }
+
+        public override void ParseEvent(Event i_EventDetails)
+        {
+            throw new NotImplementedException();
         }
     }
 }
