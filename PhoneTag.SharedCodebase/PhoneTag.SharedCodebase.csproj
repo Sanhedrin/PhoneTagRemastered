@@ -35,6 +35,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Events\GameEvents\GameLobbyUpdateEvent.cs" />
+    <Compile Include="Events\GameEvents\JoinRoomEvent.cs" />
     <Compile Include="Events\GameEvents\MessageEvent.cs" />
     <Compile Include="Extensions\HttpExtensions.cs" />
     <Compile Include="StaticInfo\PhoneTagInfo.cs" />

@@ -86,6 +86,24 @@ namespace PhoneTag.XamarinForms.Pages
             {
                 startGame(i_Event as GameStartEvent);
             }
+            else if (i_Event is GameLobbyUpdateEvent)
+            {
+                updateGameLobby(i_Event as GameLobbyUpdateEvent);
+            }
+        }
+
+        private void updateGameLobby(GameLobbyUpdateEvent i_GameLobbyUpdateEvent)
+        {
+            if (i_GameLobbyUpdateEvent.GameId == m_GameRoom.RoomId)
+            {
+                initializeComponent(i_GameLobbyUpdateEvent.GameId);
+            }
+            else
+            {
+#if DEBUG
+                throw new Exception("Event GameId doesn't fit current GameId.");
+#endif
+            }
         }
 
         private async Task startGame(GameStartEvent i_GameStartEvent)

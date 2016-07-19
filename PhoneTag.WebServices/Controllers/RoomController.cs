@@ -173,11 +173,7 @@ namespace PhoneTag.SharedCodebase.Controllers
                     await Mongo.Database.GetCollection<BsonDocument>("RoomExpiration").UpdateOneAsync(filter, update);
 
                     //Notify all players in the room that the game started.
-                    String gameStartEventMessage = JsonConvert.SerializeObject(new GameStartEvent(i_Room._id.ToString()), new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
-                    gameStartEventMessage = gameStartEventMessage.Replace('\"', '\'');
-
-                    PushNotificationService pushService = App42API.BuildPushNotificationService();
-                    pushService.SendPushMessageToGroup(gameStartEventMessage, i_Room.LivingUsers);
+                    PushNotificationUtils.PushEvent(new GameStartEvent(i_Room._id.ToString()), i_Room.LivingUsers);                               
                 }
                 catch (Exception e)
                 {
@@ -224,6 +220,9 @@ namespace PhoneTag.SharedCodebase.Controllers
 
                             //Add the room as the user's current playing room.
                             await UsersController.JoinRoom(i_PlayerFBID, i_RoomId);
+
+                            //Notify all players in the room that a player joined the room started.
+                            PushNotificationUtils.PushEvent(new JoinRoomEvent(room._id.ToString()), room.LivingUsers);
 
                             success = true;
                         }
