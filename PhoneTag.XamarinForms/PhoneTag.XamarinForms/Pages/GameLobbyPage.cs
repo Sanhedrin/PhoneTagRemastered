@@ -94,7 +94,7 @@ namespace PhoneTag.XamarinForms.Pages
 
         private void updateGameLobby(GameLobbyUpdateEvent i_GameLobbyUpdateEvent)
         {
-            if (i_GameLobbyUpdateEvent.GameId == m_GameRoom.RoomId)
+            if (i_GameLobbyUpdateEvent.GameId.Equals(m_GameRoom.RoomId))
             {
                 initializeComponent(i_GameLobbyUpdateEvent.GameId);
             }
