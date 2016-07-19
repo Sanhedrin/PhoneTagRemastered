@@ -20,6 +20,7 @@ using PhoneTag.XamarinForms.Helpers;
 using PhoneTag.SharedCodebase.Events;
 using Newtonsoft.Json;
 using PhoneTag.SharedCodebase.Events.GameEvents;
+using Plugin.Settings;
 
 namespace PhoneTag.XamarinForms.Droid.Helpers
 {
@@ -65,7 +66,18 @@ namespace PhoneTag.XamarinForms.Droid.Helpers
             while(UserView.Current == null) { await Task.Delay(100); }
             
             PushNotificationService pushService = App42API.BuildPushNotificationService();
-            pushService.StoreDeviceToken(UserView.Current.FBID, i_RegistrationId, DeviceType.ANDROID);
+
+            String pushToken = CrossSettings.Current.GetValueOrDefault<String>("PushToken", null);
+
+            if (!i_RegistrationId.Equals(pushToken))
+            {
+                if (pushToken != null)
+                {
+                    pushService.DeleteDeviceToken(UserView.Current.FBID, pushToken);
+                }
+
+                pushService.StoreDeviceToken(UserView.Current.FBID, i_RegistrationId, DeviceType.ANDROID);
+            }
         }
 
         protected override void OnUnRegistered(Context i_Context, string i_RegistrationId)

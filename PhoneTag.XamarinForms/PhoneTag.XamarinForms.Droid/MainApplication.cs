@@ -36,17 +36,7 @@ namespace PhoneTag.XamarinForms.Droid
             GcmClient.CheckDevice(this);
             GcmClient.CheckManifest(this);
             
-            string registrationId = GcmClient.GetRegistrationId(this);
-
-            //GcmClient.UnRegister(this);
-            if (!GcmClient.IsRegistered(this) || String.IsNullOrEmpty(registrationId))
-            {
-                GcmClient.Register(this, GcmBroadcastReceiver.SENDER_IDS);
-            }
-            else
-            {
-                PushHandlerService.StoreRegistrationToken(registrationId);
-            }
+            GcmClient.Register(this, GcmBroadcastReceiver.SENDER_IDS);
         }
 
         public override void OnTerminate()
