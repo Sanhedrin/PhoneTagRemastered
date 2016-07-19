@@ -71,12 +71,13 @@ namespace PhoneTag.XamarinForms.Droid.Helpers
 
             if (!i_RegistrationId.Equals(pushToken))
             {
-                if (pushToken != null)
+                if (!String.IsNullOrEmpty(pushToken))
                 {
                     pushService.DeleteDeviceToken(UserView.Current.FBID, pushToken);
                 }
 
                 pushService.StoreDeviceToken(UserView.Current.FBID, i_RegistrationId, DeviceType.ANDROID);
+                CrossSettings.Current.AddOrUpdateValue("PushToken", i_RegistrationId);
             }
         }
 
