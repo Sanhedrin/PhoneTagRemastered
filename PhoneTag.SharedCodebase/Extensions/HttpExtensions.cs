@@ -23,23 +23,33 @@ namespace PhoneTag.SharedCodebase
         /// This object is returned as type T.</returns>
         public static async Task<dynamic> PostMethodAsync<T>(this HttpClient i_HttpClient, string i_RequestUri, T i_Content)
         {
-            //Serialize the input parameter and send the request.
-            i_HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            string jsonContent = JsonConvert.SerializeObject(i_Content, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
-            StringContent stringContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await i_HttpClient.PostAsync(new Uri(new Uri(BaseUri), i_RequestUri), stringContent).ConfigureAwait(false);
+            object resultObject = null;
 
-            //Obtain the result and deserialize it.
-            string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            try
+            {
+                //Serialize the input parameter and send the request.
+                i_HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                string jsonContent = JsonConvert.SerializeObject(i_Content, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+                StringContent stringContent = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await i_HttpClient.PostAsync(new Uri(new Uri(BaseUri), i_RequestUri), stringContent).ConfigureAwait(false);
 
-            if (!response.IsSuccessStatusCode)
+                //Obtain the result and deserialize it.
+                string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new HttpRequestException(jsonResponse);
+                }
+
+                resultObject = JsonConvert.DeserializeObject(jsonResponse, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+            }
+            catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine("EXCEPTION!");
-                System.Diagnostics.Debug.WriteLine(jsonResponse);
-                throw new HttpRequestException(jsonResponse);
+                System.Diagnostics.Debug.WriteLine(e.Message);
             }
 
-            return JsonConvert.DeserializeObject(jsonResponse, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+            return resultObject;
         }
 
         /// <summary>
@@ -50,20 +60,30 @@ namespace PhoneTag.SharedCodebase
         /// This object is returned as a dynamic which translates to a JObject on client side.</returns>
         public static async Task<dynamic> PostMethodAsync(this HttpClient i_HttpClient, string i_RequestUri)
         {
-            //Serialize the input parameter and send the request.
-            HttpResponseMessage response = await i_HttpClient.PostAsync(new Uri(new Uri(BaseUri), i_RequestUri), new StringContent("")).ConfigureAwait(false);
+            object resultObject = null;
 
-            //Obtain the result and deserialize it.
-            string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            try
+            {
+                //Serialize the input parameter and send the request.
+                HttpResponseMessage response = await i_HttpClient.PostAsync(new Uri(new Uri(BaseUri), i_RequestUri), new StringContent("")).ConfigureAwait(false);
 
-            if (!response.IsSuccessStatusCode)
+                //Obtain the result and deserialize it.
+                string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new HttpRequestException(jsonResponse);
+                }
+
+                resultObject = JsonConvert.DeserializeObject(jsonResponse, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+            }
+            catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine("EXCEPTION!");
-                System.Diagnostics.Debug.WriteLine(jsonResponse);
-                throw new HttpRequestException(jsonResponse);
+                System.Diagnostics.Debug.WriteLine(e.Message);
             }
 
-            return JsonConvert.DeserializeObject(jsonResponse, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+            return resultObject;
         }
 
         /// <summary>
@@ -74,20 +94,30 @@ namespace PhoneTag.SharedCodebase
         /// This object is returned as a dynamic which translates to a JObject on client side.</returns>
         public static async Task<dynamic> GetMethodAsync(this HttpClient i_HttpClient, string i_RequestUri)
         {
-            //Send the request.
-            HttpResponseMessage response = await i_HttpClient.GetAsync(new Uri(new Uri(BaseUri), i_RequestUri)).ConfigureAwait(false);
+            object resultObject = null;
 
-            //Obtain the result and deserialize it.
-            string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            try
+            {
+                //Send the request.
+                HttpResponseMessage response = await i_HttpClient.GetAsync(new Uri(new Uri(BaseUri), i_RequestUri)).ConfigureAwait(false);
 
-            if (!response.IsSuccessStatusCode)
+                //Obtain the result and deserialize it.
+                string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new HttpRequestException(jsonResponse);
+                }
+
+                resultObject = JsonConvert.DeserializeObject(jsonResponse, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+            }
+            catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine("EXCEPTION!");
-                System.Diagnostics.Debug.WriteLine(jsonResponse);
-                throw new HttpRequestException(jsonResponse);
+                System.Diagnostics.Debug.WriteLine(e.Message);
             }
 
-            return JsonConvert.DeserializeObject(jsonResponse, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+            return resultObject;
         }
 
         /// <summary>
@@ -99,20 +129,30 @@ namespace PhoneTag.SharedCodebase
         /// This object is returned as type T.</returns>
         public static async Task<T> GetMethodAsync<T>(this HttpClient i_HttpClient, string i_RequestUri)
         {
-            //Send the request.
-            HttpResponseMessage response = await i_HttpClient.GetAsync(new Uri(new Uri(BaseUri), i_RequestUri)).ConfigureAwait(false);
+            T resultObject = default(T);
 
-            //Obtain the result and deserialize it.
-            string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            try
+            {
+                //Send the request.
+                HttpResponseMessage response = await i_HttpClient.GetAsync(new Uri(new Uri(BaseUri), i_RequestUri)).ConfigureAwait(false);
 
-            if (!response.IsSuccessStatusCode)
+                //Obtain the result and deserialize it.
+                string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new HttpRequestException(jsonResponse);
+                }
+
+                resultObject = (T)JsonConvert.DeserializeObject(jsonResponse, typeof(T), new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+            }
+            catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine("EXCEPTION!");
-                System.Diagnostics.Debug.WriteLine(jsonResponse);
-                throw new HttpRequestException(jsonResponse);
+                System.Diagnostics.Debug.WriteLine(e.Message);
             }
 
-            return (T)JsonConvert.DeserializeObject(jsonResponse, typeof(T), new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+            return resultObject;
         }
     }
 }

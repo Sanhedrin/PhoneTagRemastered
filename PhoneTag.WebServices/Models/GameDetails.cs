@@ -39,7 +39,7 @@ namespace PhoneTag.SharedCodebase.Models
             detailsView.GameDurationInMins = GameDurationInMins;
             detailsView.GameRadius = GameRadius;
 
-            if (StartLocation != null)
+            if (StartLocation != null && StartLocation.Coordinates != null)
             {
                 detailsView.StartLocation = new GeoPoint(StartLocation.Coordinates.Y, StartLocation.Coordinates.X);
             }

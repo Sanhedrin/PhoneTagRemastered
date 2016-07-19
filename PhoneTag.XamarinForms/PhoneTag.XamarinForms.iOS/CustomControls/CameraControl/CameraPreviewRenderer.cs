@@ -47,7 +47,16 @@ namespace PhoneTag.XamarinForms.iOS.CustomControls.CameraControl
         private async Task takePicture(Action<byte[]> i_Callback)
         {
             byte[] pictureStream = await TakePicture();
-            i_Callback(pictureStream);
+
+            if (pictureStream != null)
+            {
+                i_Callback(pictureStream);
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("ERROR!");
+                System.Diagnostics.Debug.WriteLine("Camera: Failed to take picture");
+            }
         }
 
         /// <summary>
@@ -56,20 +65,31 @@ namespace PhoneTag.XamarinForms.iOS.CustomControls.CameraControl
         /// <returns>Byte array representing the picture that was just taken.</returns>
         public async Task<byte[]> TakePicture()
         {
-            //Might need this if CaptureSession.Outputs is empty, can't tell without testing
-            //output = new AVCaptureStillImageOutput
-            //{
-            //    OutputSettings = new Foundation.NSDictionary(AVVideo.CodecKey, AVVideo.CodecJPEG)
-            //};
-            //uiCameraPreview.CaptureSession.AddOutput(output)
+            byte[] bytes = null;
 
-            CMSampleBuffer buffer = await ((AVCaptureStillImageOutput)uiCameraPreview.CaptureSession.Outputs[0]).CaptureStillImageTaskAsync(uiCameraPreview.CaptureSession.Outputs[0].Connections[0]);
-            NSData data = AVCaptureStillImageOutput.JpegStillToNSData(buffer);
+            try
+            {
+                //Might need this if CaptureSession.Outputs is empty, can't tell without testing
+                //output = new AVCaptureStillImageOutput
+                //{
+                //    OutputSettings = new Foundation.NSDictionary(AVVideo.CodecKey, AVVideo.CodecJPEG)
+                //};
+                //uiCameraPreview.CaptureSession.AddOutput(output)
 
-            uiCameraPreview.CaptureSession.StartRunning();
+                CMSampleBuffer buffer = await ((AVCaptureStillImageOutput)uiCameraPreview.CaptureSession.Outputs[0]).CaptureStillImageTaskAsync(uiCameraPreview.CaptureSession.Outputs[0].Connections[0]);
+                NSData data = AVCaptureStillImageOutput.JpegStillToNSData(buffer);
 
-            byte[] bytes = new byte[data.AsStream().Length];
-            await data.AsStream().ReadAsync(bytes, 0, (int)data.AsStream().Length);
+                uiCameraPreview.CaptureSession.StartRunning();
+
+                bytes = new byte[data.AsStream().Length];
+                await data.AsStream().ReadAsync(bytes, 0, (int)data.AsStream().Length);
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("EXCEPTION!");
+                System.Diagnostics.Debug.WriteLine(e.Message);
+            }
+
             return bytes;
         }
 

@@ -102,7 +102,27 @@ namespace PhoneTag.SharedCodebase.Views
         /// <param name="i_User">User whose friends we want to poll.</param>
         public List<UserView> FriendsInRoomFor(UserView i_User)
         {
-            return LivingUsers.Where((userView) => i_User.Friends.Any((friendView) => userView.Username.Equals(friendView.Username))).ToList();
+            List<UserView> friends = new List<UserView>();
+
+            if (i_User != null)
+            {
+                try
+                {
+                    IEnumerable<UserView> friendList = LivingUsers.Where((userView) => i_User.Friends.Any((friendView) => userView.Username.Equals(friendView.Username)));
+
+                    if (friendList.Count() > 0)
+                    {
+                        friends = friendList.ToList();
+                    }
+                }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine("EXCEPTION!");
+                    System.Diagnostics.Debug.WriteLine(e.Message);
+                }
+            }
+
+            return friends;
         }
 
         /// <summary>
@@ -112,11 +132,14 @@ namespace PhoneTag.SharedCodebase.Views
         {
             GameRoomView view = await GetRoom(RoomId);
 
-            this.DeadUsers = view.DeadUsers;
-            this.LivingUsers = view.LivingUsers;
-            this.Finished = view.Finished;
-            this.GameTime = view.GameTime;
-            this.Started = view.Started;
+            if (view != null)
+            {
+                this.DeadUsers = view.DeadUsers;
+                this.LivingUsers = view.LivingUsers;
+                this.Finished = view.Finished;
+                this.GameTime = view.GameTime;
+                this.Started = view.Started;
+            }
         }
     }
 }

@@ -2,6 +2,8 @@
 using MongoDB.Driver;
 using PhoneTag.SharedCodebase.Events.OpLogEvents;
 using PhoneTag.SharedCodebase.Models;
+using PhoneTag.WebServices;
+using PhoneTag.WebServices.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,17 +35,30 @@ namespace PhoneTag.SharedCodebase.Controllers.ExpirationControllers
         //A room that already started playing doesn't expire.
         private static async Task handleRoomExpiration(ObjectId i_ExpiredId)
         {
-            GameRoom room = await RoomController.GetRoomModel(i_ExpiredId.ToString());
+            if(i_ExpiredId != null)
+            { 
+                GameRoom room = await RoomController.GetRoomModel(i_ExpiredId.ToString());
 
-            if (!room.Started)
-            {
-                foreach(String userId in room.LivingUsers)
+                if (room != null)
                 {
-                    await UsersController.LeaveRoom(userId);
-                }
+                    if (!room.Started)
+                    {
+                        foreach (String userId in room.LivingUsers)
+                        {
+                            await UsersController.LeaveRoom(userId);
+                        }
 
-                FilterDefinition<BsonDocument> roomFilter = Builders<BsonDocument>.Filter.Eq("_id", i_ExpiredId);
-                await Mongo.Database.GetCollection<BsonDocument>("Rooms").DeleteOneAsync(roomFilter);
+                        try
+                        {
+                            FilterDefinition<BsonDocument> roomFilter = Builders<BsonDocument>.Filter.Eq("_id", i_ExpiredId);
+                            await Mongo.Database.GetCollection<BsonDocument>("Rooms").DeleteOneAsync(roomFilter);
+                        }
+                        catch (Exception e)
+                        {
+                            ErrorLogger.Log(e.Message);
+                        }
+                    }
+                }
             }
         }
     }

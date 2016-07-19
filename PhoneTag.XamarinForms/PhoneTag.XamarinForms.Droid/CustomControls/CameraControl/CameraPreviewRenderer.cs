@@ -51,7 +51,16 @@ namespace PhoneTag.XamarinForms.Droid.CustomControls.CameraControl
         private async Task takePicture(Action<byte[]> i_Callback)
         {
             byte[] pictureStream = await TakePicture();
-            i_Callback(pictureStream);
+
+            if (pictureStream != null)
+            {
+                i_Callback(pictureStream);
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("ERROR!");
+                System.Diagnostics.Debug.WriteLine("Camera: Picture taking failed");
+            }
         }
 
         /// <summary>
@@ -61,11 +70,20 @@ namespace PhoneTag.XamarinForms.Droid.CustomControls.CameraControl
         public async Task<byte[]> TakePicture()
         {
             m_PictureDataStream = null;
-            cameraPreview.Preview.TakePicture(null, null, null, this);
 
-            await Task.Run(() => { while (m_PictureDataStream == null) ; });
+            try
+            {
+                cameraPreview.Preview.TakePicture(null, null, null, this);
 
-            cameraPreview.Preview.StartPreview();
+                await Task.Run(() => { while (m_PictureDataStream == null) ; });
+
+                cameraPreview.Preview.StartPreview();
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("EXCEPTION!");
+                System.Diagnostics.Debug.WriteLine(e.Message);
+            }
 
             return m_PictureDataStream;
         }

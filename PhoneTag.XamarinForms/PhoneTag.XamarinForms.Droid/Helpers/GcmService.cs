@@ -63,9 +63,7 @@ namespace PhoneTag.XamarinForms.Droid.Helpers
         public static async Task StoreRegistrationToken(string i_RegistrationId)
         {
             while(UserView.Current == null) { await Task.Delay(100); }
-
-            //await UserView.Current.RegisterPushToken(i_RegistrationId);
-
+            
             PushNotificationService pushService = App42API.BuildPushNotificationService();
             pushService.StoreDeviceToken(UserView.Current.FBID, i_RegistrationId, DeviceType.ANDROID);
         }
@@ -82,9 +80,7 @@ namespace PhoneTag.XamarinForms.Droid.Helpers
         private async Task deleteRegistrationToken(string i_RegistrationId)
         {
             while (UserView.Current == null) { await Task.Delay(100); }
-
-            //await UserView.Current.UnregisterPushToken(i_RegistrationId);
-
+            
             PushNotificationService pushService = App42API.BuildPushNotificationService();
             pushService.DeleteDeviceToken(UserView.Current.Username, i_RegistrationId);
         }

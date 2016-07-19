@@ -9,8 +9,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using PhoneTag.SharedCodebase.Events.OpLogEvents;
+using PhoneTag.WebServices.Utilities;
 
-namespace PhoneTag.SharedCodebase
+namespace PhoneTag.WebServices
 {
     /// <summary>
     /// Allows access to our database.
@@ -62,66 +63,87 @@ namespace PhoneTag.SharedCodebase
         //stored in the database, update the database's saved version.
         private static async Task updateVersion()
         {
-            FilterDefinition<BsonDocument> serverInfoFilter = Builders<BsonDocument>.Filter.Eq("Type", "ServerInfo");
-            UpdateDefinition<BsonDocument> updateVersion = Builders<BsonDocument>.Update.Set("Version", k_ServerVersion);
-            
-            //If the ServerInfo document doesn't exist, we'll create it.
-            if ((await Database.GetCollection<BsonDocument>("Info").CountAsync(Builders<BsonDocument>.Filter.Empty)) == 0)
+            try
             {
-                await Database.GetCollection<BsonDocument>("Info")
-                    .InsertOneAsync(new BsonDocument() {
-                        { "Type", "ServerInfo" },
-                        { "Version", k_ServerVersion }
-                    });
-            }
-            else
-            {
-                BsonDocument info = await Database.GetCollection<BsonDocument>("Info").Find(serverInfoFilter).FirstAsync();
+                FilterDefinition<BsonDocument> serverInfoFilter = Builders<BsonDocument>.Filter.Eq("Type", "ServerInfo");
+                UpdateDefinition<BsonDocument> updateVersion = Builders<BsonDocument>.Update.Set("Version", k_ServerVersion);
 
-                //Otherwise, if the version is out of date, update it.
-                if (!info.GetValue("Version").AsString.Equals(k_ServerVersion))
+                //If the ServerInfo document doesn't exist, we'll create it.
+                if ((await Database.GetCollection<BsonDocument>("Info").CountAsync(Builders<BsonDocument>.Filter.Empty)) == 0)
                 {
                     await Database.GetCollection<BsonDocument>("Info")
-                        .UpdateOneAsync(serverInfoFilter, updateVersion);
+                        .InsertOneAsync(new BsonDocument() {
+                            { "Type", "ServerInfo" },
+                            { "Version", k_ServerVersion }
+                        });
                 }
+                else
+                {
+                    IMongoCollection<BsonDocument> infoList = Database.GetCollection<BsonDocument>("Info");
+
+                    if (await infoList.CountAsync(serverInfoFilter) > 0)
+                    {
+                        BsonDocument info = await infoList.Find(serverInfoFilter).FirstAsync();
+
+                        //Otherwise, if the version is out of date, update it.
+                        if (!info.GetValue("Version").AsString.Equals(k_ServerVersion))
+                        {
+                            await Database.GetCollection<BsonDocument>("Info")
+                                .UpdateOneAsync(serverInfoFilter, updateVersion);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                ErrorLogger.Log(e.Message);
             }
         }
 
         private static async Task rebuildIndexes()
         {
-            //If the database is out of date, rebuild the indexes.
-            if (!(await Mongo.Database.GetCollection<BsonDocument>("FloatingValues").FindAsync(Builders<BsonDocument>.Filter.Eq("Ready", "true"))).Any())
+            try
             {
-                await Database.GetCollection<ExpirationEntry>("RoomExpiration").Indexes.DropAllAsync();
-                await Database.GetCollection<ExpirationEntry>("UserExpiration").Indexes.DropAllAsync();
-                await Database.GetCollection<User>("Users").Indexes.DropAllAsync();
-                await Database.GetCollection<GameRoom>("Rooms").Indexes.DropAllAsync();
+                await Database.GetCollection<BsonDocument>("ErrorLog").DeleteManyAsync(Builders<BsonDocument>.Filter.Empty);
 
-                //Create timed index for rooms
-                CreateIndexOptions creationOptions = new CreateIndexOptions();
-                IndexKeysDefinition<ExpirationEntry> keys = Builders<ExpirationEntry>.IndexKeys.Ascending("ExpirationTime");
-                creationOptions.ExpireAfter = new TimeSpan(0);
-                //Adding expiration indexes for rooms.
-                await Database.GetCollection<ExpirationEntry>("RoomExpiration").Indexes.CreateOneAsync(keys, creationOptions);
-                //Adding expiration indexes for users.
-                await Database.GetCollection<ExpirationEntry>("UserExpiration").Indexes.CreateOneAsync(keys, creationOptions);
+                //If the database is out of date, rebuild the indexes.
+                if (!(await Mongo.Database.GetCollection<BsonDocument>("FloatingValues").FindAsync(Builders<BsonDocument>.Filter.Eq("Ready", "true"))).Any())
+                {
+                    await Database.GetCollection<ExpirationEntry>("RoomExpiration").Indexes.DropAllAsync();
+                    await Database.GetCollection<ExpirationEntry>("UserExpiration").Indexes.DropAllAsync();
+                    await Database.GetCollection<User>("Users").Indexes.DropAllAsync();
+                    await Database.GetCollection<GameRoom>("Rooms").Indexes.DropAllAsync();
 
-                //Create username index for users.
-                await Database.GetCollection<User>("Users").Indexes.CreateOneAsync(
-                    Builders<User>.IndexKeys.Ascending("FBID"),
-                    new CreateIndexOptions<User>() { Unique = true }
-                );
-                //Create a geographic index for our users
-                await Database.GetCollection<User>("Users").Indexes.CreateOneAsync(
-                    Builders<User>.IndexKeys.Geo2DSphere(x => x.CurrentLocation)
-                );
+                    //Create timed index for rooms
+                    CreateIndexOptions creationOptions = new CreateIndexOptions();
+                    IndexKeysDefinition<ExpirationEntry> keys = Builders<ExpirationEntry>.IndexKeys.Ascending("ExpirationTime");
+                    creationOptions.ExpireAfter = new TimeSpan(0);
+                    //Adding expiration indexes for rooms.
+                    await Database.GetCollection<ExpirationEntry>("RoomExpiration").Indexes.CreateOneAsync(keys, creationOptions);
+                    //Adding expiration indexes for users.
+                    await Database.GetCollection<ExpirationEntry>("UserExpiration").Indexes.CreateOneAsync(keys, creationOptions);
 
-                //Create a geographic index for our games.
-                await Database.GetCollection<GameRoom>("Rooms").Indexes.CreateOneAsync(
-                    Builders<GameRoom>.IndexKeys.Geo2DSphere(room => room.RoomLocation)
-                );
+                    //Create username index for users.
+                    await Database.GetCollection<User>("Users").Indexes.CreateOneAsync(
+                        Builders<User>.IndexKeys.Ascending("FBID"),
+                        new CreateIndexOptions<User>() { Unique = true }
+                    );
+                    //Create a geographic index for our users
+                    await Database.GetCollection<User>("Users").Indexes.CreateOneAsync(
+                        Builders<User>.IndexKeys.Geo2DSphere(x => x.CurrentLocation)
+                    );
 
-                Database.GetCollection<BsonDocument>("FloatingValues").InsertOne(new BsonDocument { { "Ready", "true" } });
+                    //Create a geographic index for our games.
+                    await Database.GetCollection<GameRoom>("Rooms").Indexes.CreateOneAsync(
+                        Builders<GameRoom>.IndexKeys.Geo2DSphere(room => room.RoomLocation)
+                    );
+
+                    Database.GetCollection<BsonDocument>("FloatingValues").InsertOne(new BsonDocument { { "Ready", "true" } });
+                }
+            }
+            catch (Exception e)
+            {
+                ErrorLogger.Log(e.Message);
             }
         }
     }

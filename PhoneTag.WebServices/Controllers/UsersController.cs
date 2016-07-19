@@ -17,6 +17,8 @@ using Nito.AsyncEx;
 using com.shephertz.app42.paas.sdk.csharp.pushNotification;
 using com.shephertz.app42.paas.sdk.csharp;
 using PhoneTag.SharedCodebase.Events.OpLogEvents;
+using PhoneTag.WebServices;
+using PhoneTag.WebServices.Utilities;
 
 namespace PhoneTag.SharedCodebase.Controllers
 {
@@ -38,21 +40,29 @@ namespace PhoneTag.SharedCodebase.Controllers
         {
             bool success = true;
 
-            User newUser = new User();
-
-            newUser.FBID = i_UserSocialView.Id;
-            newUser.Username = i_UserSocialView.Name;
-            newUser.ProfilePicUrl = i_UserSocialView.ProfilePictureUrl;
-            newUser.Ammo = 3;
-            newUser.IsReady = false;
-            newUser.IsActive = false;
-            newUser.Friends = new List<String>();
-
-            try
+            if (i_UserSocialView != null)
             {
-                await Mongo.Database.GetCollection<User>("Users").InsertOneAsync(newUser);
+                User newUser = new User();
+
+                newUser.FBID = i_UserSocialView.Id;
+                newUser.Username = i_UserSocialView.Name;
+                newUser.ProfilePicUrl = i_UserSocialView.ProfilePictureUrl;
+                newUser.Ammo = 3;
+                newUser.IsReady = false;
+                newUser.IsActive = false;
+                newUser.Friends = new List<String>();
+
+                try
+                {
+                    await Mongo.Database.GetCollection<User>("Users").InsertOneAsync(newUser);
+                }
+                catch (Exception e)
+                {
+                    success = false;
+                    ErrorLogger.Log(e.Message);
+                }
             }
-            catch (Exception e)
+            else
             {
                 success = false;
             }
@@ -81,26 +91,40 @@ namespace PhoneTag.SharedCodebase.Controllers
         {
             bool newReadyStatus = i_ReadyStatus;
 
-            //Add the room as the user's current playing room.
-            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
-            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
-                .Set("IsReady", i_ReadyStatus);
+            if (i_PlayerFBID != null)
+            {
+                //Add the room as the user's current playing room.
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
+                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                    .Set("IsReady", i_ReadyStatus);
 
-            IMongoCollection<BsonDocument> users = Mongo.Database.GetCollection<BsonDocument>("Users");
+                IMongoCollection<BsonDocument> users = Mongo.Database.GetCollection<BsonDocument>("Users");
 
-            //Checks if the game should start.
-            BsonDocument room = (await users.FindAsync(filter)).First();
+                try
+                {
+                    BsonDocument room = (await users.FindAsync(filter)).First();
 
-            String roomId = room.GetValue("PlayingIn").IsBsonNull ? null : room.GetValue("PlayingIn").AsString;
+                    String roomId = room.GetValue("PlayingIn").IsBsonNull ? null : room.GetValue("PlayingIn").AsString;
 
-            if (String.IsNullOrEmpty(roomId))
+                    if (String.IsNullOrEmpty(roomId))
+                    {
+                        newReadyStatus = false;
+                    }
+                    else if (newReadyStatus)
+                    {
+                        await users.UpdateOneAsync(filter, update);
+                        //Checks if the game should start.
+                        RoomController.CheckGameStart(roomId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    ErrorLogger.Log(e.Message);
+                }
+            }
+            else
             {
                 newReadyStatus = false;
-            }
-            else if (newReadyStatus)
-            {
-                await users.UpdateOneAsync(filter, update);
-                RoomController.CheckGameStart(roomId);
             }
 
             return newReadyStatus;
@@ -117,14 +141,20 @@ namespace PhoneTag.SharedCodebase.Controllers
             {
                 FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_FBID);
 
-                using (IAsyncCursor<User> cursor = await Mongo.Database.GetCollection<BsonDocument>("Users").FindAsync<User>(filter))
+                IMongoCollection<BsonDocument> users = Mongo.Database.GetCollection<BsonDocument>("Users");
+
+                if (await users.CountAsync(filter) > 0)
                 {
-                    foundUser = await cursor.SingleAsync();
+                    using (IAsyncCursor<User> cursor = await users.FindAsync<User>(filter))
+                    {
+                        foundUser = await cursor.SingleAsync();
+                    }
                 }
             }
             catch (Exception e)
             {
                 foundUser = null;
+                ErrorLogger.Log(e.Message);
             }
 
             return foundUser;
@@ -137,32 +167,56 @@ namespace PhoneTag.SharedCodebase.Controllers
         [HttpPost]
         public async Task<UserView> PingAsActive(String i_PlayerFBID)
         {
-            //Set the user's activity state.
-            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
-            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
-                .Set("IsActive", true);
+            UserView activeUser = null;
 
-            await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
-
-            User user = await GetUserModel(i_PlayerFBID);
-
-            //Refresh the expiration on activity
-            BsonDocument expiration = new BsonDocument()
+            if (i_PlayerFBID != null)
             {
-                { "_id", user._id },
-                {  "ExpirationTime", DateTime.Now.AddSeconds(60) }
-            };
+                try
+                {
+                    //Set the user's activity state.
+                    FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
+                    UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                        .Set("IsActive", true);
 
-            FilterDefinition<BsonDocument> expFilter = Builders<BsonDocument>.Filter.Eq("_id", user._id);
-            await Mongo.Database.GetCollection<BsonDocument>("UserExpiration")
-                .ReplaceOneAsync(expFilter, expiration, new UpdateOptions { IsUpsert = true });
+                    await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+                }
+                catch (Exception e)
+                {
+                    ErrorLogger.Log(e.Message);
+                }
 
-            //At a later point, if we'll choose we want to, we can use the returned value from this replacement
-            //operation to tell if it was an insert or an update.
-            //This helps in determining whether the user just logged on or if we're just pinging.
-            //As a result, we can use that info to update the user's friends about them logging on.
+                User user = await GetUserModel(i_PlayerFBID);
 
-            return await user.GenerateView();
+                if (user != null)
+                {
+                    //Refresh the expiration on activity
+                    BsonDocument expiration = new BsonDocument()
+                    {
+                        { "_id", user._id },
+                        {  "ExpirationTime", DateTime.Now.AddSeconds(60) }
+                    };
+
+                    try
+                    {
+                        FilterDefinition<BsonDocument> expFilter = Builders<BsonDocument>.Filter.Eq("_id", user._id);
+                        await Mongo.Database.GetCollection<BsonDocument>("UserExpiration")
+                            .ReplaceOneAsync(expFilter, expiration, new UpdateOptions { IsUpsert = true });
+                    }
+                    catch (Exception e)
+                    {
+                        ErrorLogger.Log(e.Message);
+                    }
+
+                    //At a later point, if we'll choose we want to, we can use the returned value from this replacement
+                    //operation to tell if it was an insert or an update.
+                    //This helps in determining whether the user just logged on or if we're just pinging.
+                    //As a result, we can use that info to update the user's friends about them logging on.
+
+                    activeUser = await user.GenerateView();
+                }
+            }
+
+            return activeUser;
         }
 
         /// <summary>
@@ -170,11 +224,26 @@ namespace PhoneTag.SharedCodebase.Controllers
         /// </summary>
         public static async Task Quit(ObjectId i_ExpiredId)
         {
-            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", i_ExpiredId);
+            if (i_ExpiredId != null)
+            {
+                try
+                {
+                    FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", i_ExpiredId);
 
-            BsonDocument userDoc = (await Mongo.Database.GetCollection<BsonDocument>("Users").FindAsync(filter)).First();
+                    IMongoCollection<BsonDocument> users = Mongo.Database.GetCollection<BsonDocument>("Users");
 
-            await Quit(userDoc.GetValue("FBID").AsString);
+                    if (await users.CountAsync(filter) > 0)
+                    {
+                        BsonDocument userDoc = (await users.FindAsync(filter)).First();
+
+                        await Quit(userDoc.GetValue("FBID").AsString);
+                    }
+                }
+                catch (Exception e)
+                {
+                    ErrorLogger.Log(e.Message);
+                }
+            }
         }
 
         /// <summary>
@@ -182,18 +251,28 @@ namespace PhoneTag.SharedCodebase.Controllers
         /// </summary>
         public static async Task Quit(string i_PlayerFBID)
         {
-            //Set the user's activity state.
-            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
-            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
-                .Set("IsActive", false);
-
-            await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
-
-            User user = await GetUserModel(i_PlayerFBID);
-
-            if (!String.IsNullOrEmpty(user.PlayingIn))
+            if (i_PlayerFBID != null)
             {
-                await new RoomController().LeaveRoom(user.PlayingIn, i_PlayerFBID);
+                try
+                {
+                    //Set the user's activity state.
+                    FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
+                    UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                        .Set("IsActive", false);
+
+                    await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+                }
+                catch (Exception e)
+                {
+                    ErrorLogger.Log(e.Message);
+                }
+
+                User user = await GetUserModel(i_PlayerFBID);
+
+                if (user != null && !String.IsNullOrEmpty(user.PlayingIn))
+                {
+                    await new RoomController().LeaveRoom(user.PlayingIn, i_PlayerFBID);
+                }
             }
         }
 
@@ -204,12 +283,22 @@ namespace PhoneTag.SharedCodebase.Controllers
         //[HttpPost]
         public static async Task JoinRoom(string i_PlayerFBID, string i_RoomId)
         {
-            //Add the room as the user's current playing room.
-            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
-            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
-                .Set<String>("PlayingIn", i_RoomId);
+            if (i_PlayerFBID != null && i_RoomId != null)
+            {
+                try
+                {
+                    //Add the room as the user's current playing room.
+                    FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
+                    UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                        .Set<String>("PlayingIn", i_RoomId);
 
-            await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+                    await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+                }
+                catch (Exception e)
+                {
+                    ErrorLogger.Log(e.Message);
+                }
+            }
         }
 
         /// <summary>
@@ -217,13 +306,23 @@ namespace PhoneTag.SharedCodebase.Controllers
         /// </summary>
         public static async Task LeaveRoom(string i_PlayerFBID)
         {
-            //Add the room as the user's current playing room.
-            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
-            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
-                .Set<String>("PlayingIn", null)
-                .Set("IsReady", false);
+            if (i_PlayerFBID != null)
+            {
+                try
+                {
+                    //Add the room as the user's current playing room.
+                    FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", i_PlayerFBID);
+                    UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                        .Set<String>("PlayingIn", null)
+                        .Set("IsReady", false);
 
-            await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+                    await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+                }
+                catch (Exception e)
+                {
+                    ErrorLogger.Log(e.Message);
+                }
+            }
         }
     }
 }

@@ -49,21 +49,38 @@ namespace PhoneTag.SharedCodebase.Models
             GameRoomView roomView = new GameRoomView();
 
             roomView.RoomId = _id.ToString();
-            roomView.RoomLocation = new GeoPoint(RoomLocation.Coordinates.X, RoomLocation.Coordinates.Y);
             roomView.Finished = Finished;
             roomView.GameTime = GameTime;
             roomView.Started = Started;
 
+            if (RoomLocation != null && RoomLocation.Coordinates != null)
+            {
+                roomView.RoomLocation = new GeoPoint(RoomLocation.Coordinates.X, RoomLocation.Coordinates.Y);
+            }
+
             foreach (String userId in LivingUsers)
             {
-                roomView.LivingUsers.Add(await (await UsersController.GetUserModel(userId)).GenerateView());
+                User user = await UsersController.GetUserModel(userId);
+
+                if (user != null)
+                {
+                    roomView.LivingUsers.Add(await user.GenerateView());
+                }
             }
             foreach (String userId in DeadUsers)
             {
-                roomView.DeadUsers.Add(await (await UsersController.GetUserModel(userId)).GenerateView());
+                User user = await UsersController.GetUserModel(userId);
+
+                if (user != null)
+                {
+                    roomView.DeadUsers.Add(await user.GenerateView());
+                }
             }
 
-            roomView.GameDetails = await GameModeDetails.GenerateView();
+            if (GameModeDetails != null)
+            {
+                roomView.GameDetails = await GameModeDetails.GenerateView();
+            }
 
             return roomView;
         }

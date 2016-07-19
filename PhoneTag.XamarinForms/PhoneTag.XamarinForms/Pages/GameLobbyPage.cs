@@ -23,15 +23,40 @@ namespace PhoneTag.XamarinForms.Pages
             initializeLoadingComponent();
             joinRoom(i_GameRoomId);
         }
-        
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            if (m_GameRoom != null && UserView.Current?.FBID != null)
+            {
+                m_GameRoom.LeaveRoom(UserView.Current.FBID);
+            }
+        }
+
         //Upon opening a room's lobby page, we essentialy enter it.
         private async Task joinRoom(String i_GameRoomId)
         {
-            m_GameRoom = await GameRoomView.GetRoom(i_GameRoomId);
-            await m_GameRoom.JoinRoom(UserView.Current.FBID);
-            await UserView.Current.Update();
+            if (i_GameRoomId != null)
+            {
+                m_GameRoom = await GameRoomView.GetRoom(i_GameRoomId);
 
-            initializeComponent(i_GameRoomId);
+                if (m_GameRoom != null)
+                {
+                    await m_GameRoom.JoinRoom(UserView.Current.FBID);
+                    await UserView.Current.Update();
+
+                    initializeComponent(i_GameRoomId);
+                }
+                else
+                {
+                    Application.Current.MainPage = new ErrorPage("Couldn't find requested game room.");
+                }
+            }
+            else
+            {
+                Application.Current.MainPage = new ErrorPage("Couldn't find requested game room.");
+            }
         }
 
 
@@ -44,12 +69,15 @@ namespace PhoneTag.XamarinForms.Pages
         //Changes the ready status of the player in the room.
         private async Task triggerReadyStatus()
         {
-            await UserView.Current.Update();
+            if (UserView.Current != null)
+            {
+                await UserView.Current.Update();
 
-            UserView.Current.IsReady = await UserView.Current.PlayerSetReady(!UserView.Current.IsReady);
+                UserView.Current.IsReady = await UserView.Current.PlayerSetReady(!UserView.Current.IsReady);
 
-            buttonReady.IsEnabled = true;
-            buttonReady.Text = UserView.Current.IsReady ? "Unready" : "Ready";
+                buttonReady.IsEnabled = true;
+                buttonReady.Text = UserView.Current.IsReady ? "Unready" : "Ready";
+            }
         }
 
         public override void ParseEvent(Event i_Event)
@@ -64,7 +92,14 @@ namespace PhoneTag.XamarinForms.Pages
         {
             GameRoomView roomView = await GameRoomView.GetRoom(i_GameStartEvent.GameId);
 
-            Device.BeginInvokeOnMainThread(() => Application.Current.MainPage = new GamePage(roomView));
+            if (roomView != null)
+            {
+                Application.Current.MainPage = new GamePage(roomView);
+            }
+            else
+            {
+                Application.Current.MainPage = new ErrorPage("Couldn't find specified game.");
+            }
         }
     }
 }

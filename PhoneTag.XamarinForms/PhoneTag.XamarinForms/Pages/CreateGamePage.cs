@@ -42,11 +42,16 @@ namespace PhoneTag.XamarinForms.Pages
         //Collects the supported game modes from the server and updates the picker with them.
         private async Task initializeGameModeList()
         {
+            pickerGameMode.IsEnabled = false;
+
             List<String> gameModes = await PhoneTagInfo.GetGameModeList();
 
-            foreach (String gameMode in gameModes)
+            if (gameModes != null)
             {
-                pickerGameMode.Items.Add(gameMode);
+                foreach (String gameMode in gameModes)
+                {
+                    pickerGameMode.Items.Add(gameMode);
+                }
             }
 
             pickerGameMode.IsEnabled = true;
@@ -68,17 +73,20 @@ namespace PhoneTag.XamarinForms.Pages
 
         private async Task createGame()
         {
-            while(m_AreaChooserPage.ChosenPosition.Latitude == 0 && m_AreaChooserPage.ChosenPosition.Longitude == 0)
+            if (m_AreaChooserPage != null && m_AreaChooserPage.ChosenPosition != null)
             {
-                await Task.Delay(10);
+                while (m_AreaChooserPage.ChosenPosition.Latitude == 0 && m_AreaChooserPage.ChosenPosition.Longitude == 0)
+                {
+                    await Task.Delay(10);
+                }
+
+                m_GameDetails.StartLocation = new GeoPoint(m_AreaChooserPage.ChosenPosition.Latitude, m_AreaChooserPage.ChosenPosition.Longitude);
+                m_GameDetails.GameRadius = m_AreaChooserPage.ChosenRadius;
+
+                String gameRoomId = await GameRoomView.CreateRoom(m_GameDetails);
+                Navigation.InsertPageBefore(new GameLobbyPage(gameRoomId), this);
+                Navigation.PopAsync();
             }
-
-            m_GameDetails.StartLocation = new GeoPoint(m_AreaChooserPage.ChosenPosition.Latitude, m_AreaChooserPage.ChosenPosition.Longitude);
-            m_GameDetails.GameRadius = m_AreaChooserPage.ChosenRadius;
-
-            String gameRoomId = await GameRoomView.CreateRoom(m_GameDetails);
-            Navigation.InsertPageBefore(new GameLobbyPage(gameRoomId), this);
-            Navigation.PopAsync();
         }
 
         //Updates the selected game mode.

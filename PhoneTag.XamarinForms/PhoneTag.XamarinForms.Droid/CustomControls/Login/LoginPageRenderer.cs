@@ -100,20 +100,29 @@ namespace PhoneTag.XamarinForms.Droid.CustomControls.Login
 
             if (client != null)
             {
-                UserSocialView socialInfo = new UserSocialView();
+                try
+                {
+                    UserSocialView socialInfo = new UserSocialView();
 
-                //Get basic user info.
-                IDictionary<String, object> info = (IDictionary<String, object>)await client.GetTaskAsync("me?fields=id,name,email,picture");
+                    //Get basic user info.
+                    IDictionary<String, object> info = (IDictionary<String, object>)await client.GetTaskAsync("me?fields=id,name,email,picture");
 
-                socialInfo.Id = (string)info["id"];
-                socialInfo.Name = (string)info["name"];
+                    socialInfo.Id = (string)info["id"];
+                    socialInfo.Name = (string)info["name"];
 
-                //Gets user profile picture url
-                IDictionary<String, object> picture = (IDictionary<String, object>)info["picture"];
-                IDictionary<String, object> pictureData = (IDictionary<String, object>)picture["data"];
-                socialInfo.ProfilePictureUrl = (string)pictureData["url"];
+                    //Gets user profile picture url
+                    IDictionary<String, object> picture = (IDictionary<String, object>)info["picture"];
+                    IDictionary<String, object> pictureData = (IDictionary<String, object>)picture["data"];
+                    socialInfo.ProfilePictureUrl = (string)pictureData["url"];
 
-                await LoadingPage.SuccessfulLoginAction(socialInfo, i_UserAccount);
+                    await LoadingPage.SuccessfulLoginAction(socialInfo, i_UserAccount);
+                }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine("EXCEPTION!");
+                    System.Diagnostics.Debug.WriteLine(e.Message);
+                    LoadingPage.LoginFailedAction();
+                }
             }
             else
             {

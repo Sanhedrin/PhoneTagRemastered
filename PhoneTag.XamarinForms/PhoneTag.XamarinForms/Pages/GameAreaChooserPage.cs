@@ -49,14 +49,17 @@ namespace PhoneTag.XamarinForms.Pages
 
             await CrossGeolocator.Current.StopListeningAsync();
 
-            MapPosition startLocation = new MapPosition(userLocation.Latitude, userLocation.Longitude);
-            m_GameMap = new GameMapSetup(startLocation, k_DefaultGameRadius, k_DefaultGameZoom);
-           
-            //Store the values in the static properties for access once we're done.
-            ChosenPosition = m_GameMap.StartLocation = startLocation;
-            ChosenRadius = m_GameMap.GameRadius = k_DefaultGameRadius;
+            if (userLocation != null)
+            {
+                MapPosition startLocation = new MapPosition(userLocation.Latitude, userLocation.Longitude);
+                m_GameMap = new GameMapSetup(startLocation, k_DefaultGameRadius, k_DefaultGameZoom);
 
-            initializeComponent();
+                //Store the values in the static properties for access once we're done.
+                ChosenPosition = m_GameMap.StartLocation = startLocation;
+                ChosenRadius = m_GameMap.GameRadius = k_DefaultGameRadius;
+
+                initializeComponent();
+            }
         }
 
         //When the area is chosen return to the last page.

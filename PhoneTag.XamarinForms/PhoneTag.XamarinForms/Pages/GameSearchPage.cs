@@ -46,10 +46,14 @@ namespace PhoneTag.XamarinForms.Pages
         {
             await UserView.Current.Update();
 
-            if (String.IsNullOrEmpty(UserView.Current.PlayingIn))
+            if (!String.IsNullOrEmpty(UserView.Current?.PlayingIn))
             {
                 GameRoomView room = await GameRoomView.GetRoom(UserView.Current.PlayingIn);
-                await room.LeaveRoom(UserView.Current.FBID);
+
+                if (room != null)
+                {
+                    await room.LeaveRoom(UserView.Current.FBID);
+                }
             }
         }
 
@@ -76,15 +80,19 @@ namespace PhoneTag.XamarinForms.Pages
 
                 await CrossGeolocator.Current.StopListeningAsync();
 
-                List<String> roomIds = await GameRoomView.GetAllRoomsInRange(new GeoPoint(userLocation.Latitude, userLocation.Longitude), SearchRadius);
-                
-                await UserView.Current.Update();
 
-                foreach (String roomId in roomIds)
+                if (userLocation != null)
                 {
-                    GameDetailsTile tile = new GameDetailsTile();
-                    await tile.SetupTile(roomId);
-                    m_GameRoomTileDisplay.Children.Add(tile);
+                    List<String> roomIds = await GameRoomView.GetAllRoomsInRange(new GeoPoint(userLocation.Latitude, userLocation.Longitude), SearchRadius);
+
+                    await UserView.Current.Update();
+
+                    foreach (String roomId in roomIds)
+                    {
+                        GameDetailsTile tile = new GameDetailsTile();
+                        await tile.SetupTile(roomId);
+                        m_GameRoomTileDisplay.Children.Add(tile);
+                    }
                 }
 
                 initializeComponent();

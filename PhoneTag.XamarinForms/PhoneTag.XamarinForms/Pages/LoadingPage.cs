@@ -30,7 +30,8 @@ namespace PhoneTag.XamarinForms.Pages
         //update their app.
         private async Task initGame()
         {
-            try {
+            try
+            {
                 if (await PhoneTagInfo.ValidateVersion())
                 {
                     promptUserLogin();
@@ -40,7 +41,7 @@ namespace PhoneTag.XamarinForms.Pages
                     Application.Current.MainPage = new ErrorPage(String.Format("Version mismatch. {0}Please update your game to the latest version.", Environment.NewLine));
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Application.Current.MainPage = new ErrorPage(e.Message);
             }
@@ -59,8 +60,18 @@ namespace PhoneTag.XamarinForms.Pages
         public static async Task SuccessfulLoginAction(UserSocialView i_SocialView, Account i_UserAccount)
         {
             await FBLoginService.StoreAccount(i_SocialView, i_UserAccount);
-            UserView.SetLoggedInUser(await UserView.TryGetUser(i_SocialView));
-            proceedToMainMenuPage();
+
+            UserView user = await UserView.TryGetUser(i_SocialView);
+
+            if (user != null)
+            {
+                UserView.SetLoggedInUser(user);
+                proceedToMainMenuPage();
+            }
+            else
+            {
+                Application.Current.MainPage = new ErrorPage("Couldn't find or create user.");
+            }
         }
 
         //Once authenticated, we can move on to the main menu page.

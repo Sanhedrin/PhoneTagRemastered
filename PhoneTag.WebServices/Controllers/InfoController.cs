@@ -11,6 +11,8 @@ using System.IO;
 using PhoneTag.SharedCodebase.Models;
 using PhoneTag.SharedCodebase.Views;
 using System.Linq.Expressions;
+using PhoneTag.WebServices;
+using PhoneTag.WebServices.Utilities;
 
 namespace PhoneTag.SharedCodebase.Controllers
 {
@@ -26,18 +28,23 @@ namespace PhoneTag.SharedCodebase.Controllers
         [HttpGet]
         public async Task<List<String>> GetGameModeList()
         {
-            List<String> gameModeNames = null;
+            List<String> gameModeNames = new List<String>();
 
             try
             {
                 IFindFluent<GameMode, String> gameModes = Mongo.Database.GetCollection<GameMode>("GameModes")
                     .Find(Builders<GameMode>.Filter.Empty)
                     .Project(gameMode => gameMode.Name);
-                gameModeNames = await gameModes.ToListAsync();
+
+                if (gameModes.Count() > 0)
+                {
+                    gameModeNames = await gameModes.ToListAsync();
+                }
             }
             catch (Exception e)
             {
                 gameModeNames = null;
+                ErrorLogger.Log(e.Message);
             }
 
             return gameModeNames;
@@ -54,14 +61,15 @@ namespace PhoneTag.SharedCodebase.Controllers
 
             try
             {
-                IFindFluent<ServerInfo, String> gameModes = Mongo.Database.GetCollection<ServerInfo>("Info")
+                IFindFluent<ServerInfo, String> serverInfo = Mongo.Database.GetCollection<ServerInfo>("Info")
                     .Find(Builders<ServerInfo>.Filter.Eq("Type", "ServerInfo"))
                     .Project(info => info.Version);
-                version = await gameModes.FirstAsync();
+                version = await serverInfo.FirstAsync();
             }
             catch (Exception e)
             {
                 version = null;
+                ErrorLogger.Log(e.Message);
             }
 
             return version;

@@ -36,45 +36,53 @@ namespace PhoneTag.XamarinForms.Pages
         private async void initializeComponent(String i_GameRoomId)
         {
             NavigationPage.SetHasBackButton(this, true);
-            GameRoomView gameRoom = await GameRoomView.GetRoom(i_GameRoomId);
 
-            Position startLocation = new Position(gameRoom.GameDetails.StartLocation.Latitude, gameRoom.GameDetails.StartLocation.Longitude);
-
-            GameDetailsTile roomTile = new GameDetailsTile();
-            await roomTile.SetupTile(i_GameRoomId);
-
-            buttonReady = new Button()
+            if (i_GameRoomId != null)
             {
-                Text = "Ready",
-                BackgroundColor = Color.Red
-            };
-            buttonReady.BindingContext = this;
-            //buttonReady.SetBinding(Button.IsEnabledProperty, "ReadyRequestComplete");
-            buttonReady.Clicked += ButtonReady_Clicked;
+                GameRoomView gameRoom = await GameRoomView.GetRoom(i_GameRoomId);
 
-            Title = "Game Lobby";
-            Padding = new Thickness(0, 20, 0, 0);
-            Content = new StackLayout
-            {
-                VerticalOptions = new LayoutOptions
+                if (gameRoom != null)
                 {
-                    Alignment = LayoutAlignment.Fill
-                },
-                Children = {
-                    roomTile,
-                    //TODO: Insert player list
-                    //TODO: Insert chat box.
-                    new Button
+                    Position startLocation = new Position(gameRoom.GameDetails.StartLocation.Latitude, gameRoom.GameDetails.StartLocation.Longitude);
+
+                    GameDetailsTile roomTile = new GameDetailsTile();
+                    await roomTile.SetupTile(i_GameRoomId);
+
+                    buttonReady = new Button()
                     {
-                        Text = "View Map",
-                        BackgroundColor = Color.Yellow,
-                        Command = new Command(() => {
-                            Navigation.PushAsync(new GameAreaDisplayPage(startLocation, gameRoom.GameDetails.GameRadius)); 
-                        })
-                    },
-                    buttonReady
+                        Text = "Ready",
+                        BackgroundColor = Color.Red
+                    };
+                    buttonReady.BindingContext = this;
+                    //buttonReady.SetBinding(Button.IsEnabledProperty, "ReadyRequestComplete");
+                    buttonReady.Clicked += ButtonReady_Clicked;
+
+                    Title = "Game Lobby";
+                    Padding = new Thickness(0, 20, 0, 0);
+                    Content = new StackLayout
+                    {
+                        VerticalOptions = new LayoutOptions
+                        {
+                            Alignment = LayoutAlignment.Fill
+                        },
+                        Children = {
+                            roomTile,
+                            //TODO: Insert player list
+                            //TODO: Insert chat box.
+                            //View map button.
+                            new Button
+                            {
+                                Text = "View Map",
+                                BackgroundColor = Color.Yellow,
+                                Command = new Command(() => {
+                                    Navigation.PushAsync(new GameAreaDisplayPage(startLocation, gameRoom.GameDetails.GameRadius));
+                                })
+                            },
+                            buttonReady
+                        }
+                    };
                 }
-            };
+            }
         }
     }
 }

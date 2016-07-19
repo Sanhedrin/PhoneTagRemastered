@@ -38,9 +38,9 @@ namespace PhoneTag.XamarinForms.Controls.Login
         /// <returns></returns>
         public static async Task<Account> GetCurrentAccount()
         {
-            List<Account> accounts = (await CurrentAccountStore.FindAccountsForServiceAsync("Facebook")).ToList();
+            List<Account> accounts = await CurrentAccountStore.FindAccountsForServiceAsync("Facebook");
 
-            return accounts.Count > 0 ? accounts[0] : null;
+            return accounts == null ? null : (accounts.Count > 0 ? accounts[0] : null);
         }
 
         /// <summary>
@@ -50,12 +50,17 @@ namespace PhoneTag.XamarinForms.Controls.Login
         {
             if (!String.IsNullOrEmpty(LoggedInUserId))
             {
-                UserView.SetLoggedInUser(await UserView.GetUser(LoggedInUserId));
+                UserView user = await UserView.GetUser(LoggedInUserId);
 
-                if (s_LoginAccount == null)
+                if (user != null)
                 {
-                    List<Account> storedAccounts = (await CurrentAccountStore.FindAccountsForServiceAsync("Facebook")).ToList();
-                    s_LoginAccount = storedAccounts.Count > 0 ? storedAccounts[0] : null;
+                    UserView.SetLoggedInUser(user);
+
+                    if (s_LoginAccount == null)
+                    {
+                        List<Account> storedAccounts = await CurrentAccountStore.FindAccountsForServiceAsync("Facebook");
+                        s_LoginAccount = storedAccounts == null ? null : (storedAccounts.Count > 0 ? storedAccounts[0] : null);
+                    }
                 }
             }
 
@@ -83,7 +88,16 @@ namespace PhoneTag.XamarinForms.Controls.Login
         {
             await ClearAccounts();
             await CurrentAccountStore.SaveAsync(i_UserAccount, "Facebook");
-            CrossSettings.Current.AddOrUpdateValue<String>("SocialInfo", JsonConvert.SerializeObject(i_SocialView));
+
+            try
+            {
+                CrossSettings.Current.AddOrUpdateValue<String>("SocialInfo", JsonConvert.SerializeObject(i_SocialView));
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("EXCEPTION!");
+                System.Diagnostics.Debug.WriteLine(e.Message);
+            }
         }
 
         /// <summary>
@@ -93,13 +107,17 @@ namespace PhoneTag.XamarinForms.Controls.Login
         {
             s_LoginAccount = null;
 
-            List<Account> storedAccounts = (await CurrentAccountStore.FindAccountsForServiceAsync("Facebook")).ToList();
-            for(int i = 0; i < storedAccounts.Count; ++i)
-            {
-                await CurrentAccountStore.DeleteAsync(storedAccounts[i], "Facebook");
-            }
+            List<Account> storedAccounts = await CurrentAccountStore.FindAccountsForServiceAsync("Facebook");
 
-            CrossSettings.Current.Remove("SocialInfo");
+            if (storedAccounts != null)
+            {
+                for (int i = 0; i < storedAccounts.Count; ++i)
+                {
+                    await CurrentAccountStore.DeleteAsync(storedAccounts[i], "Facebook");
+                }
+
+                CrossSettings.Current.Remove("SocialInfo");
+            }
         }
     }
 }

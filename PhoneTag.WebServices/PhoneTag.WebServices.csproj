@@ -224,6 +224,7 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Events\OpLogEvents\DocumentDeletedEventArgs.cs" />
     <Compile Include="Events\OpLogEvents\OpLogEventDispatcher.cs" />
+    <Compile Include="Utilities\ErrorLogger.cs" />
     <Compile Include="Utilities\Mongo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -22,6 +22,8 @@ using com.shephertz.app42.paas.sdk.csharp.pushNotification;
 using PhoneTag.SharedCodebase.Events.GameEvents;
 using PhoneTag.SharedCodebase.Controllers;
 using PhoneTag.SharedCodebase.Events.OpLogEvents;
+using PhoneTag.WebServices;
+using PhoneTag.WebServices.Utilities;
 
 namespace PhoneTag.SharedCodebase.Controllers
 {
@@ -43,22 +45,25 @@ namespace PhoneTag.SharedCodebase.Controllers
         {
             String roomId = null;
 
-            GameRoom gameRoom = new GameRoom(GameDetails.FromView(i_GameDetailsView));
-
-            try
+            if (i_GameDetailsView != null)
             {
-                await Mongo.Database.GetCollection<GameRoom>("Rooms").InsertOneAsync(gameRoom);
-                roomId = gameRoom._id.ToString();
+                try
+                {
+                    GameRoom gameRoom = new GameRoom(GameDetails.FromView(i_GameDetailsView));
+                    await Mongo.Database.GetCollection<GameRoom>("Rooms").InsertOneAsync(gameRoom);
+                    roomId = gameRoom._id.ToString();
 
-                //Add the room to the expiration list.
-                ExpirationEntry expiration = new ExpirationEntry();
-                expiration.ExpirationTime = DateTime.Now.AddMinutes(1);
-                expiration._id = gameRoom._id;
-                await Mongo.Database.GetCollection<ExpirationEntry>("RoomExpiration").InsertOneAsync(expiration);
-            }
-            catch (Exception e)
-            {
-                roomId = null;
+                    //Add the room to the expiration list.
+                    ExpirationEntry expiration = new ExpirationEntry();
+                    expiration.ExpirationTime = DateTime.Now.AddMinutes(1);
+                    expiration._id = gameRoom._id;
+                    await Mongo.Database.GetCollection<ExpirationEntry>("RoomExpiration").InsertOneAsync(expiration);
+                }
+                catch (Exception e)
+                {
+                    roomId = null;
+                    ErrorLogger.Log(e.Message);
+                }
             }
 
             return roomId;
@@ -72,29 +77,43 @@ namespace PhoneTag.SharedCodebase.Controllers
         [HttpPost]
         public async Task LeaveRoom(string i_RoomId, string i_PlayerFBID)
         {
-            GameRoom room = await GetRoomModel(i_RoomId);
-
-            //We need to separate between the case a user leaves in the middle of a game or in the lobby
-            //Game case(If the player is already dead we don't need to doy anything)
-            if (room.Started && room.LivingUsers.Contains(i_PlayerFBID))
+            if (i_RoomId != null && i_PlayerFBID != null)
             {
-                //In the case the user left in the middle of the game, we'll consider it as the player
-                //having died.
-                await KillPlayer(i_RoomId, i_PlayerFBID);
-            }
-            //If the game didn't yet start, we just remove the player
-            else if (!room.Started && room.LivingUsers.Contains(i_PlayerFBID)) { 
-                room.LivingUsers.Remove(i_PlayerFBID);
-                    
-                //Update the room to add the player to it.
-                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(i_RoomId));
-                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
-                    .Set<List<String>>("LivingUsers", room.LivingUsers);
+                GameRoom room = await GetRoomModel(i_RoomId);
 
-                await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+                if (room != null)
+                {
+                    //We need to separate between the case a user leaves in the middle of a game or in the lobby
+                    //Game case(If the player is already dead we don't need to doy anything)
+                    if (room.Started && room.LivingUsers.Contains(i_PlayerFBID))
+                    {
+                        //In the case the user left in the middle of the game, we'll consider it as the player
+                        //having died.
+                        await KillPlayer(i_RoomId, i_PlayerFBID);
+                    }
+                    //If the game didn't yet start, we just remove the player
+                    else if (!room.Started && room.LivingUsers.Contains(i_PlayerFBID))
+                    {
+                        try
+                        {
+                            room.LivingUsers.Remove(i_PlayerFBID);
 
-                //Add the room as the user's current playing room.
-                await UsersController.LeaveRoom(i_PlayerFBID);
+                            //Update the room to add the player to it.
+                            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(i_RoomId));
+                            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                                .Set<List<String>>("LivingUsers", room.LivingUsers);
+
+                            await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+                        }
+                        catch (Exception e)
+                        {
+                            ErrorLogger.Log(e.Message);
+                        }
+
+                        //Add the room as the user's current playing room.
+                        await UsersController.LeaveRoom(i_PlayerFBID);
+                    }
+                }
             }
         }
 
@@ -104,55 +123,74 @@ namespace PhoneTag.SharedCodebase.Controllers
         /// </summary>
         public static async Task CheckGameStart(string i_RoomId)
         {
-            GameRoom room = await GetRoomModel(i_RoomId);
-
-            bool readyToStart = true;
-
-            //Important to note:
-            //We allow players to start the game even if not enough players are present if everyone agrees to it.
-            foreach (String userId in room.LivingUsers)
+            if (i_RoomId != null)
             {
-                User user = await UsersController.GetUserModel(userId);
+                GameRoom room = await GetRoomModel(i_RoomId);
 
-                if (!user.IsReady)
+                if (room != null)
                 {
-                    readyToStart = false;
-                    break;
-                }
-            }
+                    bool readyToStart = true;
 
-            //If all players are ready, start the game.
-            if (readyToStart)
-            {
-                startGame(room);
+                    //Important to note:
+                    //We allow players to start the game even if not enough players are present if everyone agrees to it.
+                    foreach (String userId in room.LivingUsers)
+                    {
+                        User user = await UsersController.GetUserModel(userId);
+
+                        if (user == null)
+                        {
+                            ErrorLogger.Log("Invalid User ID found in room's player list.");
+                        }
+                        else if (!user.IsReady)
+                        {
+                            readyToStart = false;
+                            break;
+                        }
+                    }
+
+                    //If all players are ready, start the game.
+                    if (readyToStart)
+                    {
+                        startGame(room);
+                    }
+                }
             }
         }
 
         //Starts the game on the given room.
         private static async Task startGame(GameRoom i_Room)
         {
-            //Update the room to set it as started.
-            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", i_Room._id);
-            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update.Set("Started", true);
+            if (i_Room != null)
+            {
+                try {
+                    //Update the room to set it as started.
+                    FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", i_Room._id);
+                    UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update.Set("Started", true);
 
-            await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+                    await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
 
-            update = Builders<BsonDocument>.Update.Set("ExpriationTime", DateTime.Now.AddMinutes(i_Room.GameModeDetails.GameDurationInMins));
+                    update = Builders<BsonDocument>.Update.Set("ExpirationTime", DateTime.Now.AddMinutes(i_Room.GameModeDetails.GameDurationInMins));
+                    await Mongo.Database.GetCollection<BsonDocument>("RoomExpiration").UpdateOneAsync(filter, update);
 
-            //Notify all players in the room that the game started.
-            String gameStartEventMessage = JsonConvert.SerializeObject(new GameStartEvent(i_Room._id.ToString()), new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
-            gameStartEventMessage = gameStartEventMessage.Replace('\"', '\'');
+                    //Notify all players in the room that the game started.
+                    String gameStartEventMessage = JsonConvert.SerializeObject(new GameStartEvent(i_Room._id.ToString()), new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
+                    gameStartEventMessage = gameStartEventMessage.Replace('\"', '\'');
 
-            PushNotificationService pushService = App42API.BuildPushNotificationService();
-            pushService.SendPushMessageToGroup(gameStartEventMessage, i_Room.LivingUsers);
+                    PushNotificationService pushService = App42API.BuildPushNotificationService();
+                    pushService.SendPushMessageToGroup(gameStartEventMessage, i_Room.LivingUsers);
+                }
+                catch (Exception e)
+                {
+                    ErrorLogger.Log(e.Message);
+                }
+            }
         }
 
         /// <summary>
         /// Kills the player from the current game.
         /// </summary>
-        public Task KillPlayer(string i_RoomId, string i_PlayerFBID)
+        public async Task KillPlayer(string i_RoomId, string i_PlayerFBID)
         {
-            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -165,31 +203,35 @@ namespace PhoneTag.SharedCodebase.Controllers
         {
             bool success = false;
 
-            using (await sr_RoomChangeMutex.LockAsync())
+            if (i_RoomId != null && i_PlayerFBID != null)
             {
-                GameRoom room = await GetRoomModel(i_RoomId);
-
-                if (!room.Started && room.LivingUsers.Count < room.GameModeDetails.Mode.TotalNumberOfPlayers)
+                using (await sr_RoomChangeMutex.LockAsync())
                 {
-                    room.LivingUsers.Add(i_PlayerFBID);
-                    
-                    try
+                    GameRoom room = await GetRoomModel(i_RoomId);
+
+                    if (room != null && !room.Started && room.LivingUsers.Count < room.GameModeDetails.Mode.TotalNumberOfPlayers)
                     {
-                        //Update the room to add the player to it.
-                        FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(i_RoomId));
-                        UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
-                            .Set<List<String>>("LivingUsers", room.LivingUsers);
+                        room.LivingUsers.Add(i_PlayerFBID);
 
-                        await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+                        try
+                        {
+                            //Update the room to add the player to it.
+                            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(i_RoomId));
+                            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                                .Set<List<String>>("LivingUsers", room.LivingUsers);
 
-                        //Add the room as the user's current playing room.
-                        await UsersController.JoinRoom(i_PlayerFBID, i_RoomId);
+                            await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
 
-                        success = true;
-                    }
-                    catch (Exception e)
-                    {
-                        success = false;
+                            //Add the room as the user's current playing room.
+                            await UsersController.JoinRoom(i_PlayerFBID, i_RoomId);
+
+                            success = true;
+                        }
+                        catch (Exception e)
+                        {
+                            success = false;
+                            ErrorLogger.Log(e.Message);
+                        }
                     }
                 }
             }
@@ -222,15 +264,28 @@ namespace PhoneTag.SharedCodebase.Controllers
         public async Task<List<String>> GetRoomsInRange(double i_Lat, double i_Lng, float i_SearchRadius)
         {
             List<String> roomIds = new List<string>();
-            GeoPoint location = new GeoPoint(i_Lat, i_Lng);
 
-            FilterDefinition<GameRoom> filter = Builders<GameRoom>.Filter
-                    .NearSphere(room => room.RoomLocation, GeoJson.Point<GeoJson2DGeographicCoordinates>(new GeoJson2DGeographicCoordinates(location.Longitude, location.Latitude)), i_SearchRadius);
-            
-            IFindFluent<GameRoom, String> gameModes = Mongo.Database.GetCollection<GameRoom>("Rooms")
-                .Find(filter)
-                .Project(room => room._id.ToString());
-            roomIds = await gameModes.ToListAsync();
+            try
+            {
+                GeoPoint location = new GeoPoint(i_Lat, i_Lng);
+
+                FilterDefinition<GameRoom> filter = Builders<GameRoom>.Filter.And(
+                        Builders<GameRoom>.Filter.Eq("Started", false),
+                        Builders<GameRoom>.Filter.NearSphere(room => room.RoomLocation, GeoJson.Point<GeoJson2DGeographicCoordinates>(new GeoJson2DGeographicCoordinates(location.Longitude, location.Latitude)), i_SearchRadius));
+
+                IFindFluent<GameRoom, String> gameModes = Mongo.Database.GetCollection<GameRoom>("Rooms")
+                    .Find(filter)
+                    .Project(room => room._id.ToString());
+
+                if (gameModes.Count() > 0)
+                {
+                    roomIds = await gameModes.ToListAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                ErrorLogger.Log(e.Message);
+            }
 
             return roomIds;
         }
@@ -246,14 +301,20 @@ namespace PhoneTag.SharedCodebase.Controllers
             {
                 FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", new ObjectId(i_RoomId));
 
-                using (IAsyncCursor<GameRoom> cursor = await Mongo.Database.GetCollection<BsonDocument>("Rooms").FindAsync<GameRoom>(filter))
+                IMongoCollection<BsonDocument> rooms = Mongo.Database.GetCollection<BsonDocument>("Rooms");
+
+                if (await rooms.CountAsync(filter) > 0)
                 {
-                    foundRoom = await cursor.SingleAsync();
+                    using (IAsyncCursor<GameRoom> cursor = await rooms.FindAsync<GameRoom>(filter))
+                    {
+                        foundRoom = await cursor.SingleAsync();
+                    }
                 }
             }
             catch (Exception e)
             {
                 foundRoom = null;
+                ErrorLogger.Log(e.Message);
             }
 
             return foundRoom;

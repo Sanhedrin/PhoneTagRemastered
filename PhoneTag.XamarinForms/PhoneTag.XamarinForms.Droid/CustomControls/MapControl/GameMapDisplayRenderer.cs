@@ -137,31 +137,34 @@ namespace PhoneTag.XamarinForms.Droid
 
         private async Task markPlayArea(Position i_GameLocation, double i_GameRadius)
         {
-            while (m_MapView == null)
+            if (i_GameLocation != null)
             {
-                await Task.Delay(10);
-            }
+                while (m_MapView == null)
+                {
+                    await Task.Delay(10);
+                }
 
-            m_MapView.Clear();
+                m_MapView.Clear();
 
-            CircleOptions circleOptions = new CircleOptions();
-            LatLng gameLocation = new LatLng(i_GameLocation.Latitude, i_GameLocation.Longitude);
-            circleOptions.InvokeCenter(gameLocation);
-            circleOptions.InvokeRadius(i_GameRadius * 1000); //Meters to kilometers
-            circleOptions.InvokeFillColor(Android.Graphics.Color.Argb(50, 255, 0, 0));
-            circleOptions.InvokeStrokeWidth(3);
-            Circle newCircle = m_MapView.AddCircle(circleOptions);
-            newCircle.Visible = true;
+                CircleOptions circleOptions = new CircleOptions();
+                LatLng gameLocation = new LatLng(i_GameLocation.Latitude, i_GameLocation.Longitude);
+                circleOptions.InvokeCenter(gameLocation);
+                circleOptions.InvokeRadius(i_GameRadius * 1000); //Meters to kilometers
+                circleOptions.InvokeFillColor(Android.Graphics.Color.Argb(50, 255, 0, 0));
+                circleOptions.InvokeStrokeWidth(3);
+                Circle newCircle = m_MapView.AddCircle(circleOptions);
+                newCircle.Visible = true;
 
-            m_LastValidLocation = gameLocation;
+                m_LastValidLocation = gameLocation;
 
-            if (m_LastZoom.HasValue)
-            {
-                m_MapView.AnimateCamera(CameraUpdateFactory.NewLatLngZoom(m_LastValidLocation, m_LastZoom.Value));
-            }
-            else
-            {
-                m_MapView.AnimateCamera(CameraUpdateFactory.NewLatLng(m_LastValidLocation));
+                if (m_LastZoom.HasValue)
+                {
+                    m_MapView.AnimateCamera(CameraUpdateFactory.NewLatLngZoom(m_LastValidLocation, m_LastZoom.Value));
+                }
+                else
+                {
+                    m_MapView.AnimateCamera(CameraUpdateFactory.NewLatLng(m_LastValidLocation));
+                }
             }
         }
 
