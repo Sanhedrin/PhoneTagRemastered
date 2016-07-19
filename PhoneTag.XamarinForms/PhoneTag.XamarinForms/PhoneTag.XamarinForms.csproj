@@ -39,6 +39,10 @@
     <Compile Include="App.cs" />
     <Compile Include="Controls\CameraControl\CameraOptions.cs" />
     <Compile Include="Controls\CameraControl\CameraPreview.cs" />
+    <Compile Include="Controls\FriendMenu\FriendListButton.cs" />
+    <Compile Include="Controls\FriendMenu\FriendListButton.designer.cs">
+      <DependentUpon>FriendListButton.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\GameDetailsTile\GameDetailsTile.cs" />
     <Compile Include="Controls\Login\FBLoginService.cs" />
     <Compile Include="Controls\MapControl\GameMapInteractive.cs" />
@@ -211,6 +215,9 @@
       <Project>{4e618b83-922a-45bf-b4ce-0033b1a8c24c}</Project>
       <Name>PhoneTag.SharedCodebase</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\friend_menu_icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.3.0.46-pre3\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.0.46-pre3\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
