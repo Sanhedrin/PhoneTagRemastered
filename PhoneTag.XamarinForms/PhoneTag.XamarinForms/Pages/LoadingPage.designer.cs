@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
-using PhoneTag.XamarinForms.Controls.FriendMenu;
+using PhoneTag.XamarinForms.Controls.SocialMenu;
 
 namespace PhoneTag.XamarinForms.Pages
 {

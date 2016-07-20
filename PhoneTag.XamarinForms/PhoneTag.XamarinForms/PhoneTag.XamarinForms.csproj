@@ -39,9 +39,22 @@
     <Compile Include="App.cs" />
     <Compile Include="Controls\CameraControl\CameraOptions.cs" />
     <Compile Include="Controls\CameraControl\CameraPreview.cs" />
-    <Compile Include="Controls\FriendMenu\FriendListButton.cs" />
-    <Compile Include="Controls\FriendMenu\FriendListButton.designer.cs">
+    <Compile Include="Controls\SocialMenus\FriendListButton.cs" />
+    <Compile Include="Controls\SocialMenus\FriendListButton.designer.cs">
       <DependentUpon>FriendListButton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SocialMenus\FriendListDisplay.cs" />
+    <Compile Include="Controls\SocialMenus\LobbyPlayerListDisplay.cs" />
+    <Compile Include="Controls\SocialMenus\PlayerDetailTiles\FriendDetailsTile.cs" />
+    <Compile Include="Controls\SocialMenus\PlayerDetailTiles\LobbyPlayerDetailsTile.cs" />
+    <Compile Include="Controls\SocialMenus\PlayerDetailTiles\PlayerDetailsTile.cs" />
+    <Compile Include="Controls\SocialMenus\PlayerDetailTiles\PlayerDetailsTile.designer.cs">
+      <DependentUpon>PlayerDetailsTile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SocialMenus\PlayerDetailTiles\PlayerDetailTileFactory.cs" />
+    <Compile Include="Controls\SocialMenus\PlayerListDisplay.cs" />
+    <Compile Include="Controls\SocialMenus\PlayerListDisplay.designer.cs">
+      <DependentUpon>PlayerListDisplay.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\GameDetailsTile\GameDetailsTile.cs" />
     <Compile Include="Controls\Login\FBLoginService.cs" />
@@ -218,6 +231,10 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Images\friend_menu_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\add_friend_button.png" />
+    <EmbeddedResource Include="Images\friend_indication.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.3.0.46-pre3\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.0.46-pre3\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />

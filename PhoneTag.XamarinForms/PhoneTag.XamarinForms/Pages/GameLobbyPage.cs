@@ -1,5 +1,6 @@
 ﻿using PhoneTag.SharedCodebase.Events.GameEvents;
 using PhoneTag.SharedCodebase.Views;
+using PhoneTag.XamarinForms.Controls.SocialMenu;
 using PhoneTag.XamarinForms.Controls.MapControl;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,14 @@ namespace PhoneTag.XamarinForms.Pages
         private bool ReadyRequestComplete { get; set; }
 
         private GameRoomView m_GameRoom;
+        
+        public IEnumerable<UserView> PlayerList
+        {
+            get
+            {
+                return m_GameRoom.DeadUsers.Union(m_GameRoom.LivingUsers);
+            }
+        }
 
         private Button buttonReady;
 

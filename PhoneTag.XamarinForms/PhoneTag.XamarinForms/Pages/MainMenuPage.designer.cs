@@ -1,4 +1,4 @@
-﻿using PhoneTag.XamarinForms.Controls.FriendMenu;
+﻿using PhoneTag.XamarinForms.Controls.SocialMenu;
 using Plugin.XamJam.Screen;
 using System;
 using System.Collections.Generic;

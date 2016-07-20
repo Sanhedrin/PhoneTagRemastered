@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace PhoneTag.XamarinForms.Controls.FriendMenu
+namespace PhoneTag.XamarinForms.Controls.SocialMenu
 {
     public partial class FriendListButton : Image
     {

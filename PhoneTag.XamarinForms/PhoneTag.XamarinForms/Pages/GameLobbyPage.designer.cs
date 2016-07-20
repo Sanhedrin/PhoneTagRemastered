@@ -9,11 +9,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
+using PhoneTag.XamarinForms.Controls.SocialMenu;
 
 namespace PhoneTag.XamarinForms.Pages
 {
     public partial class GameLobbyPage : TrailableContentPage
     {
+        private LobbyPlayerListDisplay m_LobbyPlayerList;
+
         private void initializeLoadingComponent()
         {
             Title = "Loading";
@@ -33,29 +36,20 @@ namespace PhoneTag.XamarinForms.Pages
             };
         }
 
-        private async void initializeComponent(String i_GameRoomId)
+        private async Task initializeComponent(String i_GameRoomId)
         {
             NavigationPage.SetHasBackButton(this, true);
 
             if (i_GameRoomId != null)
             {
-                GameRoomView gameRoom = await GameRoomView.GetRoom(i_GameRoomId);
+                m_GameRoom = await GameRoomView.GetRoom(i_GameRoomId);
 
-                if (gameRoom != null)
+                if (m_GameRoom != null)
                 {
-                    Position startLocation = new Position(gameRoom.GameDetails.StartLocation.Latitude, gameRoom.GameDetails.StartLocation.Longitude);
-
-                    GameDetailsTile roomTile = new GameDetailsTile();
-                    await roomTile.SetupTile(i_GameRoomId);
-
-                    buttonReady = new Button()
-                    {
-                        Text = "Ready",
-                        BackgroundColor = Color.Red
-                    };
-                    buttonReady.BindingContext = this;
-                    //buttonReady.SetBinding(Button.IsEnabledProperty, "ReadyRequestComplete");
-                    buttonReady.Clicked += ButtonReady_Clicked;
+                    GameDetailsTile roomTile = await generateRoomTile(i_GameRoomId);
+                    buttonReady = generateReadyButton();
+                    Button viewMapButton = generateViewMapButton();
+                    m_LobbyPlayerList = new LobbyPlayerListDisplay();
 
                     Title = "Game Lobby";
                     Padding = new Thickness(0, 20, 0, 0);
@@ -67,22 +61,55 @@ namespace PhoneTag.XamarinForms.Pages
                         },
                         Children = {
                             roomTile,
-                            //TODO: Insert player list
+                            m_LobbyPlayerList,
                             //TODO: Insert chat box.
-                            //View map button.
-                            new Button
-                            {
-                                Text = "View Map",
-                                BackgroundColor = Color.Yellow,
-                                Command = new Command(() => {
-                                    Navigation.PushAsync(new GameAreaDisplayPage(startLocation, gameRoom.GameDetails.GameRadius));
-                                })
-                            },
+                            viewMapButton,
                             buttonReady
                         }
                     };
                 }
             }
+        }
+
+        private Button generateViewMapButton()
+        {
+            Position startLocation = new Position(m_GameRoom.GameDetails.StartLocation.Latitude, m_GameRoom.GameDetails.StartLocation.Longitude);
+
+            Button button = new Button
+            {
+                Text = "View Map",
+                BackgroundColor = Color.Yellow,
+                Command = new Command(() =>
+                {
+                    Navigation.PushAsync(new GameAreaDisplayPage(startLocation, m_GameRoom.GameDetails.GameRadius));
+                })
+            };
+
+            return button;
+        }
+
+        private Button generateReadyButton()
+        {
+            Button buttonReady = new Button()
+            {
+                Text = "Ready",
+                BackgroundColor = Color.Red
+            };
+
+            buttonReady.BindingContext = this;
+            //buttonReady.SetBinding(Button.IsEnabledProperty, "ReadyRequestComplete");
+            buttonReady.Clicked += ButtonReady_Clicked;
+
+            return buttonReady;
+        }
+
+        private async Task<GameDetailsTile> generateRoomTile(String i_GameRoomId)
+        {
+            GameDetailsTile roomTile = new GameDetailsTile();
+
+            await roomTile.SetupTile(i_GameRoomId);
+
+            return roomTile;
         }
     }
 }

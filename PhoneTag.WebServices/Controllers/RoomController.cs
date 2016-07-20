@@ -55,7 +55,7 @@ namespace PhoneTag.SharedCodebase.Controllers
 
                     //Add the room to the expiration list.
                     ExpirationEntry expiration = new ExpirationEntry();
-                    expiration.ExpirationTime = DateTime.Now.AddMinutes(1);
+                    expiration.ExpirationTime = DateTime.Now.AddMinutes(60);
                     expiration._id = gameRoom._id;
                     await Mongo.Database.GetCollection<ExpirationEntry>("RoomExpiration").InsertOneAsync(expiration);
                 }

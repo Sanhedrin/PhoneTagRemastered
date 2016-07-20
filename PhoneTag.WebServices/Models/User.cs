@@ -61,6 +61,9 @@ namespace PhoneTag.SharedCodebase.Models
 
                 if (friend != null)
                 {
+                    friendView.FBID = friend.FBID;
+                    friendView.PlayingIn = friend.PlayingIn;
+                    friendView.ProfilePicUrl = friend.ProfilePicUrl;
                     friendView.Username = friend.Username;
                     friendView.Ammo = friend.Ammo;
                     friendView.IsReady = friend.IsReady;
