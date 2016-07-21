@@ -7,12 +7,14 @@ using PhoneTag.SharedCodebase.Views;
 using PhoneTag.SharedCodebase.Utils;
 using PhoneTag.WebServices.Models.GameModes;
 using System.Threading.Tasks;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace PhoneTag.WebServices.Models
 {
     /// <summary>
     /// The game mode model.
     /// </summary>
+    [BsonKnownTypes(typeof(TDMGameMode), typeof(VIPGameMode))]
     public abstract class GameMode : IViewable
     {
         public ObjectId _id { get; set; }

@@ -36,15 +36,9 @@ namespace PhoneTag.WebServices.Controllers.ExpirationControllers
         {
             GameRoom room = await RoomController.GetRoomModel(i_ExpiredId.ToString());
 
-            if (!room.Started)
+            if (room != null)
             {
-                foreach(String userId in room.LivingUsers)
-                {
-                    await UsersController.LeaveRoom(userId);
-                }
-
-                FilterDefinition<BsonDocument> roomFilter = Builders<BsonDocument>.Filter.Eq("_id", i_ExpiredId);
-                await Mongo.Database.GetCollection<BsonDocument>("Rooms").DeleteOneAsync(roomFilter);
+                room.Expire();
             }
         }
     }

@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using PhoneTag.WebServices.Controllers;
 using MongoDB.Driver.GeoJsonObjectModel;
 using PhoneTag.SharedCodebase.Utils;
+using MongoDB.Driver;
+using PhoneTag.WebServices.Utilities;
 
 namespace PhoneTag.WebServices.Models
 {
@@ -28,6 +30,130 @@ namespace PhoneTag.WebServices.Models
         public String PlayingIn { get; set; }
         public GeoJsonPoint<GeoJson2DCoordinates> CurrentLocation { get; set; }
 
+        /// <summary>
+        /// Sets the ready status of the current player.
+        /// </summary>
+        public async Task<bool> SetReadyStatus(bool i_ReadyStatus)
+        {
+            bool newReadyStatus = i_ReadyStatus;
+
+            //Checks if the game should start.
+            if (String.IsNullOrEmpty(PlayingIn))
+            {
+                newReadyStatus = false;
+            }
+            else if (newReadyStatus)
+            {
+                //Add the room as the user's current playing room.
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", FBID);
+                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                    .Set("IsReady", i_ReadyStatus);
+
+                IMongoCollection<BsonDocument> users = Mongo.Database.GetCollection<BsonDocument>("Users");
+                
+                await users.UpdateOneAsync(filter, update);
+
+                GameRoom room = await RoomController.GetRoomModel(PlayingIn);
+                
+                if(room != null)
+                {
+                    room.CheckGameStart();
+                }
+            }
+
+            return newReadyStatus;
+        }
+
+        /// <summary>
+        /// Marks the player as active and updates their details.
+        /// </summary>
+        /// <returns></returns>
+        public async Task PingAsActive()
+        {
+            //Set the user's activity state.
+            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", FBID);
+            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                .Set("IsActive", true);
+
+            await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+
+
+            //Refresh the expiration on activity
+            BsonDocument expiration = new BsonDocument()
+            {
+                { "_id", this._id },
+                {  "ExpirationTime", DateTime.Now.AddSeconds(60) }
+            };
+
+            FilterDefinition<BsonDocument> expFilter = Builders<BsonDocument>.Filter.Eq("_id", this._id);
+            await Mongo.Database.GetCollection<BsonDocument>("UserExpiration")
+                .ReplaceOneAsync(expFilter, expiration, new UpdateOptions { IsUpsert = true });
+
+            //At a later point, if we'll choose we want to, we can use the returned value from this replacement
+            //operation to tell if it was an insert or an update.
+            //This helps in determining whether the user just logged on or if we're just pinging.
+            //As a result, we can use that info to update the user's friends about them logging on.
+        }
+
+        /// <summary>
+        /// Disconnects the user from the game server marking them as inactive.
+        /// </summary>
+        /// <returns></returns>
+        public async Task Quit()
+        {
+            //Set the user's activity state.
+            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", FBID);
+            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                .Set("IsActive", false);
+
+            await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+
+            if (!String.IsNullOrEmpty(this.PlayingIn))
+            {
+                GameRoom room = await RoomController.GetRoomModel(PlayingIn);
+
+                if (room != null)
+                {
+                    await room.LeaveRoom(FBID);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets the given room as this player's active room.
+        /// </summary>
+        public async Task JoinRoom(string i_RoomId)
+        {
+            if (!String.IsNullOrEmpty(i_RoomId))
+            {
+                //Add the room as the user's current playing room.
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", FBID);
+                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                    .Set<String>("PlayingIn", i_RoomId);
+
+                await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+
+                await SetReadyStatus(false);
+            }
+            else
+            {
+                ErrorLogger.Log("Invalid room given");
+            }
+        }
+
+        /// <summary>
+        /// Removes the player from the room they're currently at.
+        /// </summary>
+        public async Task LeaveRoom()
+        {
+            //Add the room as the user's current playing room.
+            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", FBID);
+            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                .Set<String>("PlayingIn", null)
+                .Set("IsReady", false);
+
+            await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+        }
 
         /// <summary>
         /// Generates a view for this model,

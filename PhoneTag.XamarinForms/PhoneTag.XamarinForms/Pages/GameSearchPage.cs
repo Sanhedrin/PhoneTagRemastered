@@ -74,23 +74,29 @@ namespace PhoneTag.XamarinForms.Pages
                 Position userLocation = await CrossGeolocator.Current.GetPositionAsync(timeoutMilliseconds: 3);
 
                 await CrossGeolocator.Current.StopListeningAsync();
-
-
+                
                 if (userLocation != null)
                 {
                     List<String> roomIds = await GameRoomView.GetAllRoomsInRange(new GeoPoint(userLocation.Latitude, userLocation.Longitude), SearchRadius);
 
-                    await UserView.Current.Update();
-
-                    foreach (String roomId in roomIds)
+                    if (roomIds.Count > 0)
                     {
-                        GameDetailsTile tile = new GameDetailsTile();
-                        await tile.SetupTile(roomId);
-                        m_GameRoomTileDisplay.Children.Add(tile);
+                        await UserView.Current.Update();
+
+                        foreach (String roomId in roomIds)
+                        {
+                            GameDetailsTile tile = new GameDetailsTile();
+                            await tile.SetupTile(roomId);
+                            m_GameRoomTileDisplay.Children.Add(tile);
+
+                            initializeComponent();
+                        }
+                    }
+                    else
+                    {
+                        initializeNoResultComponent();
                     }
                 }
-
-                initializeComponent();
             }
         }
 

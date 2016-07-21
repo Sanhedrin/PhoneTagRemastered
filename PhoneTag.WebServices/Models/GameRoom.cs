@@ -11,6 +11,9 @@ using PhoneTag.SharedCodebase.Controllers;
 using MongoDB.Driver.GeoJsonObjectModel;
 using PhoneTag.SharedCodebase.Utils;
 using PhoneTag.WebServices.Controllers;
+using MongoDB.Driver;
+using PhoneTag.WebServices.Utilities;
+using PhoneTag.SharedCodebase.Events.GameEvents;
 
 namespace PhoneTag.WebServices.Models
 {
@@ -40,6 +43,256 @@ namespace PhoneTag.WebServices.Models
             GameTime = 0;
             LivingUsers = new List<string>();
             DeadUsers = new List<string>();
+        }
+
+        /// <summary>
+        /// Expires the room, closing it.
+        /// If the room is an ongoing game, this signals the end of the game.
+        /// </summary>
+        public async Task Expire()
+        {
+            if (!this.Started)
+            {
+                closePendingGame();
+            }
+            else
+            {
+                closeOngoingGame();
+            }
+        }
+
+        //Closes an ongoing game room.
+        private async Task closeOngoingGame()
+        {
+            closePendingGame();
+        }
+
+        //Closes a pending game room.
+        private async Task closePendingGame()
+        {
+            foreach (String userId in this.LivingUsers)
+            {
+                User user = await UsersController.GetUserModel(userId);
+
+                if (user != null)
+                {
+                    await LeaveRoom(userId);
+                }
+            }
+
+            FilterDefinition<BsonDocument> roomFilter = Builders<BsonDocument>.Filter.Eq("_id", _id);
+            await Mongo.Database.GetCollection<BsonDocument>("Rooms").DeleteOneAsync(roomFilter);
+        }
+
+        /// <summary>
+        /// Removes the given player from this room.
+        /// </summary>
+        public async Task LeaveRoom(string i_PlayerFBID)
+        {
+            if (!String.IsNullOrEmpty(i_PlayerFBID))
+            {
+                //We need to separate between the case a user leaves in the middle of a game or in the lobby
+                //Game case(If the player is already dead we don't need to doy anything)
+                if (this.Started && this.LivingUsers.Contains(i_PlayerFBID))
+                {
+                    //In the case the user left in the middle of the game, we'll consider it as the player
+                    //having died.
+                    await KillPlayer(i_PlayerFBID);
+                }
+                //If the game didn't yet start, we just remove the player
+                else if (!this.Started && this.LivingUsers.Contains(i_PlayerFBID))
+                {
+                    try
+                    {
+                        this.LivingUsers.Remove(i_PlayerFBID);
+
+                        //Update the room to add the player to it.
+                        FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", _id);
+                        UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                            .Set<List<String>>("LivingUsers", this.LivingUsers);
+
+                        await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+                    }
+                    catch (Exception e)
+                    {
+                        ErrorLogger.Log(e.Message);
+                    }
+
+                    //Add the room as the user's current playing room.
+                    User user = await UsersController.GetUserModel(i_PlayerFBID);
+                    await user.LeaveRoom();
+                }
+            }
+            else
+            {
+                ErrorLogger.Log("Invalid FBID given");
+            }
+        }
+
+        /// <summary>
+        /// Kills the given player removing them from the room.
+        /// </summary>
+        /// <param name="i_PlayerFBID"></param>
+        /// <returns></returns>
+        public async Task KillPlayer(string i_PlayerFBID)
+        {
+        }
+
+        /// <summary>
+        /// Adds the given player to this room.
+        /// </summary>
+        /// <param name="i_PlayerFBID"></param>
+        public async Task<bool> JoinGame(string i_PlayerFBID)
+        {
+            bool success = false;
+
+            if (!String.IsNullOrEmpty(i_PlayerFBID))
+            {
+                if (!this.Started && this.LivingUsers.Count < this.GameModeDetails.Mode.TotalNumberOfPlayers)
+                {
+                    this.LivingUsers.Add(i_PlayerFBID);
+
+                    try
+                    {
+                        await removeUserFromAllRooms(i_PlayerFBID);
+
+                        //Update the room to add the player to it.
+                        FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", _id);
+                        UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                            .Set<List<String>>("LivingUsers", this.LivingUsers);
+
+                        await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+
+                        //Add the room as the user's current playing room.
+                        User user = await UsersController.GetUserModel(i_PlayerFBID);
+
+                        if (user != null)
+                        {
+                            await user.JoinRoom(this._id.ToString());
+
+                            //Notify all players in the room that a player joined the room started.
+                            PushNotificationUtils.PushEvent(new JoinRoomEvent(this._id.ToString()), this.LivingUsers);
+
+                            success = true;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        success = false;
+                        ErrorLogger.Log(e.Message);
+                    }
+                }
+            }
+            else
+            {
+                ErrorLogger.Log("Invalid FBID given");
+            }
+
+            return success;
+        }
+
+        //Normally, we can track a user's quitting and remove them from the room they're currently listed in.
+        //However, detecting the quit takes up to a minute.
+        //If the user closes the application, logs in within the minute and then joins another room, a ghost
+        //of that user will be left in the last room.
+        //To fix that, we'll remove the player from any room they're listed in when joining a room.
+        //Along with the quit detection, this takes care of all ghosting situations.
+        private async Task removeUserFromAllRooms(String i_FBID)
+        {
+            try
+            {
+                //Update the room to add the player to it.
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter
+                    .AnyEq("LivingUsers", i_FBID);
+                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                    .Pull("LivingUsers", i_FBID);
+
+                await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+            }
+            catch (Exception e)
+            {
+                ErrorLogger.Log(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Checks if the given room has all players ready and is ready to start the game.
+        /// In which case a push notification is sent to all participating players to signal them to start.
+        /// </summary>
+        public async Task CheckGameStart()
+        {
+            bool readyToStart = true;
+
+            //Important to note:
+            //We allow players to start the game even if not enough players are present if everyone agrees to it.
+            foreach (String userId in this.LivingUsers)
+            {
+                User user = await UsersController.GetUserModel(userId);
+
+                if (user == null)
+                {
+                    ErrorLogger.Log("Invalid User ID found in room's player list.");
+                }
+                else if (!user.IsReady)
+                {
+                    readyToStart = false;
+                    break;
+                }
+            }
+
+            //If all players are ready, start the game.
+            if (readyToStart)
+            {
+                startGame();
+            }
+        }
+
+        /// <summary>
+        /// Gets a list of all enemies that are considered to be in my current sight, for suggestion purposes.
+        /// </summary>
+        public async Task<List<UserView>> GetEnemiesInSight(string i_FBID, GeoPoint i_Location, double i_Heading)
+        {
+            List<UserView> targets = new List<UserView>();
+
+            List<String> targetIds = this.LivingUsers;
+
+            if (targetIds != null && targetIds.Count > 0)
+            {
+                foreach (String userId in targetIds)
+                {
+                    User user = await UsersController.GetUserModel(userId);
+
+                    if (user != null && !user.FBID.Equals(i_FBID))
+                    {
+                        targets.Add(await user.GenerateView());
+                    }
+                }
+            }
+
+            return targets;
+        }
+
+        //Starts the game on the given room.
+        private async Task startGame()
+        {
+            try
+            {
+                //Update the room to set it as started.
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", this._id);
+                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update.Set("Started", true);
+
+                await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+
+                update = Builders<BsonDocument>.Update.Set("ExpirationTime", DateTime.Now.AddMinutes(this.GameModeDetails.GameDurationInMins));
+                await Mongo.Database.GetCollection<BsonDocument>("RoomExpiration").UpdateOneAsync(filter, update);
+
+                //Notify all players in the room that the game started.
+                PushNotificationUtils.PushEvent(new GameStartEvent(this._id.ToString()), this.LivingUsers);
+            }
+            catch (Exception e)
+            {
+                ErrorLogger.Log(e.Message);
+            }
         }
 
         /// <summary>
