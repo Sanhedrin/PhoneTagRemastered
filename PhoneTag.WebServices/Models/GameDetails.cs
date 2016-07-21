@@ -3,14 +3,14 @@ using MongoDB.Driver.GeoJsonObjectModel;
 using PhoneTag.SharedCodebase.Utils;
 using PhoneTag.SharedCodebase.Views;
 using PhoneTag.SharedCodebase.Views.GameModes;
-using PhoneTag.SharedCodebase.Models.GameModes;
+using PhoneTag.WebServices.Models.GameModes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PhoneTag.SharedCodebase.Models
+namespace PhoneTag.WebServices.Models
 {
     /// <summary>
     /// The game details model.

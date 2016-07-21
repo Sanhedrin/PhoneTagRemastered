@@ -1,4 +1,5 @@
-﻿using PhoneTag.SharedCodebase.Views;
+﻿using PhoneTag.WebServices.Models.GameModes;
+using PhoneTag.SharedCodebase.Views;
 using PhoneTag.SharedCodebase.Views.GameModes;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Web;
 
-namespace PhoneTag.SharedCodebase.Models.GameModes
+namespace PhoneTag.WebServices.Models.GameModes
 {
     public static class GameModeModelViewRelation
     {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace PhoneTag.SharedCodebase.Models.GameModes
+namespace PhoneTag.WebServices.Models.GameModes
 {
     public class TDMGameMode : GameMode
     {

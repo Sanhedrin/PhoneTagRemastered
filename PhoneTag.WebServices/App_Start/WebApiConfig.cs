@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 
-namespace PhoneTag.SharedCodebase
+namespace PhoneTag.WebServices
 {
     public static class WebApiConfig
     {

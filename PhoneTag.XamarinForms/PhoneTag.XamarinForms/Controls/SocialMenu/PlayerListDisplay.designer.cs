@@ -26,7 +26,7 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
             };
         }
 
-        private async void initializeComponent(PlayerDetailsTileType i_DetailType)
+        protected virtual async Task initializeComponent(PlayerDetailsTileType i_DetailType)
         {
             StackLayout friendList = await generatePlayerListPresenter(i_DetailType);
 

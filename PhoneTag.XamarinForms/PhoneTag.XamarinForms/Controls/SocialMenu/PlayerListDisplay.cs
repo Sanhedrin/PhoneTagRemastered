@@ -16,6 +16,7 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
         protected PlayerListDisplay()
         {
             initializeLoadingComponent();
+            Refresh();
         }
 
         protected void updatePlayerList(IEnumerable<UserView> i_Players, PlayerDetailsTileType i_DetailsType)
@@ -29,7 +30,7 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
         }
 
         //Creates a list containing player detail tiles for display.
-        private async Task<StackLayout> generatePlayerListPresenter(PlayerDetailsTileType i_DetailType)
+        protected async Task<StackLayout> generatePlayerListPresenter(PlayerDetailsTileType i_DetailType)
         {
             StackLayout playerDetailsList = new StackLayout();
 

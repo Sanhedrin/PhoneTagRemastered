@@ -7,7 +7,7 @@ using System.Web;
 using System.Web.Http;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using PhoneTag.SharedCodebase.Models;
+using PhoneTag.WebServices.Models;
 using PhoneTag.WebServices;
 
 namespace PhoneTag.SharedCodebase.Controllers

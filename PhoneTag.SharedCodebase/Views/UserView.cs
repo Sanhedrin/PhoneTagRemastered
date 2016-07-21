@@ -67,22 +67,22 @@ namespace PhoneTag.SharedCodebase.Views
         /// </summary>
         public void Quit()
         {
-            try
+            if(m_UserActivityCancellationToken != null)
             {
-                if (m_UserActivityCancellationToken != null)
-                {
-                    m_UserActivityCancellationToken.Cancel();
-                }
-                else
-                {
-                    throw new InvalidOperationException("Can't quit on a user that's not connected.");
-                }
+                m_UserActivityCancellationToken.Cancel();
             }
-            catch (Exception e)
+            else
             {
-                System.Diagnostics.Debug.WriteLine("EXCEPTION!");
-                System.Diagnostics.Debug.WriteLine(e.Message);
+                throw new InvalidOperationException("Can't quit on a user that's not connected.");
             }
+        }
+
+        /// <summary>
+        /// Tries to kill the given player, sending a confirmation prompt to them.
+        /// </summary>
+        public void TryKill(string i_FBID)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace PhoneTag.SharedCodebase.Views
             if (m_UserActivityCancellationToken == null)
             {
                 m_UserActivityCancellationToken = new CancellationTokenSource();
-
+                
                 //Unless we get cancelled, we'll keep pinging the server forever on occasion.
                 for (;;)
                 {
@@ -105,15 +105,10 @@ namespace PhoneTag.SharedCodebase.Views
                         m_UserActivityCancellationToken = null;
                         break;
                     }
-
+                    
                     using (HttpClient client = new HttpClient())
                     {
-                        UserView user = await client.PostMethodAsync(String.Format("users/{0}/ping", FBID));
-
-                        if (user != null)
-                        {
-                            UserView.SetLoggedInUser(user);
-                        }
+                        UserView.SetLoggedInUser(await client.PostMethodAsync(String.Format("users/{0}/ping", FBID)));
                     }
 
                     await this.Update();
@@ -123,8 +118,7 @@ namespace PhoneTag.SharedCodebase.Views
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("ERROR!");
-                System.Diagnostics.Debug.WriteLine("Trying to log in with a user that's already logged in");
+                throw new InvalidOperationException("Trying to log in with a user that's already logged in.");
             }
         }
 
@@ -179,14 +173,11 @@ namespace PhoneTag.SharedCodebase.Views
         {
             UserView view = await GetUser(FBID);
 
-            if (view != null)
-            {
-                this.PlayingIn = view.PlayingIn;
-                this.IsReady = view.IsReady;
-                this.IsActive = view.IsActive;
-                this.Friends = view.Friends;
-                this.Ammo = view.Ammo;
-            }
+            this.PlayingIn = view.PlayingIn;
+            this.IsReady = view.IsReady;
+            this.IsActive = view.IsActive;
+            this.Friends = view.Friends;
+            this.Ammo = view.Ammo;
         }
     }
 }

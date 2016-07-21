@@ -8,7 +8,7 @@ using System.Web.Http;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System.IO;
-using PhoneTag.SharedCodebase.Models;
+using PhoneTag.WebServices.Models;
 using PhoneTag.SharedCodebase.Views;
 using Nito.AsyncEx;
 using PhoneTag.SharedCodebase.Utils;
@@ -24,6 +24,7 @@ using PhoneTag.SharedCodebase.Controllers;
 using PhoneTag.SharedCodebase.Events.OpLogEvents;
 using PhoneTag.WebServices;
 using PhoneTag.WebServices.Utilities;
+using PhoneTag.WebServices.Controllers;
 
 namespace PhoneTag.SharedCodebase.Controllers
 {
@@ -250,6 +251,44 @@ namespace PhoneTag.SharedCodebase.Controllers
             GameRoom foundRoom = await GetRoomModel(i_RoomId);
 
             return (foundRoom != null) ? await foundRoom.GenerateView() : null;
+        }
+
+        [Route("api/rooms/{i_RoomId}/targets/{i_FBID}/{i_Lat}/{i_Lng}/{i_Heading}")]
+        [HttpGet]
+        public async Task<List<UserView>> GetEnemiesInSight(String i_RoomId, String i_FBID, double i_Lat, double i_Lng, double i_Heading)
+        {
+            List<UserView> targets = new List<UserView>();
+
+            if (!String.IsNullOrEmpty(i_RoomId) && !String.IsNullOrEmpty(i_FBID))
+            {
+                //GeoPoint location = new GeoPoint(i_Lat, i_Lng);
+
+                GameRoom room = await GetRoomModel(i_RoomId);
+
+                if (room != null)
+                {
+                    List<String> targetIds = room.LivingUsers;
+
+                    if (targetIds != null && targetIds.Count > 0)
+                    {
+                        foreach (String userId in targetIds)
+                        {
+                            User user = await UsersController.GetUserModel(userId);
+
+                            if (user != null && !user.FBID.Equals(i_FBID))
+                            {
+                                targets.Add(await user.GenerateView());
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                ErrorLogger.Log("Invalid room or user id");
+            }
+
+            return targets;
         }
 
         /// <summary>

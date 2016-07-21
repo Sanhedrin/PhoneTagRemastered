@@ -1,4 +1,5 @@
-﻿using Plugin.XamJam.Screen;
+﻿using PhoneTag.XamarinForms.Controls.SocialMenu;
+using Plugin.XamJam.Screen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,27 +13,48 @@ namespace PhoneTag.XamarinForms.Pages
     {
         private Image m_ShotView;
 
-        private void initializeComponent()
+        private async Task initializeComponent()
         {
             NavigationPage.SetHasNavigationBar(this, false);
 
-            m_ShotView = new Image
-            {
-                Aspect = Aspect.Fill,
-                HeightRequest = CrossScreen.Current.Size.Height * 2 / 5,
-                WidthRequest = CrossScreen.Current.Size.Width,
-            };
+            m_ShotView = generateShotImage();
+            ShotSuggestionListDisplay shotSuggestions = generatePlayerShotSuggestions();
 
             Title = "Main Page";
-            Content = new StackLayout
+            Content = new RelativeLayout
             {
                 VerticalOptions = new LayoutOptions
                 {
                     Alignment = LayoutAlignment.Fill
                 },
                 Children = {
-                    m_ShotView
                 }
+            };
+
+            (Content as RelativeLayout).Children.Add(m_ShotView,
+                Constraint.RelativeToParent((parent) => { return 0; }));
+
+            (Content as RelativeLayout).Children.Add(shotSuggestions,
+                widthConstraint: Constraint.RelativeToParent((parent) => { return parent.Width; }),
+                yConstraint: Constraint.RelativeToParent((parent) => { return parent.Height - shotSuggestions.HeightRequest; }));
+        }
+
+        private ShotSuggestionListDisplay generatePlayerShotSuggestions()
+        {
+            ShotSuggestionListDisplay container = new ShotSuggestionListDisplay();
+
+            container.HeightRequest = CrossScreen.Current.Size.Height / 6;
+
+            return container;
+        }
+
+        private Image generateShotImage()
+        {
+            return new Image
+            {
+                Aspect = Aspect.Fill,
+                HeightRequest = CrossScreen.Current.Size.Height * 2 / 5,
+                WidthRequest = CrossScreen.Current.Size.Width,
             };
         }
     }

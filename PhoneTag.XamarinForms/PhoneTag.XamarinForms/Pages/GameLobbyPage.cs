@@ -121,7 +121,7 @@ namespace PhoneTag.XamarinForms.Pages
 
             if (roomView != null)
             {
-                Application.Current.MainPage = new GamePage(roomView);
+                Application.Current.MainPage = new NavigationPage(new GamePage(roomView));
             }
             else
             {

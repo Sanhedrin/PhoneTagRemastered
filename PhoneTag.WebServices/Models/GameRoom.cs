@@ -10,8 +10,9 @@ using MongoDB.Bson;
 using PhoneTag.SharedCodebase.Controllers;
 using MongoDB.Driver.GeoJsonObjectModel;
 using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.WebServices.Controllers;
 
-namespace PhoneTag.SharedCodebase.Models
+namespace PhoneTag.WebServices.Models
 {
     /// <summary>
     /// The game room model.

@@ -1,7 +1,8 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
 using PhoneTag.SharedCodebase.Events.OpLogEvents;
-using PhoneTag.SharedCodebase.Models;
+using PhoneTag.WebServices.Controllers;
+using PhoneTag.WebServices.Models;
 using PhoneTag.WebServices.Utilities;
 using System;
 using System.Collections.Generic;

@@ -11,12 +11,6 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
 {
     public class LobbyPlayerListDisplay : PlayerListDisplay
     {
-        //Initializes the player list with the the player's friends.
-        public LobbyPlayerListDisplay()
-        {
-            Refresh();
-        }
-
         /// <summary>
         /// Refreshes the display to show more recent user status.
         /// </summary>

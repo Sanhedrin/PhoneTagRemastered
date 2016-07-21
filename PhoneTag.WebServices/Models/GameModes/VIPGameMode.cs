@@ -1,11 +1,8 @@
-﻿using PhoneTag.SharedCodebase.Views.GameModes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using PhoneTag.WebServices.Models;
+using PhoneTag.SharedCodebase.Views.GameModes;
 using System.Threading.Tasks;
-using System.Web;
 
-namespace PhoneTag.SharedCodebase.Models.GameModes
+namespace PhoneTag.WebServices.Models.GameModes
 {
     public class VIPGameMode : GameMode
     {

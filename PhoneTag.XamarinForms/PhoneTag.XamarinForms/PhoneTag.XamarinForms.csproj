@@ -39,21 +39,22 @@
     <Compile Include="App.cs" />
     <Compile Include="Controls\CameraControl\CameraOptions.cs" />
     <Compile Include="Controls\CameraControl\CameraPreview.cs" />
-    <Compile Include="Controls\SocialMenus\FriendListButton.cs" />
-    <Compile Include="Controls\SocialMenus\FriendListButton.designer.cs">
+    <Compile Include="Controls\SocialMenu\FriendListButton.cs" />
+    <Compile Include="Controls\SocialMenu\FriendListButton.designer.cs">
       <DependentUpon>FriendListButton.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\SocialMenus\FriendListDisplay.cs" />
-    <Compile Include="Controls\SocialMenus\LobbyPlayerListDisplay.cs" />
-    <Compile Include="Controls\SocialMenus\PlayerDetailTiles\FriendDetailsTile.cs" />
-    <Compile Include="Controls\SocialMenus\PlayerDetailTiles\LobbyPlayerDetailsTile.cs" />
-    <Compile Include="Controls\SocialMenus\PlayerDetailTiles\PlayerDetailsTile.cs" />
-    <Compile Include="Controls\SocialMenus\PlayerDetailTiles\PlayerDetailsTile.designer.cs">
+    <Compile Include="Controls\SocialMenu\FriendListDisplay.cs" />
+    <Compile Include="Controls\SocialMenu\LobbyPlayerListDisplay.cs" />
+    <Compile Include="Controls\SocialMenu\PlayerDetailTiles\FriendDetailsTile.cs" />
+    <Compile Include="Controls\SocialMenu\PlayerDetailTiles\LobbyPlayerDetailsTile.cs" />
+    <Compile Include="Controls\SocialMenu\PlayerDetailTiles\PlayerDetailsTile.cs" />
+    <Compile Include="Controls\SocialMenu\PlayerDetailTiles\PlayerDetailsTile.designer.cs">
       <DependentUpon>PlayerDetailsTile.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\SocialMenus\PlayerDetailTiles\PlayerDetailTileFactory.cs" />
-    <Compile Include="Controls\SocialMenus\PlayerListDisplay.cs" />
-    <Compile Include="Controls\SocialMenus\PlayerListDisplay.designer.cs">
+    <Compile Include="Controls\SocialMenu\PlayerDetailTiles\PlayerDetailTileFactory.cs" />
+    <Compile Include="Controls\SocialMenu\PlayerDetailTiles\ShotSuggestionDetailsTile.cs" />
+    <Compile Include="Controls\SocialMenu\PlayerListDisplay.cs" />
+    <Compile Include="Controls\SocialMenu\PlayerListDisplay.designer.cs">
       <DependentUpon>PlayerListDisplay.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\GameDetailsTile\GameDetailsTile.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="Controls\MapControl\GameMapSetup.cs" />
     <Compile Include="Controls\CameraControl\PictureReadyEventArgs.cs" />
     <Compile Include="Controls\CameraControl\TakePictureEventArgs.cs" />
+    <Compile Include="Controls\SocialMenu\ShotSuggestionListDisplay.cs" />
     <Compile Include="Extensions\GameDetailsPresenters.cs" />
     <Compile Include="Helpers\GameEventDispatcher.cs" />
     <Compile Include="Helpers\Settings.cs" />

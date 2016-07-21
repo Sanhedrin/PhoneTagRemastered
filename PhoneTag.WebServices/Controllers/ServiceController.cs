@@ -1,12 +1,11 @@
 ﻿using MongoDB.Driver;
-using PhoneTag.WebServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
 
-namespace PhoneTag.SharedCodebase.Controllers
+namespace PhoneTag.WebServices.Controllers
 {
     /// <summary>
     /// Controller to access service operations.

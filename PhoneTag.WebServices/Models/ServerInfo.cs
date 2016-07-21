@@ -6,7 +6,7 @@ using System.Web;
 using PhoneTag.SharedCodebase.Views;
 using System.Threading.Tasks;
 
-namespace PhoneTag.SharedCodebase.Models
+namespace PhoneTag.WebServices.Models
 {
     /// <summary>
     /// The server info model.

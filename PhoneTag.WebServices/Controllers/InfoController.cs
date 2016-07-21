@@ -8,7 +8,7 @@ using System.Web.Http;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System.IO;
-using PhoneTag.SharedCodebase.Models;
+using PhoneTag.WebServices.Models;
 using PhoneTag.SharedCodebase.Views;
 using System.Linq.Expressions;
 using PhoneTag.WebServices;

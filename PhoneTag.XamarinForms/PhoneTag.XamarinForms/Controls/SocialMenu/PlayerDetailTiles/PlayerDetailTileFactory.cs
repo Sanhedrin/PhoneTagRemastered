@@ -10,7 +10,8 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
     public enum PlayerDetailsTileType
     {
         Lobby,
-        FriendList
+        FriendList,
+        ShotSuggestions
     }
 
     public static class PlayerDetailsTileFactory
@@ -30,6 +31,9 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
                     break;
                 case PlayerDetailsTileType.Lobby:
                     tile = new LobbyPlayerDetailsTile(i_UserView);
+                    break;
+                case PlayerDetailsTileType.ShotSuggestions:
+                    tile = new ShotSuggestionDetailsTile(i_UserView);
                     break;
             }
 

@@ -11,12 +11,6 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
 {
     public class FriendListDisplay : PlayerListDisplay
     {
-        //Initializes the player list with the the player's friends.
-        public FriendListDisplay()
-        {
-            Refresh();
-        }
-
         /// <summary>
         /// Refreshes the display to show more recent user status.
         /// </summary>
@@ -28,7 +22,7 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
         }
 
         //Returns a collection of friend ids for the current player.
-        private static IEnumerable<UserView> getPlayerFriends()
+        private IEnumerable<UserView> getPlayerFriends()
         {
             return UserView.Current?.Friends;
         }

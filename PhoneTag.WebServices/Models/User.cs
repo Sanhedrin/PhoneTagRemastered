@@ -1,4 +1,4 @@
-﻿using PhoneTag.SharedCodebase;
+﻿using PhoneTag.WebServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,11 +6,11 @@ using System.Web;
 using PhoneTag.SharedCodebase.Views;
 using MongoDB.Bson;
 using System.Threading.Tasks;
-using PhoneTag.SharedCodebase.Controllers;
+using PhoneTag.WebServices.Controllers;
 using MongoDB.Driver.GeoJsonObjectModel;
 using PhoneTag.SharedCodebase.Utils;
 
-namespace PhoneTag.SharedCodebase.Models
+namespace PhoneTag.WebServices.Models
 {
     /// <summary>
     /// The user model.
@@ -42,13 +42,17 @@ namespace PhoneTag.SharedCodebase.Models
             userView.IsReady = IsReady;
             userView.IsActive = IsActive;
             userView.Ammo = Ammo;
-            userView.PlayingIn = PlayingIn;
 
-            if (CurrentLocation != null && CurrentLocation.Coordinates != null)
+            if (CurrentLocation != null)
             {
                 userView.CurrentLocation = new GeoPoint(CurrentLocation.Coordinates.Y, CurrentLocation.Coordinates.X);
             }
-            
+
+            if (PlayingIn != null)
+            {
+                userView.PlayingIn = PlayingIn;
+            }
+
             //We can't start generating views for each of my friends because it'll cause a cyclic
             //infinite loop.
             //We might not care about the entirety of the list though, and only get basic details.
@@ -59,24 +63,20 @@ namespace PhoneTag.SharedCodebase.Models
                 UserView friendView = new UserView();
                 User friend = await UsersController.GetUserModel(friendId);
 
-                if (friend != null)
+                friendView.Username = friend.Username;
+                friendView.FBID = friend.FBID;
+                friendView.ProfilePicUrl = friend.ProfilePicUrl;
+                friendView.Ammo = friend.Ammo;
+                friendView.IsReady = friend.IsReady;
+                friendView.Friends = null;
+                friendView.IsActive = friend.IsActive;
+
+                if (friend.CurrentLocation != null)
                 {
-                    friendView.FBID = friend.FBID;
-                    friendView.PlayingIn = friend.PlayingIn;
-                    friendView.ProfilePicUrl = friend.ProfilePicUrl;
-                    friendView.Username = friend.Username;
-                    friendView.Ammo = friend.Ammo;
-                    friendView.IsReady = friend.IsReady;
-                    friendView.Friends = null;
-                    friendView.IsActive = friend.IsActive;
-
-                    if (friend.CurrentLocation != null && friend.CurrentLocation.Coordinates != null)
-                    {
-                        friendView.CurrentLocation = new GeoPoint(friend.CurrentLocation.Coordinates.Y, friend.CurrentLocation.Coordinates.X);
-                    }
-
-                    userView.Friends.Add(friendView);
+                    friendView.CurrentLocation = new GeoPoint(friend.CurrentLocation.Coordinates.Y, friend.CurrentLocation.Coordinates.X);
                 }
+
+                userView.Friends.Add(friendView);
             }
 
             return userView;

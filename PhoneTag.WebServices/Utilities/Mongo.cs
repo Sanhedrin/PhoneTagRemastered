@@ -2,7 +2,7 @@
 using MongoDB.Bson;
 using MongoDB.Driver;
 using PhoneTag.SharedCodebase.Utils;
-using PhoneTag.SharedCodebase.Models;
+using PhoneTag.WebServices.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

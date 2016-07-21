@@ -11,6 +11,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using PhoneTag.SharedCodebase.Views;
 using PhoneTag.SharedCodebase.Events.GameEvents;
+using Plugin.Geolocator;
 
 namespace PhoneTag.XamarinForms.Pages
 {
@@ -41,6 +42,27 @@ namespace PhoneTag.XamarinForms.Pages
         private void setupPage()
         {
             m_Camera.PictureReady += GamePage_PictureReady;
+
+            startGeoLocationListening();
+        }
+        
+        //Starts listening to the geolocator, while looking for errors.
+        private async Task startGeoLocationListening()
+        {
+            if (!CrossGeolocator.Current.IsListening)
+            {
+                bool isReady = false;
+
+                if (CrossGeolocator.Current.IsGeolocationAvailable && CrossGeolocator.Current.IsGeolocationEnabled)
+                {
+                    isReady = await CrossGeolocator.Current.StartListeningAsync(1, 1);
+                }
+
+                if (!isReady)
+                {
+                    Application.Current.MainPage = new ErrorPage("GPS signal not found, please enable GPS");
+                }
+            }
         }
 
         private void GamePage_PictureReady(object sender, PictureReadyEventArgs e)

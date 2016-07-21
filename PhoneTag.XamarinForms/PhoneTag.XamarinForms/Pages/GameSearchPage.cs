@@ -62,11 +62,6 @@ namespace PhoneTag.XamarinForms.Pages
             Application.Current.MainPage = new ErrorPage("GPS signal not found, please enable GPS");
         }
 
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-        }
-
         //Looks for all nearby rooms and adds them to the search page results.
         private async Task populateRoomList()
         {

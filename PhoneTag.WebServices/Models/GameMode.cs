@@ -5,16 +5,14 @@ using System.Linq;
 using System.Web;
 using PhoneTag.SharedCodebase.Views;
 using PhoneTag.SharedCodebase.Utils;
-using PhoneTag.SharedCodebase.Models.GameModes;
+using PhoneTag.WebServices.Models.GameModes;
 using System.Threading.Tasks;
-using MongoDB.Bson.Serialization.Attributes;
 
-namespace PhoneTag.SharedCodebase.Models
+namespace PhoneTag.WebServices.Models
 {
     /// <summary>
     /// The game mode model.
     /// </summary>
-    [BsonKnownTypes(typeof(VIPGameMode), typeof(TDMGameMode))]
     public abstract class GameMode : IViewable
     {
         public ObjectId _id { get; set; }

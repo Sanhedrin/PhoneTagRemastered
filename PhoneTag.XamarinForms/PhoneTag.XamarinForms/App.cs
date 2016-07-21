@@ -1,24 +1,10 @@
-﻿using Plugin.Media;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-
+﻿
 using Xamarin.Forms;
-
-using Plugin.Media.Abstractions;
 
 using PhoneTag.XamarinForms.Pages;
 using com.shephertz.app42.paas.sdk.csharp;
-using PhoneTag.SharedCodebase.Utils;
-using System.Threading.Tasks;
-using PhoneTag.SharedCodebase.StaticInfo;
 using Plugin.Geolocator;
-using System.Threading;
-using System.Net.Http;
-using PhoneTag.SharedCodebase;
-using PhoneTag.SharedCodebase.Views;
+using PhoneTag.SharedCodebase.Utils;
 
 namespace PhoneTag.XamarinForms
 {
