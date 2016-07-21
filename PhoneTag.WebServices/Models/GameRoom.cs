@@ -250,23 +250,28 @@ namespace PhoneTag.WebServices.Models
         /// <summary>
         /// Gets a list of all enemies that are considered to be in my current sight, for suggestion purposes.
         /// </summary>
-        public async Task<List<UserView>> GetEnemiesInSight(string i_FBID, GeoPoint i_Location, double i_Heading)
+        public async Task<List<User>> GetEnemiesInSight(string i_FBID, GeoPoint i_Location, double i_Heading)
         {
-            List<UserView> targets = new List<UserView>();
+            List<User> targets = new List<User>();
 
-            List<String> targetIds = this.LivingUsers;
-
-            if (targetIds != null && targetIds.Count > 0)
+            try
             {
-                foreach (String userId in targetIds)
+                List<String> allTargetIds = this.GameModeDetails.Mode.GetEnemiesFor(i_FBID);
+                                
+                if (allTargetIds != null && allTargetIds.Count > 0)
                 {
-                    User user = await UsersController.GetUserModel(userId);
+                    //We only care about the living enemies.
+                    IEnumerable<String> livingTargetIds = allTargetIds.Intersect(LivingUsers);
 
-                    if (user != null && !user.FBID.Equals(i_FBID))
+                    foreach (String userId in livingTargetIds)
                     {
-                        targets.Add(await user.GenerateView());
+                        User user = await UsersController.GetUserModel(userId);
                     }
                 }
+            }
+            catch(Exception e)
+            {
+                ErrorLogger.Log(e.Message);
             }
 
             return targets;
@@ -277,6 +282,8 @@ namespace PhoneTag.WebServices.Models
         {
             try
             {
+                await setTeams();
+
                 //Update the room to set it as started.
                 FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", this._id);
                 UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update.Set("Started", true);
@@ -293,6 +300,19 @@ namespace PhoneTag.WebServices.Models
             {
                 ErrorLogger.Log(e.Message);
             }
+        }
+
+        //When the game starts, we'll randomize the players into teams according to the game's rules.
+        private async Task setTeams()
+        {
+            GameModeDetails.Mode.ArrangeTeams(LivingUsers);
+
+            //Update the newly created teams in the database.
+            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", this._id);
+            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update.Set("GameModeDetails", GameModeDetails);
+
+            await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+
         }
 
         /// <summary>

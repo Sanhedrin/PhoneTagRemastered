@@ -68,12 +68,7 @@ namespace PhoneTag.SharedCodebase.Views
             using (HttpClient client = new HttpClient())
             {
                 List<UserView> enemies = await client.GetMethodAsync<List<UserView>>(String.Format("rooms/{0}/targets/{1}/{2}/{3}/{4}", RoomId, UserView.Current.FBID, i_GeoPoint.Latitude, i_GeoPoint.Longitude, i_Heading));
-
-                if(enemies != null && enemies.Count > 0)
-                {
-                    //enemies = enemies.FindAll((user) => !UserView.Current.FBID.Equals(user.FBID));
-                }
-
+                
                 return enemies;
             }
         }

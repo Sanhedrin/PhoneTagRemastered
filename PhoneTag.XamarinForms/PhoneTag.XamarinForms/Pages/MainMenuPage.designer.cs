@@ -30,9 +30,7 @@ namespace PhoneTag.XamarinForms.Pages
 
         private FriendListButton generateFriendListButton()
         {
-            FriendListButton friendsButton = new FriendListButton()
-            {
-            };
+            FriendListButton friendsButton = new FriendListButton();
 
             return friendsButton;
         }

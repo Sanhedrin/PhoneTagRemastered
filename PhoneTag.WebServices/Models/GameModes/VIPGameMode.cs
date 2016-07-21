@@ -1,12 +1,16 @@
 ﻿using PhoneTag.WebServices.Models;
 using PhoneTag.SharedCodebase.Views.GameModes;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System;
+using PhoneTag.WebServices.Utilities;
 
 namespace PhoneTag.WebServices.Models.GameModes
 {
     public class VIPGameMode : GameMode
     {
         public int PlayersPerTeam { get; set; }
+        public List<string> VipForTeam { get; private set; }
 
         public override int TotalNumberOfPlayers
         {
@@ -16,12 +20,19 @@ namespace PhoneTag.WebServices.Models.GameModes
             }
         }
 
+        public VIPGameMode() : base()
+        {
+            VipForTeam = new List<String>();
+        }
+
         public override async Task<dynamic> GenerateView()
         {
             VIPGameModeView view = new VIPGameModeView();
 
             view.PlayersPerTeam = PlayersPerTeam;
-            
+            view.Teams = Teams;
+            view.VipForTeam = VipForTeam;
+
             return view;
         }
 
@@ -32,6 +43,43 @@ namespace PhoneTag.WebServices.Models.GameModes
             gameMode.PlayersPerTeam = i_GameMode.PlayersPerTeam;
 
             return gameMode;
+        }
+
+        /// <summary>
+        /// Arranges the players in this game into 2 teams and sets a VIP for each team.
+        /// </summary>
+        public override void ArrangeTeams(List<string> i_LivingUsers)
+        {
+            List<String> team1 = new List<string>(), team2;
+
+            List<String> usersToSplit = new List<String>(i_LivingUsers);
+
+            for (int i = 0; i <= i_LivingUsers.Count / 2; ++i)
+            {
+                int chosenUser = Randomizer.Range(usersToSplit.Count);
+
+                team1.Add(usersToSplit[chosenUser]);
+
+                usersToSplit.RemoveAt(chosenUser);
+            }
+
+            team2 = new List<String>(usersToSplit);
+
+            Teams.Add(team1);
+            Teams.Add(team2);
+
+            //Once the teams are set up, we choose a VIP for each side.
+            foreach (List<String> team in Teams)
+            {
+                if (team.Count > 0)
+                {
+                    VipForTeam.Add(team[Randomizer.Range(team.Count)]);
+                }
+                else
+                {
+                    VipForTeam.Add(null);
+                }
+            }
         }
     }
 }

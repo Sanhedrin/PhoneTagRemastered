@@ -13,7 +13,6 @@ using PhoneTag.SharedCodebase.Views;
 using Nito.AsyncEx;
 using PhoneTag.SharedCodebase.Utils;
 using MongoDB.Driver.GeoJsonObjectModel;
-using MongoDB.Driver.Linq;
 using MongoDB.Driver.Builders;
 using Newtonsoft.Json;
 using System.Linq.Expressions;
@@ -161,7 +160,15 @@ namespace PhoneTag.WebServices.Controllers
 
                 if (room != null)
                 {
-                    targets = await room.GetEnemiesInSight(i_FBID, location, i_Heading);
+                    List<User> enemiesInSight = await room.GetEnemiesInSight(i_FBID, location, i_Heading);
+
+                    foreach (User enemy in enemiesInSight)
+                    {
+                        if (enemy != null && !enemy.FBID.Equals(i_FBID))
+                        {
+                            targets.Add(await enemy.GenerateView());
+                        }
+                    }
                 }
             }
             else

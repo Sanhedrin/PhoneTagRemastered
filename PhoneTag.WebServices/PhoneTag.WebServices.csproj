@@ -228,6 +228,7 @@
     <Compile Include="Utilities\Mongo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\PushNotificationUtils.cs" />
+    <Compile Include="Utilities\Randomizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="apiapp.json" />

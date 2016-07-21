@@ -1,4 +1,5 @@
 ﻿using PhoneTag.SharedCodebase.Views.GameModes;
+using PhoneTag.WebServices.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace PhoneTag.WebServices.Models.GameModes
             TDMGameModeView view = new TDMGameModeView();
 
             view.PlayersPerTeam = PlayersPerTeam;
+            view.Teams = Teams;
 
             return view;
         }
@@ -35,6 +37,30 @@ namespace PhoneTag.WebServices.Models.GameModes
             gameMode.PlayersPerTeam = i_GameMode.PlayersPerTeam;
 
             return gameMode;
+        }
+
+        /// <summary>
+        /// Arranges the players in this game into 2 teams.
+        /// </summary>
+        public override void ArrangeTeams(List<string> i_LivingUsers)
+        {
+            List<String> team1 = new List<string>(), team2;
+
+            List<String> usersToSplit = new List<String>(i_LivingUsers);
+
+            for (int i = 0; i < i_LivingUsers.Count / 2; ++i)
+            {
+                int chosenUser = Randomizer.Range(usersToSplit.Count);
+
+                team1.Add(usersToSplit[chosenUser]);
+
+                usersToSplit.RemoveAt(chosenUser);
+            }
+
+            team2 = new List<String>(usersToSplit);
+
+            Teams.Add(team1);
+            Teams.Add(team2);
         }
     }
 }

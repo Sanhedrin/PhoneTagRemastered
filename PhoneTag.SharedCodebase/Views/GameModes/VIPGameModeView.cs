@@ -9,6 +9,8 @@ namespace PhoneTag.SharedCodebase.Views.GameModes
     public class VIPGameModeView : GameModeView
     {
         public int PlayersPerTeam { get; set; }
+        public List<string> VipForTeam { get; set; }
+
         public override int TotalNumberOfPlayers { get { return PlayersPerTeam * 2; } }
     }
 }

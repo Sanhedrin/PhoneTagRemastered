@@ -11,6 +11,7 @@ using MongoDB.Driver.GeoJsonObjectModel;
 using PhoneTag.SharedCodebase.Utils;
 using MongoDB.Driver;
 using PhoneTag.WebServices.Utilities;
+using PhoneTag.SharedCodebase.Events.GameEvents;
 
 namespace PhoneTag.WebServices.Models
 {
@@ -36,26 +37,31 @@ namespace PhoneTag.WebServices.Models
         public async Task<bool> SetReadyStatus(bool i_ReadyStatus)
         {
             bool newReadyStatus = i_ReadyStatus;
+            
+            //Add the room as the user's current playing room.
+            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", FBID);
+            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                .Set("IsReady", i_ReadyStatus);
 
+            IMongoCollection<BsonDocument> users = Mongo.Database.GetCollection<BsonDocument>("Users");
+
+            await users.UpdateOneAsync(filter, update);
+            
             //Checks if the game should start.
             if (String.IsNullOrEmpty(PlayingIn))
             {
                 newReadyStatus = false;
             }
-            else if (newReadyStatus)
+            else 
             {
-                //Add the room as the user's current playing room.
-                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", FBID);
-                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
-                    .Set("IsReady", i_ReadyStatus);
-
-                IMongoCollection<BsonDocument> users = Mongo.Database.GetCollection<BsonDocument>("Users");
-                
-                await users.UpdateOneAsync(filter, update);
-
                 GameRoom room = await RoomController.GetRoomModel(PlayingIn);
-                
-                if(room != null)
+
+                if (room.LivingUsers.Count > 0)
+                {
+                    PushNotificationUtils.PushEvent(new GameLobbyUpdateEvent(PlayingIn), room.LivingUsers);
+                }
+
+                if (newReadyStatus && room != null)
                 {
                     room.CheckGameStart();
                 }
@@ -129,7 +135,7 @@ namespace PhoneTag.WebServices.Models
                 //Add the room as the user's current playing room.
                 FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", FBID);
                 UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
-                    .Set<String>("PlayingIn", i_RoomId);
+                    .Set("PlayingIn", i_RoomId);
 
                 await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
 
