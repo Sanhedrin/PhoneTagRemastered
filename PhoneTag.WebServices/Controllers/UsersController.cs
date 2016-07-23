@@ -201,7 +201,7 @@ namespace PhoneTag.WebServices.Controllers
                 if (user != null)
                 {
                     ErrorLogger.Log("updating user position...");
-                    user.UpdatePosition(i_Latitude, i_Longitude);
+                    await user.UpdatePosition(i_Latitude, i_Longitude);
                 }
             }
             else
