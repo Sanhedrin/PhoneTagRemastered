@@ -73,7 +73,7 @@ namespace PhoneTag.XamarinForms.Pages
         private void GPS_PositionChanged(object sender, PositionEventArgs e)
         {
             GeoPoint position = new GeoPoint(e.Position.Latitude, e.Position.Longitude);
-            m_GameRoomView.UpdatePosition(UserView.Current.FBID, position);
+            UserView.Current.UpdatePosition(UserView.Current.FBID, position);
         }
 
         private void GamePage_PictureReady(object sender, PictureReadyEventArgs e)

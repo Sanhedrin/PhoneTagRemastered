@@ -73,14 +73,6 @@ namespace PhoneTag.SharedCodebase.Views
             }
         }
 
-        public async Task UpdatePosition(string i_FBID, GeoPoint i_position)
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                await client.PostMethodAsync(String.Format("users/{0}/position/{1}/{2}", i_FBID, i_position.Latitude, i_position.Longitude));
-            }
-        }
-
         /// <summary>
         /// Searches all the existing pending rooms in nearby proximity to the user.
         /// </summary>
