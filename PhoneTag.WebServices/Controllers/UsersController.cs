@@ -224,7 +224,7 @@ namespace PhoneTag.WebServices.Controllers
             }
             catch(Exception e)
             {
-                ErrorLogger.Log("Invalid object id given");
+                ErrorLogger.Log($"{e.Message}{Environment.NewLine}{e.StackTrace}");
             }
         }
 

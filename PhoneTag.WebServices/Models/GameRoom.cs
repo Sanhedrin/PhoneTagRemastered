@@ -192,21 +192,28 @@ namespace PhoneTag.WebServices.Models
         {
             if(LivingUsers.Contains(i_PlayerFBID) && !DeadUsers.Contains(i_PlayerFBID))
             {
-                LivingUsers.Remove(i_PlayerFBID);
-                DeadUsers.Add(i_PlayerFBID);
+                try
+                {
+                    LivingUsers.Remove(i_PlayerFBID);
+                    DeadUsers.Add(i_PlayerFBID);
 
-                //Update the room to add the player to it.
-                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", _id);
-                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update.Combine(
-                    Builders<BsonDocument>.Update.Set<List<String>>("LivingUsers", this.LivingUsers),
-                    Builders<BsonDocument>.Update.Set<List<String>>("DeadUsers", this.DeadUsers));
+                    //Update the room to add the player to it.
+                    FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", _id);
+                    UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                        .Set("LivingUsers", this.LivingUsers)
+                        .Set("DeadUsers", this.DeadUsers);
 
-                GameModeDetails.Mode.GameEnded += Mode_GameEnded;
-                GameModeDetails.Mode.GameStateUpdate(LivingUsers);
+                    GameModeDetails.Mode.GameEnded += Mode_GameEnded;
+                    GameModeDetails.Mode.GameStateUpdate(LivingUsers);
 
-                await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+                    await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
 
-                PushNotificationUtils.PushEvent(new PlayerKilledEvent(i_PlayerFBID), LivingUsers.Union(DeadUsers) as List<String>);
+                    PushNotificationUtils.PushEvent(new PlayerKilledEvent(i_PlayerFBID), LivingUsers.Union(DeadUsers) as List<String>);
+                }
+                catch (Exception e)
+                {
+                    ErrorLogger.Log($"{e.Message}{Environment.NewLine}{e.StackTrace}");
+                }
             }
         }
 
