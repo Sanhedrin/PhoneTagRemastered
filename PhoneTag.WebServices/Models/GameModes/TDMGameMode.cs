@@ -62,5 +62,10 @@ namespace PhoneTag.WebServices.Models.GameModes
             Teams.Add(team1);
             Teams.Add(team2);
         }
+
+        public override void GameStateUpdate()
+        {
+            
+        }
     }
 }

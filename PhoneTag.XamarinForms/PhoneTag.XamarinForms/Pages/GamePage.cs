@@ -85,10 +85,18 @@ namespace PhoneTag.XamarinForms.Pages
 
         private void ShootButton_Clicked(object sender, EventArgs e)
         {
-            buttonShoot.IsEnabled = false;
-            buttonShoot.Text = "Processing shot...";
+            if (buttonShoot.Text.Equals("Shoot!"))
+            {
+                buttonShoot.IsEnabled = false;
+                buttonShoot.Text = "Processing shot...";
 
-            m_Camera.TakePicture();
+                m_Camera.TakePicture();
+            }
+            else
+            {
+                Application.Current.MainPage = new NavigationPage(new MainMenuPage());
+                UserView.Current.LeaveGame();
+            }
         }
 
         public override void ParseEvent(Event i_EventDetails)
@@ -117,7 +125,15 @@ namespace PhoneTag.XamarinForms.Pages
 
         private void KillConfirmationDialog_KillConfirmed(object sender, EventArgs e)
         {
-            hideDialog();
+            playerKilled();
+        }
+
+        //Kill the current player and remove them from the game.
+        private async Task playerKilled()
+        {
+            await hideDialog();
+
+            await transitionToSpectatorMode();
         }
     }
 }

@@ -74,5 +74,7 @@ namespace PhoneTag.WebServices.Models
             
             return enemies.Count() > 0 ? enemies.ToList() : new List<string>();
         }
+
+        public abstract void GameStateUpdate();
     }
 }

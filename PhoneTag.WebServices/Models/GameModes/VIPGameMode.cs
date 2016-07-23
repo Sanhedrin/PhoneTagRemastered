@@ -81,5 +81,10 @@ namespace PhoneTag.WebServices.Models.GameModes
                 }
             }
         }
+
+        public override void GameStateUpdate()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

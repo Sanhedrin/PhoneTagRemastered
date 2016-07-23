@@ -135,6 +135,36 @@ namespace PhoneTag.WebServices.Controllers
         }
 
         /// <summary>
+        /// Removes user from the current game.
+        /// </summary>
+        [Route("api/users/{i_PlayerFBID}/leave")]
+        [HttpPost]
+        public async Task LeaveGame(String i_PlayerFBID)
+        {
+            if (!String.IsNullOrEmpty(i_PlayerFBID))
+            {
+                User user = await GetUserModel(i_PlayerFBID);
+
+                if (user != null)
+                {
+                    if (!String.IsNullOrEmpty(user.PlayingIn))
+                    {
+                        GameRoom room = await RoomController.GetRoomModel(user.PlayingIn);
+
+                        if(room != null)
+                        {
+                            await room.QuitRoom(i_PlayerFBID);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                ErrorLogger.Log("Invalid FBID given");
+            }
+        }
+
+        /// <summary>
         /// Player's attempt at killing another player.
         /// </summary>
         [Route("api/users/{i_AttackerId}/kill/{i_AttackedId}/{i_KillCamId}")]

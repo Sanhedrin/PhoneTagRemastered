@@ -114,6 +114,14 @@ namespace PhoneTag.SharedCodebase.Views
             }
         }
 
+        public async Task LeaveGame()
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                await client.PostMethodAsync($"users/{FBID}/leave");
+            }
+        }
+
         /// <summary>
         /// Requests that a new user be created with the given name, whereas a username is unique
         /// for all users.

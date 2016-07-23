@@ -97,7 +97,7 @@ namespace PhoneTag.WebServices.Models
                 {
                     //In the case the user left in the middle of the game, we'll consider it as the player
                     //having died.
-                    await KillPlayer(i_PlayerFBID);
+                    await QuitRoom(i_PlayerFBID);
                 }
                 //If the game didn't yet start, we just remove the player
                 else if (!this.Started && this.LivingUsers.Contains(i_PlayerFBID))
@@ -130,12 +130,77 @@ namespace PhoneTag.WebServices.Models
         }
 
         /// <summary>
-        /// Kills the given player removing them from the room.
+        /// If the player is in a room, it removes them from it completely.
         /// </summary>
-        /// <param name="i_PlayerFBID"></param>
-        /// <returns></returns>
+        public async Task QuitRoom(string i_PlayerFBID)
+        {
+            if (!String.IsNullOrEmpty(i_PlayerFBID))
+            {
+                User user = await UsersController.GetUserModel(i_PlayerFBID);
+
+                if(user != null)
+                {
+                    if (LivingUsers.Contains(i_PlayerFBID))
+                    {
+                        await KillPlayer(i_PlayerFBID);
+                    }
+
+                    if (DeadUsers.Contains(i_PlayerFBID))
+                    {
+                        await removePlayerFromRoom(i_PlayerFBID);
+                    }
+                }
+            }
+            else
+            {
+                ErrorLogger.Log("Invalid FBID given");
+            }
+        }
+
+        //Removes player from the active room completely
+        private async Task removePlayerFromRoom(string i_PlayerFBID)
+        {
+            try
+            {
+                this.DeadUsers.Remove(i_PlayerFBID);
+
+                //Update the room to add the player to it.
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", _id);
+                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                    .Set<List<String>>("DeadUsers", this.DeadUsers);
+
+                await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+            }
+            catch (Exception e)
+            {
+                ErrorLogger.Log(String.Format("{0}{1}{2}", e.Message, Environment.NewLine, e.StackTrace));
+            }
+
+            //Add the room as the user's current playing room.
+            User user = await UsersController.GetUserModel(i_PlayerFBID);
+            await user.LeaveRoom();
+        }
+
+        /// <summary>
+        /// Kills the given player.
+        /// </summary>
         public async Task KillPlayer(string i_PlayerFBID)
         {
+            if(LivingUsers.Contains(i_PlayerFBID) && !DeadUsers.Contains(i_PlayerFBID))
+            {
+                LivingUsers.Remove(i_PlayerFBID);
+                DeadUsers.Add(i_PlayerFBID);
+
+                //Update the room to add the player to it.
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", _id);
+                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update.Combine(
+                    Builders<BsonDocument>.Update.Set<List<String>>("LivingUsers", this.LivingUsers),
+                    Builders<BsonDocument>.Update.Set<List<String>>("DeadUsers", this.DeadUsers));
+
+                GameModeDetails.Mode.GameStateUpdate();
+
+                await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+            }
         }
 
         /// <summary>
