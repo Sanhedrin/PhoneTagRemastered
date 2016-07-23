@@ -188,6 +188,28 @@ namespace PhoneTag.WebServices.Controllers
         }
 
         /// <summary>
+        /// Player's attempt at killing another player.
+        /// </summary>
+        [Route("api/users/{i_PlayerFBID}/position/{i_Latitude}/{i_Longitude}")]
+        [HttpPost]
+        public async Task updateUserPosition(String i_PlayerFBID, double i_Latitude, double i_Longitude)
+        {
+            if (!String.IsNullOrEmpty(i_PlayerFBID))
+            {
+                User user = await GetUserModel(i_PlayerFBID);
+
+                if (user != null)
+                {
+                    user.UpdatePosition(i_Latitude, i_Longitude);
+                }
+            }
+            else
+            {
+                ErrorLogger.Log("Invalid FBID given");
+            }
+        }
+
+        /// <summary>
         /// Sets the user as inactive.
         /// </summary>
         public static async Task Quit(ObjectId i_ExpiredId)
