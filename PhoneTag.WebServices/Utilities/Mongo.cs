@@ -96,7 +96,7 @@ namespace PhoneTag.WebServices
             }
             catch (Exception e)
             {
-                ErrorLogger.Log(e.Message);
+                ErrorLogger.Log(String.Format("{0}{1}{2}", e.Message, Environment.NewLine, e.StackTrace));
             }
         }
 
@@ -143,7 +143,7 @@ namespace PhoneTag.WebServices
             }
             catch (Exception e)
             {
-                ErrorLogger.Log(e.Message);
+                ErrorLogger.Log(String.Format("{0}{1}{2}", e.Message, Environment.NewLine, e.StackTrace));
             }
         }
     }

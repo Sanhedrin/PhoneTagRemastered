@@ -33,6 +33,15 @@ namespace PhoneTag.XamarinForms.Droid
 
             LoadApplication(new App());
         }
+
+        public override void OnBackPressed()
+        {
+            if(App.Current.MainPage?.Navigation != null 
+                && App.Current.MainPage.Navigation.NavigationStack.Count > 1)
+            {
+                base.OnBackPressed();
+            }
+        }
     }
 }
 

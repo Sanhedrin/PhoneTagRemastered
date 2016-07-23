@@ -115,7 +115,7 @@ namespace PhoneTag.WebServices.Models
                     }
                     catch (Exception e)
                     {
-                        ErrorLogger.Log(e.Message);
+                        ErrorLogger.Log(String.Format("{0}{1}{2}", e.Message, Environment.NewLine, e.StackTrace));
                     }
 
                     //Add the room as the user's current playing room.
@@ -179,7 +179,7 @@ namespace PhoneTag.WebServices.Models
                     catch (Exception e)
                     {
                         success = false;
-                        ErrorLogger.Log(e.Message);
+                        ErrorLogger.Log(String.Format("{0}{1}{2}", e.Message, Environment.NewLine, e.StackTrace));
                     }
                 }
             }
@@ -211,7 +211,7 @@ namespace PhoneTag.WebServices.Models
             }
             catch (Exception e)
             {
-                ErrorLogger.Log(e.Message);
+                ErrorLogger.Log(String.Format("{0}{1}{2}", e.Message, Environment.NewLine, e.StackTrace));
             }
         }
 
@@ -247,6 +247,31 @@ namespace PhoneTag.WebServices.Models
             }
         }
 
+        //Starts the game on the given room.
+        private async Task startGame()
+        {
+            try
+            {
+                await setTeams();
+
+                //Update the room to set it as started.
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", this._id);
+                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update.Set("Started", true);
+
+                await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+
+                update = Builders<BsonDocument>.Update.Set("ExpirationTime", DateTime.Now.AddMinutes(this.GameModeDetails.GameDurationInMins));
+                await Mongo.Database.GetCollection<BsonDocument>("RoomExpiration").UpdateOneAsync(filter, update);
+
+                //Notify all players in the room that the game started.
+                PushNotificationUtils.PushEvent(new GameStartEvent(this._id.ToString()), this.LivingUsers);
+            }
+            catch (Exception e)
+            {
+                ErrorLogger.Log(String.Format("{0}{1}{2}", e.Message, Environment.NewLine, e.StackTrace));
+            }
+        }
+
         /// <summary>
         /// Gets a list of all enemies that are considered to be in my current sight, for suggestion purposes.
         /// </summary>
@@ -271,35 +296,10 @@ namespace PhoneTag.WebServices.Models
             }
             catch(Exception e)
             {
-                ErrorLogger.Log(e.Message);
+                ErrorLogger.Log(String.Format("{0}{1}{2}", e.Message, Environment.NewLine, e.StackTrace));
             }
 
             return targets;
-        }
-
-        //Starts the game on the given room.
-        private async Task startGame()
-        {
-            try
-            {
-                await setTeams();
-
-                //Update the room to set it as started.
-                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", this._id);
-                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update.Set("Started", true);
-
-                await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
-
-                update = Builders<BsonDocument>.Update.Set("ExpirationTime", DateTime.Now.AddMinutes(this.GameModeDetails.GameDurationInMins));
-                await Mongo.Database.GetCollection<BsonDocument>("RoomExpiration").UpdateOneAsync(filter, update);
-
-                //Notify all players in the room that the game started.
-                PushNotificationUtils.PushEvent(new GameStartEvent(this._id.ToString()), this.LivingUsers);
-            }
-            catch (Exception e)
-            {
-                ErrorLogger.Log(e.Message);
-            }
         }
 
         //When the game starts, we'll randomize the players into teams according to the game's rules.

@@ -11,6 +11,8 @@ namespace PhoneTag.XamarinForms.Pages
 {
     public partial class ShotDisplayPage : TrailableContentPage
     {
+        public event EventHandler ShotCancelled;
+
         private Image m_ShotView;
 
         private async Task initializeComponent()
@@ -56,6 +58,16 @@ namespace PhoneTag.XamarinForms.Pages
                 HeightRequest = CrossScreen.Current.Size.Height * 2 / 5,
                 WidthRequest = CrossScreen.Current.Size.Width,
             };
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            if(ShotCancelled != null)
+            {
+                ShotCancelled(this, new EventArgs());
+            }
+
+            return base.OnBackButtonPressed();
         }
     }
 }

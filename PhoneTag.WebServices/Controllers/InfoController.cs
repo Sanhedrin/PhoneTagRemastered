@@ -44,7 +44,7 @@ namespace PhoneTag.SharedCodebase.Controllers
             catch (Exception e)
             {
                 gameModeNames = null;
-                ErrorLogger.Log(e.Message);
+                ErrorLogger.Log(String.Format("{0}{1}{2}", e.Message, Environment.NewLine, e.StackTrace));
             }
 
             return gameModeNames;
@@ -69,7 +69,7 @@ namespace PhoneTag.SharedCodebase.Controllers
             catch (Exception e)
             {
                 version = null;
-                ErrorLogger.Log(e.Message);
+                ErrorLogger.Log(String.Format("{0}{1}{2}", e.Message, Environment.NewLine, e.StackTrace));
             }
 
             return version;

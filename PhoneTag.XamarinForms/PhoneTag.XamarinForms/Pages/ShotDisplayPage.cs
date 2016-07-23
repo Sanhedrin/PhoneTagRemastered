@@ -16,12 +16,16 @@ namespace PhoneTag.XamarinForms.Pages
     /// </summary>
     public partial class ShotDisplayPage : TrailableContentPage
     {
+        public static byte[] LastKillCam { get; private set; }
+
         /// <summary>
         /// Initializes the page with the given shot information.
         /// </summary>
         /// <param name="i_ShotPictureBuffer">The picture that was taken of the shot player.</param>
         public ShotDisplayPage(byte[] i_ShotPictureBuffer) : base()
         {
+            LastKillCam = i_ShotPictureBuffer;
+
             initializeComponent();
 
             m_ShotView.Source = ImageSource.FromStream(() => new MemoryStream(i_ShotPictureBuffer));
@@ -31,7 +35,6 @@ namespace PhoneTag.XamarinForms.Pages
 
         public override void ParseEvent(Event i_EventDetails)
         {
-            throw new NotImplementedException();
         }
     }
 }

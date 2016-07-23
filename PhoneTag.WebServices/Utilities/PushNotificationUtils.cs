@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using com.shephertz.app42.paas.sdk.csharp;
 using com.shephertz.app42.paas.sdk.csharp.pushNotification;
 using PhoneTag.SharedCodebase.Events.GameEvents;
+using PhoneTag.WebServices;
+using MongoDB.Bson;
+using PhoneTag.WebServices.Utilities;
 
 namespace PhoneTag.SharedCodebase.Utils
 {
@@ -14,11 +17,18 @@ namespace PhoneTag.SharedCodebase.Utils
     {
         public static void PushEvent(Event i_Event, List<string> i_SendTo)
         {
-            String gameStartEventMessage = JsonConvert.SerializeObject(i_Event, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
-            gameStartEventMessage = gameStartEventMessage.Replace('\"', '\'');
+            try
+            {
+                String eventMessage = JsonConvert.SerializeObject(i_Event, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
+                eventMessage = eventMessage.Replace('\"', '\'');
 
-            PushNotificationService pushService = App42API.BuildPushNotificationService();
-            pushService.SendPushMessageToGroup(gameStartEventMessage, i_SendTo);
+                PushNotificationService pushService = App42API.BuildPushNotificationService();
+                pushService.SendPushMessageToGroup(eventMessage, i_SendTo);
+            }
+            catch(Exception e)
+            {
+                ErrorLogger.Log(String.Format("{0}{1}{2}", e.Message, Environment.NewLine, e.StackTrace));
+            }
         }
     }
 }

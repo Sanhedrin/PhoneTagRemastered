@@ -1,4 +1,5 @@
 ﻿using PhoneTag.SharedCodebase.Views;
+using PhoneTag.XamarinForms.Pages;
 using Plugin.XamJam.Screen;
 using System;
 using System.Collections.Generic;
@@ -52,10 +53,10 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
         {
             StackLayout layout = new StackLayout();
 
-            Button chooseTargetButton = generateChooseTargetButton();
-
             layout.Orientation = StackOrientation.Horizontal;
             layout.HorizontalOptions = new LayoutOptions() { Alignment = LayoutAlignment.End };
+
+            Button chooseTargetButton = generateChooseTargetButton();
 
             layout.Children.Add(chooseTargetButton);
 
@@ -67,7 +68,11 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
             Button chooseTargetButton = new Button();
 
             chooseTargetButton.Text = "Choose target";
-            chooseTargetButton.Command = new Command(() => { UserView.Current.TryKill(m_UserView.FBID); });
+            chooseTargetButton.Command = new Command(() => 
+            {
+                UserView.Current?.TryKill(m_UserView.FBID, ShotDisplayPage.LastKillCam);
+                Application.Current.MainPage.Navigation.PopAsync();
+            });
 
             return chooseTargetButton;
         }

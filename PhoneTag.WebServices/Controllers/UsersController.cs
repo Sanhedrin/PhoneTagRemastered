@@ -135,6 +135,29 @@ namespace PhoneTag.WebServices.Controllers
         }
 
         /// <summary>
+        /// Player's attempt at killing another player.
+        /// </summary>
+        [Route("api/users/{i_AttackerId}/kill/{i_AttackedId}/{i_KillCamId}")]
+        [HttpPost]
+        public async Task TryKill(String i_AttackerId, String i_AttackedId, String i_KillCamId)
+        {
+            if (!String.IsNullOrEmpty(i_AttackerId) && !String.IsNullOrEmpty(i_AttackedId) && !String.IsNullOrEmpty(i_KillCamId))
+            {
+                User attackedPlayer = await GetUserModel(i_AttackedId);
+
+                if (attackedPlayer != null)
+                {
+                    await attackedPlayer.KillRequest(i_AttackerId, i_KillCamId);
+                }
+            }
+            else
+            {
+                ErrorLogger.Log(String.Format("Invalid input values given: {0}, {1}, {2}", 
+                    i_AttackedId, i_AttackerId, i_KillCamId));
+            }
+        }
+
+        /// <summary>
         /// Sets the user as inactive.
         /// </summary>
         public static async Task Quit(ObjectId i_ExpiredId)

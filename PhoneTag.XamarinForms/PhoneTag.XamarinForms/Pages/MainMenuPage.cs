@@ -1,5 +1,7 @@
 ﻿using PhoneTag.SharedCodebase.Events.GameEvents;
 using PhoneTag.SharedCodebase.Views;
+using PhoneTag.XamarinForms.Controls.KillDisputeResolver;
+using Plugin.XamJam.Screen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +34,6 @@ namespace PhoneTag.XamarinForms.Pages
 
         public override void ParseEvent(Event i_EventDetails)
         {
-            throw new NotImplementedException();
         }
     }
 }

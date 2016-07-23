@@ -56,7 +56,7 @@ namespace PhoneTag.WebServices.Models
             {
                 GameRoom room = await RoomController.GetRoomModel(PlayingIn);
 
-                if (room.LivingUsers.Count > 0)
+                if (room != null && room.LivingUsers.Count > 0)
                 {
                     PushNotificationUtils.PushEvent(new GameLobbyUpdateEvent(PlayingIn), room.LivingUsers);
                 }
@@ -121,6 +121,24 @@ namespace PhoneTag.WebServices.Models
                 if (room != null)
                 {
                     await room.LeaveRoom(FBID);
+                }
+            }
+        }
+
+        public async Task KillRequest(string i_RequestedByFBID, String i_KillCamId)
+        {
+            User killer = await UsersController.GetUserModel(i_RequestedByFBID);
+
+            if (killer != null)
+            {
+                try
+                {
+                    KillRequestEvent killRequestEvent = new KillRequestEvent(killer.Username, i_KillCamId);
+                    PushNotificationUtils.PushEvent(killRequestEvent, new List<string>() { FBID });
+                }
+                catch(Exception e)
+                {
+                    ErrorLogger.Log(String.Format("{0}{1}{2}", e.Message, Environment.NewLine, e.StackTrace));
                 }
             }
         }

@@ -62,7 +62,7 @@ namespace PhoneTag.WebServices.Controllers
                 catch (Exception e)
                 {
                     roomId = null;
-                    ErrorLogger.Log(e.Message);
+                    ErrorLogger.Log(String.Format("{0}{1}{2}", e.Message, Environment.NewLine, e.StackTrace));
                 }
             }
 
@@ -217,7 +217,7 @@ namespace PhoneTag.WebServices.Controllers
             }
             catch (Exception e)
             {
-                ErrorLogger.Log(e.Message);
+                ErrorLogger.Log(String.Format("{0}{1}{2}", e.Message, Environment.NewLine, e.StackTrace));
             }
 
             return roomIds;
@@ -249,7 +249,7 @@ namespace PhoneTag.WebServices.Controllers
                 catch (Exception e)
                 {
                     foundRoom = null;
-                    ErrorLogger.Log(e.Message);
+                    ErrorLogger.Log(String.Format("{0}{1}{2}", e.Message, Environment.NewLine, e.StackTrace));
                 }
             }
             else

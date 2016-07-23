@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using PhoneTag.SharedCodebase.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -113,6 +114,57 @@ namespace PhoneTag.SharedCodebase
             }
 
             return (T)JsonConvert.DeserializeObject(jsonResponse, typeof(T), new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+        }
+
+        /// <summary>
+        /// Uploads the given image to imgur as an annonymous upload.
+        /// </summary>
+        /// <param name="i_ImageData">The byte array representing the image we want to upload.</param>
+        /// <returns>The ID of the uploaded image, as should be used in a get request for this image.</returns>
+        public static async Task<String> PostImgurImageAsync(this HttpClient i_HttpClient, byte[] i_ImageData)
+        {
+            String imageId = String.Empty;
+
+            i_HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Client-ID", Keys.ImgurClientId);
+
+            using (HttpRequestMessage uploadRequest = new HttpRequestMessage(HttpMethod.Post, Keys.ImageHostingServiceUploadUrl))
+            {
+                MultipartFormDataContent uploadContent = new MultipartFormDataContent($"{DateTime.UtcNow.Ticks}")
+                {
+                    { new StringContent("file"), "type" },
+                    { new ByteArrayContent(i_ImageData), "image" }
+                };
+
+                uploadRequest.Content = uploadContent;
+
+                try
+                {
+                    HttpResponseMessage uploadResponse = await i_HttpClient.SendAsync(uploadRequest).ConfigureAwait(false);
+
+                    //Obtain the result and deserialize it.
+                    string jsonResponse = await uploadResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                    if (!uploadResponse.IsSuccessStatusCode)
+                    {
+                        System.Diagnostics.Debug.WriteLine("EXCEPTION!");
+                        System.Diagnostics.Debug.WriteLine(jsonResponse);
+                        throw new HttpRequestException(jsonResponse);
+                    }
+
+                    dynamic uploadedImageObject = JsonConvert.DeserializeObject(jsonResponse, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+
+                    if(uploadedImageObject != null)
+                    {
+                        imageId = uploadedImageObject.data.id;
+                    }
+                }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine(e.Message);
+                }
+
+                return imageId;
+            }
         }
     }
 }

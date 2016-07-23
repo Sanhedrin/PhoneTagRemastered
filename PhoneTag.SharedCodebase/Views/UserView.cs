@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PhoneTag.SharedCodebase;
 using PhoneTag.SharedCodebase.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
@@ -75,14 +75,6 @@ namespace PhoneTag.SharedCodebase.Views
             {
                 throw new InvalidOperationException("Can't quit on a user that's not connected.");
             }
-        }
-
-        /// <summary>
-        /// Tries to kill the given player, sending a confirmation prompt to them.
-        /// </summary>
-        public void TryKill(string i_FBID)
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -163,6 +155,29 @@ namespace PhoneTag.SharedCodebase.Views
             using (HttpClient client = new HttpClient())
             {
                 return await client.GetMethodAsync<UserView>(String.Format("users/{0}", i_FBID));
+            }
+        }
+
+        /// <summary>
+        /// Tries to kill the given player, sending a confirmation prompt to them.
+        /// </summary>
+        public async Task TryKill(string i_FBID, byte[] i_KillCam)
+        {
+            String imageId = String.Empty;
+
+            //First, we upload the image we just took to our image hosting service of choice
+            using (HttpClient uploadClient = new HttpClient())
+            {
+                imageId = await uploadClient.PostImgurImageAsync(i_KillCam);
+            }
+
+            //Then we upload the kill request with the image id we just obtained as the killcam image.
+            if (!String.IsNullOrEmpty(imageId))
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    await client.PostMethodAsync($"users/{UserView.Current?.FBID}/kill/{i_FBID}/{imageId}");
+                }
             }
         }
 

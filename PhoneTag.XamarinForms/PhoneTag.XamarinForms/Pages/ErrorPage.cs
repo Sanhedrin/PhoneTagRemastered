@@ -25,7 +25,6 @@ namespace PhoneTag.XamarinForms.Pages
 
         public override void ParseEvent(Event i_EventDetails)
         {
-            throw new NotImplementedException();
         }
     }
 }

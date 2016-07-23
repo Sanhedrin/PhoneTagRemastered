@@ -12,6 +12,7 @@ using Xamarin.Forms.Maps;
 using PhoneTag.SharedCodebase.Views;
 using PhoneTag.SharedCodebase.Events.GameEvents;
 using Plugin.Geolocator;
+using PhoneTag.XamarinForms.Controls.KillDisputeResolver;
 
 namespace PhoneTag.XamarinForms.Pages
 {
@@ -72,17 +73,51 @@ namespace PhoneTag.XamarinForms.Pages
 
         private async Task pictureReady(byte[] i_PictureData)
         {
-            await Navigation.PushAsync(new ShotDisplayPage(i_PictureData));
+            ShotDisplayPage shotDisplayPage = new ShotDisplayPage(i_PictureData);
+            shotDisplayPage.ShotCancelled += (o, e) =>
+            {
+                buttonShoot.IsEnabled = true;
+                buttonShoot.Text = "Shoot!";
+            };
+
+            await Navigation.PushAsync(shotDisplayPage);
         }
 
-        private void ShootButton_Clicked()
+        private void ShootButton_Clicked(object sender, EventArgs e)
         {
+            buttonShoot.IsEnabled = false;
+            buttonShoot.Text = "Processing shot...";
+
             m_Camera.TakePicture();
         }
 
         public override void ParseEvent(Event i_EventDetails)
         {
-            throw new NotImplementedException();
+            if(i_EventDetails is KillRequestEvent)
+            {
+                handleKillRequestEvent(i_EventDetails as KillRequestEvent);
+            }
+        }
+
+        //Triggers when another player issues a kill command on you.
+        private void handleKillRequestEvent(KillRequestEvent i_KillRequestEvent)
+        {
+            KillConfirmationDialog killConfirmationDialog = new KillConfirmationDialog(i_KillRequestEvent);
+
+            killConfirmationDialog.KillConfirmed += KillConfirmationDialog_KillConfirmed;
+            killConfirmationDialog.KillDenied += KillConfirmationDialog_KillDenied;
+
+            showDialog(killConfirmationDialog);
+        }
+        
+        private void KillConfirmationDialog_KillDenied(object sender, EventArgs e)
+        {
+            hideDialog();
+        }
+
+        private void KillConfirmationDialog_KillConfirmed(object sender, EventArgs e)
+        {
+            hideDialog();
         }
     }
 }
