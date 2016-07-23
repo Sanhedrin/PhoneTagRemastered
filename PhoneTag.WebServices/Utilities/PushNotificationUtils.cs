@@ -17,17 +17,20 @@ namespace PhoneTag.SharedCodebase.Utils
     {
         public static void PushEvent(Event i_Event, List<string> i_SendTo)
         {
-            try
+            if (i_SendTo != null && i_SendTo.Count > 0)
             {
-                String eventMessage = JsonConvert.SerializeObject(i_Event, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
-                eventMessage = eventMessage.Replace('\"', '\'');
+                try
+                {
+                    String eventMessage = JsonConvert.SerializeObject(i_Event, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
+                    eventMessage = eventMessage.Replace('\"', '\'');
 
-                PushNotificationService pushService = App42API.BuildPushNotificationService();
-                pushService.SendPushMessageToGroup(eventMessage, i_SendTo);
-            }
-            catch(Exception e)
-            {
-                ErrorLogger.Log(String.Format("{0}{1}{2}", e.Message, Environment.NewLine, e.StackTrace));
+                    PushNotificationService pushService = App42API.BuildPushNotificationService();
+                    pushService.SendPushMessageToGroup(eventMessage, i_SendTo);
+                }
+                catch (Exception e)
+                {
+                    ErrorLogger.Log(String.Format("{0}{1}{2}", e.Message, Environment.NewLine, e.StackTrace));
+                }
             }
         }
     }
