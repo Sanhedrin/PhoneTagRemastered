@@ -188,7 +188,7 @@ namespace PhoneTag.WebServices.Controllers
         }
 
         /// <summary>
-        /// Player's attempt at killing another player.
+        /// update user current position.
         /// </summary>
         [Route("api/users/{i_PlayerFBID}/position/{i_Latitude}/{i_Longitude}")]
         [HttpPost]
@@ -200,6 +200,7 @@ namespace PhoneTag.WebServices.Controllers
 
                 if (user != null)
                 {
+                    ErrorLogger.Log("updating user position...");
                     user.UpdatePosition(i_Latitude, i_Longitude);
                 }
             }

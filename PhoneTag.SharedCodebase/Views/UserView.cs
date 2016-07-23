@@ -202,5 +202,14 @@ namespace PhoneTag.SharedCodebase.Views
             this.Friends = view.Friends;
             this.Ammo = view.Ammo;
         }
+
+        public async Task UpdatePosition(string i_FBID, GeoPoint i_Position)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                await client.PostMethodAsync(String.Format("users/{0}/position/{1}/{2}", i_FBID, i_Position.Latitude, i_Position.Longitude));
+            }
+        }
+
     }
 }
