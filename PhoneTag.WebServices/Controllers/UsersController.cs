@@ -194,6 +194,7 @@ namespace PhoneTag.WebServices.Controllers
         [HttpPost]
         public async Task updateUserPosition(String i_PlayerFBID, double i_Latitude, double i_Longitude)
         {
+            ErrorLogger.Log("updating user position...");
             if (!String.IsNullOrEmpty(i_PlayerFBID))
             {
                 User user = await GetUserModel(i_PlayerFBID);
