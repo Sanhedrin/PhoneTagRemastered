@@ -1,4 +1,5 @@
-﻿using PhoneTag.SharedCodebase.Views.GameModes;
+﻿using PhoneTag.SharedCodebase.Events.GameEvents;
+using PhoneTag.SharedCodebase.Views.GameModes;
 using PhoneTag.WebServices.Utilities;
 using System;
 using System.Collections.Generic;
@@ -63,9 +64,17 @@ namespace PhoneTag.WebServices.Models.GameModes
             Teams.Add(team2);
         }
 
-        public override void GameStateUpdate()
+        public override void GameStateUpdate(List<String> i_LivingUsers)
         {
-            
+            //If all members on this team are dead, the game ends.
+            if(Teams[0].Intersect(i_LivingUsers).Count() == 0)
+            {
+                onGameEnded(new GameEndedEventArgs(new GameEndedEvent(Teams[1])));
+            }
+            else if(Teams[1].Intersect(i_LivingUsers).Count() == 0)
+            {
+                onGameEnded(new GameEndedEventArgs(new GameEndedEvent(Teams[0])));
+            }
         }
     }
 }

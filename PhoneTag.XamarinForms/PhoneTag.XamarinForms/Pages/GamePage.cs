@@ -105,6 +105,16 @@ namespace PhoneTag.XamarinForms.Pages
             {
                 handleKillRequestEvent(i_EventDetails as KillRequestEvent);
             }
+            else if(i_EventDetails is PlayerKilledEvent)
+            {
+                handlePlayerKilledEvent(i_EventDetails as PlayerKilledEvent);
+            }
+        }
+
+        //Triggers when a player dies.
+        private void handlePlayerKilledEvent(PlayerKilledEvent i_PlayerKilledEvent)
+        {
+            displayNotification(i_PlayerKilledEvent);
         }
 
         //Triggers when another player issues a kill command on you.

@@ -215,6 +215,7 @@
     </Compile>
     <Compile Include="Models\GameDetails.cs" />
     <Compile Include="Models\GameMode.cs" />
+    <Compile Include="Models\GameModes\GameEndedEventArgs.cs" />
     <Compile Include="Models\GameModes\GameModeModelViewRelation.cs" />
     <Compile Include="Models\GameModes\TDMGameMode.cs" />
     <Compile Include="Models\GameModes\VIPGameMode.cs" />

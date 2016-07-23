@@ -17,6 +17,8 @@ namespace PhoneTag.WebServices.Models
     [BsonKnownTypes(typeof(TDMGameMode), typeof(VIPGameMode))]
     public abstract class GameMode : IViewable
     {
+        public event EventHandler<GameEndedEventArgs> GameEnded;
+
         public ObjectId _id { get; set; }
         public String Name { get; set; }
         public List<List<String>> Teams { get; private set; }
@@ -75,6 +77,14 @@ namespace PhoneTag.WebServices.Models
             return enemies.Count() > 0 ? enemies.ToList() : new List<string>();
         }
 
-        public abstract void GameStateUpdate();
+        protected void onGameEnded(GameEndedEventArgs e)
+        {
+            if(GameEnded != null)
+            {
+                GameEnded(this, e);
+            }
+        }
+
+        public abstract void GameStateUpdate(List<String> i_LivingUsers);
     }
 }

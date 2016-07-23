@@ -82,7 +82,7 @@ namespace PhoneTag.WebServices.Models.GameModes
             }
         }
 
-        public override void GameStateUpdate()
+        public override void GameStateUpdate(List<String> i_LivingUsers)
         {
             throw new NotImplementedException();
         }

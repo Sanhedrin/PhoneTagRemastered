@@ -1,4 +1,7 @@
-﻿using PhoneTag.XamarinForms.Controls.CameraControl;
+﻿using PhoneTag.SharedCodebase.Events.GameEvents;
+using PhoneTag.SharedCodebase.Views;
+using PhoneTag.XamarinForms.Controls.CameraControl;
+using PhoneTag.XamarinForms.Controls.KillDisputeResolver;
 using Plugin.XamJam.Screen;
 using System;
 using System.Collections.Generic;
@@ -134,6 +137,35 @@ namespace PhoneTag.XamarinForms.Pages
             shootButton.Clicked += ShootButton_Clicked;
 
             return shootButton;
+        }
+
+        //Displays a notification saying that the player died.
+        private async Task displayNotification(PlayerKilledEvent i_PlayerKilledEvent)
+        {
+            if (i_PlayerKilledEvent != null && !String.IsNullOrEmpty(i_PlayerKilledEvent.PlayerFBID))
+            {
+                UserView user = await UserView.GetUser(i_PlayerKilledEvent.PlayerFBID);
+
+                if (user != null)
+                {
+                    GameNotification notification = new GameNotification($"{user.Username} was killed!");
+
+                    RelativeLayout contentLayout = Content as RelativeLayout;
+
+                    if(contentLayout != null)
+                    {
+                        contentLayout.Children.Add(notification,
+                            xConstraint: Constraint.RelativeToParent((parent) => { return parent.Width; }),
+                            yConstraint: Constraint.RelativeToParent((parent) => { return 0; }));
+
+                        notification.SlideIn();
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("Can't use a game notification on a non-relative layout");
+                    }
+                }
+            }
         }
 
         private async Task showDialog(View i_Dialog)

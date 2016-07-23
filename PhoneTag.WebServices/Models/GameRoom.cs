@@ -14,6 +14,7 @@ using PhoneTag.WebServices.Controllers;
 using MongoDB.Driver;
 using PhoneTag.WebServices.Utilities;
 using PhoneTag.SharedCodebase.Events.GameEvents;
+using PhoneTag.WebServices.Models.GameModes;
 
 namespace PhoneTag.WebServices.Models
 {
@@ -200,10 +201,19 @@ namespace PhoneTag.WebServices.Models
                     Builders<BsonDocument>.Update.Set<List<String>>("LivingUsers", this.LivingUsers),
                     Builders<BsonDocument>.Update.Set<List<String>>("DeadUsers", this.DeadUsers));
 
-                GameModeDetails.Mode.GameStateUpdate();
+                GameModeDetails.Mode.GameEnded += Mode_GameEnded;
+                GameModeDetails.Mode.GameStateUpdate(LivingUsers);
 
                 await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+
+                PushNotificationUtils.PushEvent(new PlayerKilledEvent(i_PlayerFBID), LivingUsers.Union(DeadUsers) as List<String>);
             }
+        }
+
+        //Occurs if the last game state changed caused the game to end.
+        private void Mode_GameEnded(object sender, GameEndedEventArgs e)
+        {
+            PushNotificationUtils.PushEvent(e.EventDetails, LivingUsers.Union(DeadUsers) as List<String>);
         }
 
         /// <summary>
