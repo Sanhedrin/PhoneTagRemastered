@@ -13,6 +13,8 @@ using PhoneTag.SharedCodebase.Views;
 using PhoneTag.SharedCodebase.Events.GameEvents;
 using Plugin.Geolocator;
 using PhoneTag.XamarinForms.Controls.KillDisputeResolver;
+using PositionEventArgs = Plugin.Geolocator.Abstractions.PositionEventArgs;
+using PhoneTag.SharedCodebase.Utils;
 
 namespace PhoneTag.XamarinForms.Pages
 {
@@ -64,6 +66,14 @@ namespace PhoneTag.XamarinForms.Pages
                     Application.Current.MainPage = new ErrorPage("GPS signal not found, please enable GPS");
                 }
             }
+
+            CrossGeolocator.Current.PositionChanged += GPS_PositionChanged;
+        }
+
+        private void GPS_PositionChanged(object sender, PositionEventArgs e)
+        {
+            GeoPoint position = new GeoPoint(e.Position.Latitude, e.Position.Longitude);
+            m_GameRoomView.UpdatePosition(UserView.Current.FBID, position);
         }
 
         private void GamePage_PictureReady(object sender, PictureReadyEventArgs e)

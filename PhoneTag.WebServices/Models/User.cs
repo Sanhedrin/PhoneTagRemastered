@@ -179,6 +179,16 @@ namespace PhoneTag.WebServices.Models
             await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
         }
 
+        public async Task UpdatePosition(double i_Latitude, double i_Longitude)
+        {
+            //update current user position. 
+            FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", FBID);
+            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                .Set("CurrentLocation", new GeoJsonPoint<GeoJson2DCoordinates>(new GeoJson2DCoordinates(i_Longitude, i_Latitude)));
+
+            await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+        }
+
         /// <summary>
         /// Generates a view for this model,
         /// </summary>
