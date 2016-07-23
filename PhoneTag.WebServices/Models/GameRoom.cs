@@ -190,6 +190,7 @@ namespace PhoneTag.WebServices.Models
         /// </summary>
         public async Task KillPlayer(string i_PlayerFBID)
         {
+            ErrorLogger.Log("Kill?? Face.");
             if (!String.IsNullOrEmpty(i_PlayerFBID))
             {
                 if (LivingUsers.Contains(i_PlayerFBID) && !DeadUsers.Contains(i_PlayerFBID))
