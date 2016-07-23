@@ -112,6 +112,9 @@ namespace PhoneTag.WebServices.Models
                             .Set<List<String>>("LivingUsers", this.LivingUsers);
 
                         await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+
+                        //Notify all players in the room that a player joined the room started.
+                        PushNotificationUtils.PushEvent(new LeaveRoomEvent(this._id.ToString()), this.LivingUsers);
                     }
                     catch (Exception e)
                     {
