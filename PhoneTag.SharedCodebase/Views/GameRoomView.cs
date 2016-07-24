@@ -73,6 +73,14 @@ namespace PhoneTag.SharedCodebase.Views
             }
         }
 
+        public async Task<Dictionary<string, GeoPoint>> GetPlayersLocations()
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                return await client.GetMethodAsync(String.Format("rooms/playersLocations/{0}", RoomId));
+            }
+        }
+
         /// <summary>
         /// Searches all the existing pending rooms in nearby proximity to the user.
         /// </summary>

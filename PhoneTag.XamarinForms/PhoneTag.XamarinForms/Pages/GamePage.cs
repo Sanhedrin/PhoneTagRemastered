@@ -15,6 +15,7 @@ using Plugin.Geolocator;
 using PhoneTag.XamarinForms.Controls.KillDisputeResolver;
 using PositionEventArgs = Plugin.Geolocator.Abstractions.PositionEventArgs;
 using PhoneTag.SharedCodebase.Utils;
+using System.Threading;
 
 namespace PhoneTag.XamarinForms.Pages
 {
@@ -26,11 +27,13 @@ namespace PhoneTag.XamarinForms.Pages
         private const double k_DefaultGameRadius = 0.5;
         private const double k_DefaultGameZoom = 1;
         private const bool k_IsSetUpView = false;
+        private int k_InitialGpsDelay = 3000;
 
         private GameMapInteractive m_GameMap;
         private CameraPreview m_Camera;
         private GameRoomView m_GameRoomView;
-
+        private CancellationTokenSource m_GpsCancellationToken;
+        
         public GamePage(GameRoomView i_GameRoomView) : base()
         {
             m_GameRoomView = i_GameRoomView;
@@ -45,10 +48,34 @@ namespace PhoneTag.XamarinForms.Pages
         private void setupPage()
         {
             m_Camera.PictureReady += GamePage_PictureReady;
-
+            startPlayersLocationsPolling();
             startGeoLocationListening();
         }
-        
+
+        private async Task startPlayersLocationsPolling()
+        {
+            Dictionary<string, GeoPoint> playersLocations;
+            if (m_GpsCancellationToken == null)
+            {
+                m_GpsCancellationToken = new CancellationTokenSource();
+
+                await Task.Delay(k_InitialGpsDelay);
+
+                for (;;)
+                {
+                    if (m_GpsCancellationToken.IsCancellationRequested)
+                    {
+                        m_GpsCancellationToken = null;
+                        break;
+                    }
+
+                    playersLocations = await m_GameRoomView.GetPlayersLocations();
+                    
+                    await Task.Delay(m_GameRoomView.GameDetails.GpsRefreshRate * 1000);
+                }
+            }
+        }
+
         //Starts listening to the geolocator, while looking for errors.
         private async Task startGeoLocationListening()
         {
