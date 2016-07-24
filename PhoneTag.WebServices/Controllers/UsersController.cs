@@ -226,9 +226,7 @@ namespace PhoneTag.WebServices.Controllers
         [HttpPost]
         public async Task UpdateUserPosition([FromUri] String i_FBID, [FromBody] GeoPoint i_LocationInfo)
         {
-            ErrorLogger.Log("updating user position... " + i_LocationInfo.Latitude.ToString() + " " + i_LocationInfo.Longitude.ToString());
-
-            if (!String.IsNullOrEmpty(i_FBID))
+            if (!String.IsNullOrEmpty(i_FBID) && i_LocationInfo != null)
             {
                 User user = await GetUserModel(i_FBID);
 
@@ -239,7 +237,7 @@ namespace PhoneTag.WebServices.Controllers
             }
             else
             {
-                ErrorLogger.Log("Invalid FBID given");
+                ErrorLogger.Log("Invalid details given");
             }
         }
 
