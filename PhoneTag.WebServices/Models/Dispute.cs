@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using PhoneTag.SharedCodebase.POCOs;
 using PhoneTag.SharedCodebase.Views;
@@ -14,27 +15,31 @@ namespace PhoneTag.WebServices.Models
 {
     public class Dispute : IViewable
     {
+        private readonly string v_Spare = false.ToString();
+        private readonly string v_Kill = true.ToString();
+
         public ObjectId _id { get; set; }
         public String RoomId { get; set; }
         public String AttackerId { get; set; }
         public String AttackedId { get; set; }
         public String KillCamId { get; set; }
-        public Dictionary<bool, int> Votes { get; set; }
+        public Dictionary<String, int> Votes { get; set; }
 
         public Dispute(KillDisputeEventArgs i_DisputeDetails)
         {
+            RoomId = i_DisputeDetails.RoomId;
             AttackerId = i_DisputeDetails.AttackerFBID;
             AttackedId = i_DisputeDetails.AttackedFBID;
             KillCamId = i_DisputeDetails.KillCamId;
 
             //Initializes our voting option counters.
-            Votes = new Dictionary<bool, int>() { { true, 0 }, { false, 0 } };
+            Votes = new Dictionary<String, int>() { { v_Kill, 0 }, { v_Spare, 0 } };
         }
 
         //Casts a vote.
         public async Task Vote(bool i_Vote)
         {
-            Votes[i_Vote]++;
+            Votes[i_Vote.ToString()]++;
 
             try
             {
@@ -56,14 +61,14 @@ namespace PhoneTag.WebServices.Models
         /// </summary>
         public async Task Expire()
         {
-            if (Votes != null && Votes.ContainsKey(true) && Votes.ContainsKey(false))
+            if (Votes != null && Votes.ContainsKey(v_Kill) && Votes.ContainsKey(v_Spare))
             {
                 GameRoom room = await RoomController.GetRoomModel(RoomId);
 
                 if (room != null)
                 {
                     //If most votes determined that the player wasn't killed.
-                    if (Votes[true] < Votes[false])
+                    if (Votes[v_Kill] < Votes[v_Spare])
                     {
                         //We kill the attacking player for failing an assault.
                         room.KillPlayer(AttackerId);

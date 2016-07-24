@@ -198,14 +198,17 @@ namespace PhoneTag.XamarinForms.Pages
         //Votes to kill a player who disputed a kill.
         private void DisputeDialog_VoteKill(object sender, KillDisputeEventArgs e)
         {
-            disputeVote(e, false);
+            disputeVote(e, true);
         }
 
         private async Task disputeVote(KillDisputeEventArgs i_KillDisputeDetails, bool i_VoteToKill)
         {
             DisputeView dispute = await DisputeView.GetDispute(i_KillDisputeDetails.DisputeId);
 
-            await dispute.Vote(i_VoteToKill);
+            if (dispute != null)
+            {
+                await dispute.Vote(i_VoteToKill);
+            }
         }
 
         //Triggers when a player dies.

@@ -111,6 +111,7 @@ namespace PhoneTag.WebServices
                 {
                     await Database.GetCollection<ExpirationEntry>("RoomExpiration").Indexes.DropAllAsync();
                     await Database.GetCollection<ExpirationEntry>("UserExpiration").Indexes.DropAllAsync();
+                    await Database.GetCollection<ExpirationEntry>("DisputeExpiration").Indexes.DropAllAsync();
                     await Database.GetCollection<User>("Users").Indexes.DropAllAsync();
                     await Database.GetCollection<GameRoom>("Rooms").Indexes.DropAllAsync();
 
@@ -118,10 +119,10 @@ namespace PhoneTag.WebServices
                     CreateIndexOptions creationOptions = new CreateIndexOptions();
                     IndexKeysDefinition<ExpirationEntry> keys = Builders<ExpirationEntry>.IndexKeys.Ascending("ExpirationTime");
                     creationOptions.ExpireAfter = new TimeSpan(0);
-                    //Adding expiration indexes for rooms.
+                    //Adding expiration indexes.
                     await Database.GetCollection<ExpirationEntry>("RoomExpiration").Indexes.CreateOneAsync(keys, creationOptions);
-                    //Adding expiration indexes for users.
                     await Database.GetCollection<ExpirationEntry>("UserExpiration").Indexes.CreateOneAsync(keys, creationOptions);
+                    await Database.GetCollection<ExpirationEntry>("DisputeExpiration").Indexes.CreateOneAsync(keys, creationOptions);
 
                     //Create username index for users.
                     await Database.GetCollection<User>("Users").Indexes.CreateOneAsync(

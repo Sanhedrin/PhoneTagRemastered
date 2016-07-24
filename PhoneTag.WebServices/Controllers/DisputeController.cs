@@ -48,10 +48,6 @@ namespace PhoneTag.WebServices.Controllers
                     dispute.Vote(i_Vote);
                 }
             }
-            else
-            {
-                ErrorLogger.Log("Invalid dispute ID given");
-            }
         }
 
         public static async Task<Dispute> CreateDispute(KillDisputeEventArgs i_DisputeDetails)

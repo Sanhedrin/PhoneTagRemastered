@@ -22,7 +22,7 @@ namespace PhoneTag.WebServices.Controllers.ExpirationControllers
         //Listens for room timeouts.
         private static void OpLogEventDispatcher_DocumentDeleted(object sender, DocumentDeletedEventArgs e)
         {
-            if (e.Collection.Equals("RoomExpiration"))
+            if (e.Collection.Equals("DisputeExpiration"))
             {
                 handleRoomExpiration(e.Id);
             }
