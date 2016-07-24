@@ -311,6 +311,7 @@ namespace PhoneTag.WebServices.Controllers
                                                              player.CurrentLocation.Coordinates.X);
 
                             playersLocations.Add(userFBID, location);
+                            ErrorLogger.Log(String.Format("added player {0}",player.Username));
                         }
                     }
                 }
