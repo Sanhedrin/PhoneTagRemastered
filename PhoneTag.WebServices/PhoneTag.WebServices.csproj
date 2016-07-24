@@ -236,6 +236,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="apiapp.json" />
+    <None Include="Properties\PublishProfiles\PhoneTag.pubxml" />
     <None Include="Properties\PublishProfiles\PhoneTagServer - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\PhoneTagServer - Web Deploy %283%29.pubxml" />
     <None Include="Properties\PublishProfiles\PhoneTagServer - Web Deploy.pubxml" />

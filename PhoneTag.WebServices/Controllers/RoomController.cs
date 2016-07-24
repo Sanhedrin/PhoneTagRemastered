@@ -73,7 +73,7 @@ namespace PhoneTag.WebServices.Controllers
         /// <summary>
         /// Handles a kill dispute request.
         /// </summary>
-        [Route("api/rooms/{i_RoomId}/leave")]
+        [Route("api/rooms/{i_RoomId}/dispute")]
         [HttpPost]
         public async Task HandleKillDispute([FromUri] string i_RoomId, [FromBody] KillDisputeEventArgs i_DisputeDetails)
         {
