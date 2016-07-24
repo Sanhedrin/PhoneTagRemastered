@@ -282,5 +282,45 @@ namespace PhoneTag.WebServices.Controllers
 
             return foundRoom;
         }
+
+        /// <summary>
+        /// Gets in Game players locations.
+        /// </summary>
+        /// <param name="i_RoomId"></param>
+        /// <returns>A dictionary of player id and his location</returns>
+        [Route("api/rooms/playersLocations/{i_RoomId}")]
+        [HttpGet]
+        public async Task<Dictionary<string, GeoPoint>> GetPlayersLocations(string i_RoomId)
+        {
+            ErrorLogger.Log("in get Players locations");
+            Dictionary<string, GeoPoint> playersLocations = new Dictionary<string, GeoPoint>();
+
+            if (!String.IsNullOrEmpty(i_RoomId))
+            {
+                GameRoom foundRoom = await GetRoomModel(i_RoomId);
+
+                if (foundRoom != null)
+                {
+                    foreach (string userFBID in foundRoom.LivingUsers)
+                    {
+                        User player = await UsersController.GetUserModel(userFBID);
+
+                        if (player?.CurrentLocation != null)
+                        {
+                            GeoPoint location = new GeoPoint(player.CurrentLocation.Coordinates.Y,
+                                                             player.CurrentLocation.Coordinates.X);
+
+                            playersLocations.Add(userFBID, location);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                ErrorLogger.Log("Invalid RoomID given");
+            }
+
+            return playersLocations;
+        }
     }
 }
