@@ -178,7 +178,7 @@ namespace PhoneTag.XamarinForms.Pages
                 yConstraint: Constraint.RelativeToParent((parent) => { return 0; }));
 
             await i_Dialog.TranslateTo(0, -i_Dialog.Height, 1, null);
-            await i_Dialog.TranslateTo((Width - i_Dialog.Width) / 2, i_Dialog.Height, 750, Easing.SpringOut);
+            await i_Dialog.TranslateTo((Width - i_Dialog.Width) / 2, 0, 750, Easing.SpringOut);
         }
 
         private async Task hideDialog()
