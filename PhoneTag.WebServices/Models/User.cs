@@ -137,7 +137,7 @@ namespace PhoneTag.WebServices.Models
             {
                 try
                 {
-                    KillRequestEvent killRequestEvent = new KillRequestEvent(killer.Username, i_KillCamId);
+                    KillRequestEvent killRequestEvent = new KillRequestEvent(PlayingIn, killer.Username, i_KillCamId);
                     PushNotificationUtils.PushEvent(killRequestEvent, new List<string>() { FBID });
                 }
                 catch(Exception e)

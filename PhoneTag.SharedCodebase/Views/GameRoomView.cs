@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using PhoneTag.SharedCodebase.POCOs;
 
 namespace PhoneTag.SharedCodebase.Views
 {
@@ -106,6 +107,17 @@ namespace PhoneTag.SharedCodebase.Views
             using (HttpClient client = new HttpClient())
             {
                 await client.PostMethodAsync(String.Format("rooms/{0}/leave/{1}", RoomId, i_FBID));
+            }
+        }
+
+        /// <summary>
+        /// Sends a kill dispute request for the given kill details.
+        /// </summary>
+        public async Task DisputeKill(KillDisputeEventArgs i_KillDisputeDetails)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                await client.PostMethodAsync<KillDisputeEventArgs>($"rooms/{RoomId}/dispute", i_KillDisputeDetails);
             }
         }
 

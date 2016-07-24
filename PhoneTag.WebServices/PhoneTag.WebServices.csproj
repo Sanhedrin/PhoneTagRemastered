@@ -202,6 +202,8 @@
     <Compile Include="App_Start\OwinConfig.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\DisputeController.cs" />
+    <Compile Include="Controllers\ExpirationControllers\DisputeExpirationController.cs" />
     <Compile Include="Controllers\ExpirationControllers\RoomExpirationController.cs" />
     <Compile Include="Controllers\ExpirationControllers\UserExpirationController.cs" />
     <Compile Include="Controllers\InfoController.cs" />
@@ -213,6 +215,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Dispute.cs" />
     <Compile Include="Models\GameDetails.cs" />
     <Compile Include="Models\GameMode.cs" />
     <Compile Include="Models\GameModes\GameEndedEventArgs.cs" />

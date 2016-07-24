@@ -1,6 +1,8 @@
 ﻿using PhoneTag.SharedCodebase;
 using PhoneTag.SharedCodebase.Events.GameEvents;
+using PhoneTag.SharedCodebase.POCOs;
 using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.SharedCodebase.Views;
 using Plugin.XamJam.Screen;
 using System;
 using System.Collections.Generic;
@@ -15,7 +17,7 @@ namespace PhoneTag.XamarinForms.Controls.KillDisputeResolver
 {
     public partial class KillConfirmationDialog : StackLayout
     {
-        private async Task initializeComponent(KillRequestEvent i_KillRequest)
+        private async Task initializeComponent(String i_DisputeId, KillRequestEvent i_KillRequest)
         {
             BackgroundColor = Color.Black;
             Padding = new Thickness() { Top = 20, Bottom = 20 };
@@ -26,14 +28,14 @@ namespace PhoneTag.XamarinForms.Controls.KillDisputeResolver
 
             Image killcam = await generateKillCamImage(i_KillRequest.KillCamId);
             Label killComment = generateKillComment(i_KillRequest.RequestedBy);
-            StackLayout responseButtons = generateResponseButtons();
+            StackLayout responseButtons = generateResponseButtons(i_DisputeId, i_KillRequest);
 
             Children.Add(killcam);
             Children.Add(killComment);
             Children.Add(responseButtons);
         }
 
-        private StackLayout generateResponseButtons()
+        private StackLayout generateResponseButtons(String i_DisputeId, KillRequestEvent i_KillRequestDetails)
         {
             StackLayout responseButtons = new StackLayout()
             {
@@ -41,18 +43,21 @@ namespace PhoneTag.XamarinForms.Controls.KillDisputeResolver
                 HorizontalOptions = new LayoutOptions { Alignment = LayoutAlignment.Center }
             };
 
+            KillDisputeEventArgs killDisputeEventArgs = new KillDisputeEventArgs(i_DisputeId, i_KillRequestDetails.RoomId,
+                        UserView.Current.FBID, i_KillRequestDetails.RequestedBy, i_KillRequestDetails.KillCamId);
+
             responseButtons.Children.Add(new Button()
             {
                 Text = "Confirm",
                 Command = new Command(() => {
-                    if (KillConfirmed != null) KillConfirmed(this, new EventArgs());
+                    if (KillConfirmed != null) KillConfirmed(this, killDisputeEventArgs);
                 })
             });
             responseButtons.Children.Add(new Button()
             {
                 Text = "Deny",
                 Command = new Command(() => {
-                    if (KillDenied != null) KillDenied(this, new EventArgs());
+                    if (KillDenied != null) KillDenied(this, killDisputeEventArgs);
                 })
             });
 

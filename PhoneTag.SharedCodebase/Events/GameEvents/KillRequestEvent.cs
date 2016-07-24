@@ -8,11 +8,13 @@ namespace PhoneTag.SharedCodebase.Events.GameEvents
 {
     public class KillRequestEvent : Event
     {
+        public String RoomId { get; set; }
         public String RequestedBy { get; set; }
         public String KillCamId { get; set; }
 
-        public KillRequestEvent(String i_RequestedBy, String i_KillCamId)
+        public KillRequestEvent(String i_RoomId, String i_RequestedBy, String i_KillCamId)
         {
+            RoomId = i_RoomId;
             RequestedBy = i_RequestedBy;
             KillCamId = i_KillCamId;
         }

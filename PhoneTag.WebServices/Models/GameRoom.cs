@@ -16,6 +16,7 @@ using PhoneTag.WebServices.Utilities;
 using PhoneTag.SharedCodebase.Events.GameEvents;
 using PhoneTag.WebServices.Models.GameModes;
 using System.Diagnostics;
+using PhoneTag.SharedCodebase.POCOs;
 
 namespace PhoneTag.WebServices.Models
 {
@@ -131,6 +132,38 @@ namespace PhoneTag.WebServices.Models
             else
             {
                 ErrorLogger.Log("Invalid FBID given");
+            }
+        }
+
+        /// <summary>
+        /// Handles a dispute request sent by a player.
+        /// What this means is that a judgement picture is sent to every player, and they need to vote whether
+        /// the kill cam is valid or not.
+        /// Kill is determined based on votes.
+        /// </summary>
+        public async Task HandleKillDispute(KillDisputeEventArgs i_DisputeDetails)
+        {
+            if(!String.IsNullOrEmpty(i_DisputeDetails.KillCamId) && !String.IsNullOrEmpty(i_DisputeDetails.AttackedFBID))
+            {
+                IEnumerable<String> playerIds = LivingUsers.Union(DeadUsers);
+
+                if(playerIds != null && playerIds.Count() > 0)
+                {
+                    try
+                    {
+                        Dispute dispute = await DisputeController.CreateDispute(i_DisputeDetails);
+                        DisputeView disputeView = await dispute.GenerateView();
+                        PushNotificationUtils.PushEvent(new KillDisputeEvent(disputeView), playerIds.ToList());
+                    }
+                    catch(Exception e)
+                    {
+                        ErrorLogger.Log($"{e.Message}{Environment.NewLine}{e.StackTrace}");
+                    }
+                }
+            }
+            else
+            {
+                ErrorLogger.Log("Invalid dispute details given.");
             }
         }
 

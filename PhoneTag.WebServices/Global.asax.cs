@@ -23,6 +23,7 @@ namespace PhoneTag.WebServices
             Mongo.Init();
 
             RoomExpirationController.InitRoomExpirationController();
+            DisputeExpirationController.InitDisputeExpirationController();
             UserExpirationController.InitUserExpirationController();
             OpLogEventDispatcher.Init();
         }

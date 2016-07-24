@@ -24,6 +24,7 @@ using PhoneTag.SharedCodebase.Events.OpLogEvents;
 using PhoneTag.WebServices;
 using PhoneTag.WebServices.Utilities;
 using PhoneTag.WebServices.Controllers;
+using PhoneTag.SharedCodebase.POCOs;
 
 namespace PhoneTag.WebServices.Controllers
 {
@@ -70,6 +71,28 @@ namespace PhoneTag.WebServices.Controllers
         }
 
         /// <summary>
+        /// Handles a kill dispute request.
+        /// </summary>
+        [Route("api/rooms/{i_RoomId}/leave")]
+        [HttpPost]
+        public async Task HandleKillDispute([FromUri] string i_RoomId, [FromBody] KillDisputeEventArgs i_DisputeDetails)
+        {
+            if (!String.IsNullOrEmpty(i_RoomId) && i_DisputeDetails != null)
+            {
+                GameRoom room = await GetRoomModel(i_RoomId);
+
+                if (room != null)
+                {
+                    room.HandleKillDispute(i_DisputeDetails);
+                }
+            }
+            else
+            {
+                ErrorLogger.Log("Invalid details given");
+            }
+        }
+
+        /// <summary>
         /// Adds the player whose FBID is given to the given room.
         /// </summary>
         /// <returns>True or false based on if joining was successful</returns>
@@ -77,7 +100,7 @@ namespace PhoneTag.WebServices.Controllers
         [HttpPost]
         public async Task LeaveRoom(string i_RoomId, string i_PlayerFBID)
         {
-            if (i_RoomId != null && i_PlayerFBID != null)
+            if (!String.IsNullOrEmpty(i_RoomId) && !String.IsNullOrEmpty(i_PlayerFBID))
             {
                 GameRoom room = await GetRoomModel(i_RoomId);
 

@@ -1,4 +1,5 @@
 ﻿using PhoneTag.SharedCodebase.Events.GameEvents;
+using PhoneTag.SharedCodebase.POCOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +14,17 @@ namespace PhoneTag.XamarinForms.Controls.KillDisputeResolver
     /// </summary>
     public partial class KillConfirmationDialog : StackLayout
     {
-        public event EventHandler KillConfirmed, KillDenied;
+        public event EventHandler<KillDisputeEventArgs> KillConfirmed;
+        public event EventHandler<KillDisputeEventArgs> KillDenied;
 
         public KillConfirmationDialog(KillRequestEvent i_KillRequest)
         {
-            initializeComponent(i_KillRequest);
+            initializeComponent(null, i_KillRequest);
+        }
+
+        public KillConfirmationDialog(String i_Dispute, KillRequestEvent i_KillRequest)
+        {
+            initializeComponent(i_Dispute, i_KillRequest);
         }
     }
 }

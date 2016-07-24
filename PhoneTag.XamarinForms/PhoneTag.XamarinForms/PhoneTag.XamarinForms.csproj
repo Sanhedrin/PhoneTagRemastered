@@ -39,6 +39,10 @@
     <Compile Include="App.cs" />
     <Compile Include="Controls\CameraControl\CameraOptions.cs" />
     <Compile Include="Controls\CameraControl\CameraPreview.cs" />
+    <Compile Include="Controls\KillDisputeResolver\DisputeDialog.cs" />
+    <Compile Include="Controls\KillDisputeResolver\DisputeDialog.designer.cs">
+      <DependentUpon>DisputeDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\KillDisputeResolver\GameNotification.cs" />
     <Compile Include="Controls\KillDisputeResolver\GameNotification.designer.cs">
       <DependentUpon>GameNotification.cs</DependentUpon>

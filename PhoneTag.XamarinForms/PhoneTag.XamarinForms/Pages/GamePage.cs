@@ -15,6 +15,7 @@ using Plugin.Geolocator;
 using PhoneTag.XamarinForms.Controls.KillDisputeResolver;
 using PositionEventArgs = Plugin.Geolocator.Abstractions.PositionEventArgs;
 using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.SharedCodebase.POCOs;
 
 namespace PhoneTag.XamarinForms.Pages
 {
@@ -120,6 +121,64 @@ namespace PhoneTag.XamarinForms.Pages
             {
                 handlePlayerKilledEvent(i_EventDetails as PlayerKilledEvent);
             }
+            else if(i_EventDetails is KillDisputeEvent)
+            {
+                handleKillDisputeEvent(i_EventDetails as KillDisputeEvent);
+            }
+        }
+
+        //Triggers when a dispute has been made over a kill and players should vote for the result.
+        private void handleKillDisputeEvent(KillDisputeEvent i_KillDisputeEvent)
+        {
+            DisputeDialog disputeDialog = new DisputeDialog(i_KillDisputeEvent);
+
+            disputeDialog.Opened += DisputeDialog_Opened;
+            disputeDialog.Timeout += DisputeDialog_Timeout;
+
+            showDialog(disputeDialog);
+        }
+
+        //When the dispute dialog times out.
+        private void DisputeDialog_Timeout(object sender, EventArgs e)
+        {
+            hideDialog();
+        }
+
+        //Shows the voting menu for the dispute.
+        private void DisputeDialog_Opened(object sender, KillDisputeEventArgs e)
+        {
+            KillRequestEvent killRequest = new KillRequestEvent(e.RoomId, e.AttackerFBID, e.KillCamId);
+            KillConfirmationDialog killConfirmationDialog = new KillConfirmationDialog(e.DisputeId, killRequest);
+
+            killConfirmationDialog.KillConfirmed += DisputeDialog_VoteKill;
+            killConfirmationDialog.KillDenied += DisputeDialog_VoteSpare;
+            
+            openDisputeDialog(killConfirmationDialog);
+        }
+
+        private async Task openDisputeDialog(KillConfirmationDialog i_KillConfirmationDialog)
+        {
+            await hideDialog();
+            await showDialog(i_KillConfirmationDialog);
+        }
+
+        //Votes to spare the player who disputed a kill.
+        private void DisputeDialog_VoteSpare(object sender, KillDisputeEventArgs e)
+        {
+            disputeVote(e, false);
+        }
+
+        //Votes to kill a player who disputed a kill.
+        private void DisputeDialog_VoteKill(object sender, KillDisputeEventArgs e)
+        {
+            disputeVote(e, false);
+        }
+
+        private async Task disputeVote(KillDisputeEventArgs i_KillDisputeDetails, bool i_VoteToKill)
+        {
+            DisputeView dispute = await DisputeView.GetDispute(i_KillDisputeDetails.DisputeId);
+
+            await dispute.Vote(i_VoteToKill);
         }
 
         //Triggers when a player dies.
@@ -139,9 +198,9 @@ namespace PhoneTag.XamarinForms.Pages
             showDialog(killConfirmationDialog);
         }
         
-        private void KillConfirmationDialog_KillDenied(object sender, EventArgs e)
+        private void KillConfirmationDialog_KillDenied(object sender, KillDisputeEventArgs e)
         {
-            hideDialog();
+            sendDispute(e);
         }
 
         private void KillConfirmationDialog_KillConfirmed(object sender, EventArgs e)
@@ -149,14 +208,24 @@ namespace PhoneTag.XamarinForms.Pages
             playerKilled();
         }
 
+        //Sends a dispute for this kill.
+        //What this means is that all players receive a notification that lets them vote on the matter.
+        //The disqualification is determined by the result of the votes.
+        private async Task sendDispute(KillDisputeEventArgs i_KillDisputeDetails)
+        {
+            await hideDialog();
+
+            await m_GameRoomView.DisputeKill(i_KillDisputeDetails);
+        }
+
         //Kill the current player and remove them from the game.
         private async Task playerKilled()
         {
-            await UserView.Current.Die();
-
             await hideDialog();
 
             await transitionToSpectatorMode();
+
+            await UserView.Current.Die();
         }
     }
 }
