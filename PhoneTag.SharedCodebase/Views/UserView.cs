@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PhoneTag.SharedCodebase.POCOs;
 using PhoneTag.SharedCodebase.Utils;
 using System;
 using System.Collections.Generic;
@@ -100,20 +101,19 @@ namespace PhoneTag.SharedCodebase.Views
                     
                     using (HttpClient client = new HttpClient())
                     {
-                        UserView.SetLoggedInUser(await client.PostMethodAsync(String.Format("users/{0}/ping", FBID)));
+                        await client.PostMethodAsync(String.Format("users/{0}/ping", FBID));
                     }
 
-                    await this.Update();
+                    await UserView.Current.Update();
 
                     await Task.Delay(k_HalfAMinuteInMS);
                 }
             }
-            else
-            {
-                throw new InvalidOperationException("Trying to log in with a user that's already logged in.");
-            }
         }
 
+        /// <summary>
+        /// Removes the player from the current game they're on.
+        /// </summary>
         public async Task LeaveGame()
         {
             using (HttpClient client = new HttpClient())
@@ -167,6 +167,18 @@ namespace PhoneTag.SharedCodebase.Views
         }
 
         /// <summary>
+        /// Called when a player should die.
+        /// </summary>
+        /// <returns></returns>
+        public async Task Die()
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                await client.PostMethodAsync(String.Format("users/{0}/die", FBID));
+            }
+        }
+
+        /// <summary>
         /// Tries to kill the given player, sending a confirmation prompt to them.
         /// </summary>
         public async Task TryKill(string i_FBID, byte[] i_KillCam)
@@ -190,6 +202,17 @@ namespace PhoneTag.SharedCodebase.Views
         }
 
         /// <summary>
+        /// Updates the player's current location.
+        /// </summary>
+        public async Task UpdatePosition(GeoPoint i_Position)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                await client.PostMethodAsync<GeoPoint>($"users/{FBID}/position", i_Position);
+            }
+        }
+
+        /// <summary>
         /// Updates the view to current server values.
         /// </summary>
         public async Task Update()
@@ -201,14 +224,6 @@ namespace PhoneTag.SharedCodebase.Views
             this.IsActive = view.IsActive;
             this.Friends = view.Friends;
             this.Ammo = view.Ammo;
-        }
-
-        public async Task UpdatePosition(string i_FBID, GeoPoint i_Position)
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                await client.PostMethodAsync(String.Format("users/{0}/position/{1}/{2}", i_FBID, i_Position.Latitude, i_Position.Longitude));
-            }
         }
 
     }

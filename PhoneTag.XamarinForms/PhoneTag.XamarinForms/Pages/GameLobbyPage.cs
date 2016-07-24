@@ -37,7 +37,7 @@ namespace PhoneTag.XamarinForms.Pages
         {
             base.OnDisappearing();
 
-            if (m_GameRoom != null && UserView.Current?.FBID != null)
+            if (m_GameRoom != null && !m_GameRoom.Started && UserView.Current?.FBID != null)
             {
                 m_GameRoom.LeaveRoom(UserView.Current.FBID);
             }

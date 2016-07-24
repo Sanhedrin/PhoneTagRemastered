@@ -43,6 +43,7 @@
     <Compile Include="Events\GameEvents\MessageEvent.cs" />
     <Compile Include="Events\GameEvents\PlayerKilledEvent.cs" />
     <Compile Include="Extensions\HttpExtensions.cs" />
+    <Compile Include="POCOs\LocationUpdateInfo.cs" />
     <Compile Include="StaticInfo\PhoneTagInfo.cs" />
     <Compile Include="Utils\GameModeFactory.cs" />
     <Compile Include="Utils\GeoPoint.cs" />
@@ -83,9 +84,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="POCOs\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

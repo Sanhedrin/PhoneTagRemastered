@@ -15,6 +15,7 @@ using MongoDB.Driver;
 using PhoneTag.WebServices.Utilities;
 using PhoneTag.SharedCodebase.Events.GameEvents;
 using PhoneTag.WebServices.Models.GameModes;
+using System.Diagnostics;
 
 namespace PhoneTag.WebServices.Models
 {
@@ -190,7 +191,6 @@ namespace PhoneTag.WebServices.Models
         /// </summary>
         public async Task KillPlayer(string i_PlayerFBID)
         {
-            ErrorLogger.Log("Kill?? Face.");
             if (!String.IsNullOrEmpty(i_PlayerFBID))
             {
                 if (LivingUsers.Contains(i_PlayerFBID) && !DeadUsers.Contains(i_PlayerFBID))
@@ -199,7 +199,7 @@ namespace PhoneTag.WebServices.Models
                     {
                         LivingUsers.Remove(i_PlayerFBID);
                         DeadUsers.Add(i_PlayerFBID);
-
+                        
                         //Update the room to add the player to it.
                         FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("_id", _id);
                         UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
@@ -210,8 +210,12 @@ namespace PhoneTag.WebServices.Models
                         //GameModeDetails.Mode.GameStateUpdate(LivingUsers);
 
                         await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
-
-                        PushNotificationUtils.PushEvent(new PlayerKilledEvent(i_PlayerFBID), LivingUsers.Union(DeadUsers) as List<String>);
+                        
+                        IEnumerable<String> playersInGame = LivingUsers.Union(DeadUsers);
+                        if(playersInGame != null && playersInGame.Count() > 0)
+                        {
+                            PushNotificationUtils.PushEvent(new PlayerKilledEvent(i_PlayerFBID), LivingUsers.Union(DeadUsers).ToList());
+                        }
                     }
                     catch (Exception e)
                     {

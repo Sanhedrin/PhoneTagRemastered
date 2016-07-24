@@ -70,10 +70,11 @@ namespace PhoneTag.XamarinForms.Pages
             CrossGeolocator.Current.PositionChanged += GPS_PositionChanged;
         }
 
+        //When our position changes, we should inform the server about it.
         private void GPS_PositionChanged(object sender, PositionEventArgs e)
         {
             GeoPoint position = new GeoPoint(e.Position.Latitude, e.Position.Longitude);
-            UserView.Current.UpdatePosition(UserView.Current.FBID, position);
+            UserView.Current.UpdatePosition(position);
         }
 
         private void GamePage_PictureReady(object sender, PictureReadyEventArgs e)
@@ -151,6 +152,8 @@ namespace PhoneTag.XamarinForms.Pages
         //Kill the current player and remove them from the game.
         private async Task playerKilled()
         {
+            await UserView.Current.Die();
+
             await hideDialog();
 
             await transitionToSpectatorMode();

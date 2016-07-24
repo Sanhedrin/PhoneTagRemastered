@@ -14,8 +14,7 @@ namespace PhoneTag.XamarinForms.Controls.KillDisputeResolver
 
         private void initializeComponent(String i_NotificationMessage)
         {
-            BackgroundColor = Color.Black;
-            Opacity = 0.4;
+            Opacity = 0.6;
             HeightRequest = CrossScreen.Current.Size.Height / 16;
 
             Label messageLabel = generateMessageLabel(i_NotificationMessage);

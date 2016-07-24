@@ -19,6 +19,8 @@ using com.shephertz.app42.paas.sdk.csharp;
 using PhoneTag.SharedCodebase.Events.OpLogEvents;
 using PhoneTag.SharedCodebase.Controllers;
 using PhoneTag.WebServices.Utilities;
+using PhoneTag.SharedCodebase.Utils;
+using PhoneTag.SharedCodebase.POCOs;
 
 namespace PhoneTag.WebServices.Controllers
 {
@@ -135,6 +137,36 @@ namespace PhoneTag.WebServices.Controllers
         }
 
         /// <summary>
+        /// Kills the given user.
+        /// </summary>
+        [Route("api/users/{i_PlayerFBID}/die")]
+        [HttpPost]
+        public async Task Kill(String i_PlayerFBID)
+        {
+            if (!String.IsNullOrEmpty(i_PlayerFBID))
+            {
+                User user = await GetUserModel(i_PlayerFBID);
+
+                if (user != null)
+                {
+                    if (!String.IsNullOrEmpty(user.PlayingIn))
+                    {
+                        GameRoom room = await RoomController.GetRoomModel(user.PlayingIn);
+
+                        if (room != null)
+                        {
+                            await room.KillPlayer(i_PlayerFBID);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                ErrorLogger.Log("Invalid FBID given");
+            }
+        }
+
+        /// <summary>
         /// Removes user from the current game.
         /// </summary>
         [Route("api/users/{i_PlayerFBID}/leave")]
@@ -188,20 +220,21 @@ namespace PhoneTag.WebServices.Controllers
         }
 
         /// <summary>
-        /// update user current position.
+        /// Update user current position.
         /// </summary>
-        [Route("api/users/{i_PlayerFBID}/position/{i_Latitude}/{i_Longitude}")]
+        [Route("api/users/{i_FBID}/position")]
         [HttpPost]
-        public async Task updateUserPosition(String i_PlayerFBID, double i_Latitude, double i_Longitude)
+        public async Task UpdateUserPosition([FromUri] String i_FBID, [FromBody] GeoPoint i_LocationInfo)
         {
-            if (!String.IsNullOrEmpty(i_PlayerFBID))
+            ErrorLogger.Log("updating user position... " + i_LocationInfo.Latitude.ToString() + " " + i_LocationInfo.Longitude.ToString());
+
+            if (!String.IsNullOrEmpty(i_FBID))
             {
-                User user = await GetUserModel(i_PlayerFBID);
+                User user = await GetUserModel(i_FBID);
 
                 if (user != null)
                 {
-                    ErrorLogger.Log("updating user position...");
-                    await user.UpdatePosition(i_Latitude, i_Longitude);
+                    await user.UpdatePosition(i_LocationInfo.Latitude, i_LocationInfo.Longitude);
                 }
             }
             else

@@ -16,7 +16,7 @@ namespace PhoneTag.WebServices.Utilities
         private const long k_MaxErrorMessages = 20;
 
         /// <summary>
-        /// Logs an error message to the error log collection, will not log more than 50 at a time.
+        /// Logs an error message to the error log collection, will not log more than 20 at a time.
         /// </summary>
         /// <param name="i_Message"></param>
         [MethodImpl(MethodImplOptions.NoInlining)]

@@ -125,6 +125,10 @@ namespace PhoneTag.WebServices.Models
             }
         }
 
+        /// <summary>
+        /// Sends a kill request to this player by the given player, which should be displayed to the
+        /// killed player.
+        /// </summary>
         public async Task KillRequest(string i_RequestedByFBID, String i_KillCamId)
         {
             User killer = await UsersController.GetUserModel(i_RequestedByFBID);
