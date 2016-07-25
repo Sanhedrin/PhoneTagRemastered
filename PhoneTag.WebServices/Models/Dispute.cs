@@ -15,11 +15,13 @@ namespace PhoneTag.WebServices.Models
 {
     public class Dispute : IViewable
     {
-        private readonly string v_Spare = false.ToString();
-        private readonly string v_Kill = true.ToString();
+        private const string v_Spare = "False";
+        private const string v_Kill = "True";
 
         public ObjectId _id { get; set; }
         public String RoomId { get; set; }
+        public String AttackerName { get; set; }
+        public String AttackedName { get; set; }
         public String AttackerId { get; set; }
         public String AttackedId { get; set; }
         public String KillCamId { get; set; }
@@ -28,8 +30,10 @@ namespace PhoneTag.WebServices.Models
         public Dispute(KillDisputeEventArgs i_DisputeDetails)
         {
             RoomId = i_DisputeDetails.RoomId;
-            AttackerId = i_DisputeDetails.AttackerFBID;
-            AttackedId = i_DisputeDetails.AttackedFBID;
+            AttackerId = i_DisputeDetails.AttackerId;
+            AttackedId = i_DisputeDetails.AttackedId;
+            AttackerName = i_DisputeDetails.AttackerName;
+            AttackedName = i_DisputeDetails.AttackedName;
             KillCamId = i_DisputeDetails.KillCamId;
 
             //Initializes our voting option counters.
@@ -64,7 +68,7 @@ namespace PhoneTag.WebServices.Models
             if (Votes != null && Votes.ContainsKey(v_Kill) && Votes.ContainsKey(v_Spare))
             {
                 GameRoom room = await RoomController.GetRoomModel(RoomId);
-
+                
                 if (room != null)
                 {
                     //If most votes determined that the player wasn't killed.
@@ -98,6 +102,8 @@ namespace PhoneTag.WebServices.Models
             disputeView.RoomId = RoomId;
             disputeView.AttackerId = AttackerId;
             disputeView.AttackedId = AttackedId;
+            disputeView.AttackerName = AttackerName;
+            disputeView.AttackedName = AttackedName;
             disputeView.KillCamId = KillCamId;
 
             return disputeView;

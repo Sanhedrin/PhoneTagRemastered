@@ -1,4 +1,5 @@
 ﻿using PhoneTag.SharedCodebase.Events.GameEvents;
+using PhoneTag.SharedCodebase.Utils;
 using Plugin.XamJam.Screen;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,8 @@ namespace PhoneTag.XamarinForms.Controls.KillDisputeResolver
         private void initializeComponent(KillDisputeEvent i_KillDisputeEvent)
         {
             BackgroundColor = Color.Black;
-            Padding = new Thickness() { Top = 20, Bottom = 20 };
+            Opacity = 0.8;
+            Padding = new Thickness() { Top = 0, Bottom = 20 };
             WidthRequest = CrossScreen.Current.Size.Width * 15 / 16;
             HeightRequest = CrossScreen.Current.Size.Height / 10;
 
@@ -26,8 +28,8 @@ namespace PhoneTag.XamarinForms.Controls.KillDisputeResolver
             m_TimeoutBar = generateTimeoutBar();
             Label disputeRequestLabel = generateDisputeComment();
 
-            Children.Add(m_TimeoutBar);
             Children.Add(disputeRequestLabel);
+            Children.Add(m_TimeoutBar);
 
             timeoutNotification();
         }
@@ -35,7 +37,7 @@ namespace PhoneTag.XamarinForms.Controls.KillDisputeResolver
         //Counts down to remove the alert.
         private async Task timeoutNotification()
         {
-            await m_TimeoutBar.ProgressTo(1, 30000, Easing.Linear);
+            await m_TimeoutBar.ProgressTo(1, Keys.DisputeTimeInSeconds * 1000, Easing.Linear);
 
             if(Timeout != null)
             {

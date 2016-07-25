@@ -4,6 +4,7 @@ using Android.Content;
 using Android.Hardware;
 using Android.Runtime;
 using Android.Views;
+using Android.Media;
 
 namespace PhoneTag.XamarinForms.Droid.CustomControls.CameraControl
 {
@@ -110,6 +111,7 @@ namespace PhoneTag.XamarinForms.Droid.CustomControls.CameraControl
             RequestLayout();
 
             Camera.Parameters cameraParameters = camera.GetParameters();
+            
             switch (windowManager.DefaultDisplay.Rotation)
             {
                 case SurfaceOrientation.Rotation0:

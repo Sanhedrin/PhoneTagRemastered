@@ -66,31 +66,7 @@ namespace PhoneTag.SharedCodebase
 
             return JsonConvert.DeserializeObject(jsonResponse, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
         }
-
-        /// <summary>
-        /// Sends a GET request to the given http resource with an optional parameter.
-        /// </summary>
-        /// <param name="i_RequestUri">URI of the http resources(Must complete the BaseUri defined in the HttpExtensions class).</param>
-        /// <returns>A response object if any such are returned by the method.
-        /// This object is returned as a dynamic which translates to a JObject on client side.</returns>
-        public static async Task<dynamic> GetMethodAsync(this HttpClient i_HttpClient, string i_RequestUri)
-        {
-            //Send the request.
-            HttpResponseMessage response = await i_HttpClient.GetAsync(new Uri(new Uri(BaseUri), i_RequestUri)).ConfigureAwait(false);
-
-            //Obtain the result and deserialize it.
-            string jsonResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                System.Diagnostics.Debug.WriteLine("EXCEPTION!");
-                System.Diagnostics.Debug.WriteLine(jsonResponse);
-                throw new HttpRequestException(jsonResponse);
-            }
-
-            return JsonConvert.DeserializeObject(jsonResponse, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
-        }
-
+        
         /// <summary>
         /// Sends a GET request to the given http resource with an optional parameter.
         /// An overloading of GetMethodAsync that allows specification of the return type.

@@ -18,5 +18,15 @@ namespace PhoneTag.SharedCodebase.Views
         {
             Name = GameModeFactory.GetNameOfModeViewType(this.GetType());
         }
+
+        /// <summary>
+        /// Gets the allegiance of the given player to the active user.
+        /// </summary>
+        public abstract PlayerAllegiance GetAllegianceFor(string i_UserId);
+
+        /// <summary>
+        /// Gets the team members of the given player.
+        /// </summary>
+        public abstract List<string> GetPlayerTeamFor(string i_UserId);
     }
 }

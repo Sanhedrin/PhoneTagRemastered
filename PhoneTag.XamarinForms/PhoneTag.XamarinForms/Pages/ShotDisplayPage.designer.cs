@@ -60,13 +60,18 @@ namespace PhoneTag.XamarinForms.Pages
             };
         }
 
-        protected override bool OnBackButtonPressed()
+        protected override void OnDisappearing()
         {
-            if(ShotCancelled != null)
+            if (ShotCancelled != null)
             {
                 ShotCancelled(this, new EventArgs());
             }
 
+            base.OnDisappearing();
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
             return base.OnBackButtonPressed();
         }
     }

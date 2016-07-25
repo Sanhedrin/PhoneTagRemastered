@@ -17,14 +17,14 @@ namespace PhoneTag.XamarinForms.Controls.KillDisputeResolver
         public event EventHandler<KillDisputeEventArgs> KillConfirmed;
         public event EventHandler<KillDisputeEventArgs> KillDenied;
 
-        public KillConfirmationDialog(KillRequestEvent i_KillRequest)
+        public KillConfirmationDialog(KillRequestEvent i_KillRequest, String i_DisplayMessage)
         {
-            initializeComponent(null, i_KillRequest);
+            initializeComponent(null, i_KillRequest, i_DisplayMessage);
         }
 
-        public KillConfirmationDialog(String i_Dispute, KillRequestEvent i_KillRequest)
+        public KillConfirmationDialog(String i_Dispute, KillRequestEvent i_KillRequest, String i_DisplayMessage)
         {
-            initializeComponent(i_Dispute, i_KillRequest);
+            initializeComponent(i_Dispute, i_KillRequest, i_DisplayMessage);
         }
     }
 }

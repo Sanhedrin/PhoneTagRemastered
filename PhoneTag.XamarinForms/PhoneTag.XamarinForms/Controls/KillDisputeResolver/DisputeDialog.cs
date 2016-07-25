@@ -36,6 +36,8 @@ namespace PhoneTag.XamarinForms.Controls.KillDisputeResolver
                     m_KillDisputeEvent.DisputeDetails.RoomId,
                     m_KillDisputeEvent.DisputeDetails.AttackedId,
                     m_KillDisputeEvent.DisputeDetails.AttackerId,
+                    m_KillDisputeEvent.DisputeDetails.AttackedName,
+                    m_KillDisputeEvent.DisputeDetails.AttackerName,
                     m_KillDisputeEvent.DisputeDetails.KillCamId));
             }
         }

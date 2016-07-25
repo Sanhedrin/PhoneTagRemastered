@@ -32,7 +32,7 @@ namespace PhoneTag.XamarinForms.Pages
             initializeLoadingComponent();
             joinRoom(i_GameRoomId);
         }
-
+        
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
@@ -117,11 +117,11 @@ namespace PhoneTag.XamarinForms.Pages
 
         private async Task startGame(GameStartEvent i_GameStartEvent)
         {
-            GameRoomView roomView = await GameRoomView.GetRoom(i_GameStartEvent.GameId);
+            m_GameRoom = await GameRoomView.GetRoom(i_GameStartEvent.GameId);
 
-            if (roomView != null)
+            if (m_GameRoom != null)
             {
-                Application.Current.MainPage = new NavigationPage(new GamePage(roomView));
+                Application.Current.MainPage = new NavigationPage(new GamePage(m_GameRoom));
             }
             else
             {

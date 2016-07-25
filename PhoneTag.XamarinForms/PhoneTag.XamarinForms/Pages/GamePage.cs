@@ -49,13 +49,37 @@ namespace PhoneTag.XamarinForms.Pages
         private void setupPage()
         {
             m_Camera.PictureReady += GamePage_PictureReady;
-            startPlayersLocationsPolling();
             startGeoLocationListening();
         }
 
+        //Starts listening to the geolocator, while looking for errors.
+        private async Task startGeoLocationListening()
+        {
+            if (!CrossGeolocator.Current.IsListening)
+            {
+                bool isReady = false;
+
+                if (CrossGeolocator.Current.IsGeolocationAvailable && CrossGeolocator.Current.IsGeolocationEnabled)
+                {
+                    isReady = await CrossGeolocator.Current.StartListeningAsync(1, 1, true);
+                }
+
+                if (!isReady)
+                {
+                    Application.Current.MainPage = new ErrorPage("GPS signal not found, please enable GPS");
+                }
+            }
+
+            CrossGeolocator.Current.PositionChanged += GPS_PositionChanged;
+
+            startPlayersLocationsPolling();
+        }
+
+        //Continuously polls the server for updated user locations.
         private async Task startPlayersLocationsPolling()
         {
             Dictionary<string, GeoPoint> playersLocations;
+
             if (m_GpsCancellationToken == null)
             {
                 m_GpsCancellationToken = new CancellationTokenSource();
@@ -71,31 +95,12 @@ namespace PhoneTag.XamarinForms.Pages
                     }
 
                     playersLocations = await m_GameRoomView.GetPlayersLocations();
-                    
+
+                    m_GameMap.UpdateUAV(playersLocations, m_GameRoomView);
+
                     await Task.Delay(m_GameRoomView.GameDetails.GpsRefreshRate * 1000);
                 }
             }
-        }
-
-        //Starts listening to the geolocator, while looking for errors.
-        private async Task startGeoLocationListening()
-        {
-            if (!CrossGeolocator.Current.IsListening)
-            {
-                bool isReady = false;
-
-                if (CrossGeolocator.Current.IsGeolocationAvailable && CrossGeolocator.Current.IsGeolocationEnabled)
-                {
-                    isReady = await CrossGeolocator.Current.StartListeningAsync(1, 1);
-                }
-
-                if (!isReady)
-                {
-                    Application.Current.MainPage = new ErrorPage("GPS signal not found, please enable GPS");
-                }
-            }
-
-            CrossGeolocator.Current.PositionChanged += GPS_PositionChanged;
         }
 
         //When our position changes, we should inform the server about it.
@@ -152,6 +157,23 @@ namespace PhoneTag.XamarinForms.Pages
             {
                 handleKillDisputeEvent(i_EventDetails as KillDisputeEvent);
             }
+            else if(i_EventDetails is GameEndedEvent)
+            {
+                handleGameEndedEvent(i_EventDetails as GameEndedEvent);
+            }
+        }
+
+        //Triggers when a win condition occured for one of the teams, ending the game.
+        private void handleGameEndedEvent(GameEndedEvent i_GameEndedEvent)
+        {
+            endGame(i_GameEndedEvent.WinnerIds);
+        }
+
+        private async Task endGame(List<String> i_WinnerIds)
+        {
+            await hideDialogSlideDown();
+
+            await transitionToGameEnd(i_WinnerIds);
         }
 
         //Triggers when a dispute has been made over a kill and players should vote for the result.
@@ -162,31 +184,46 @@ namespace PhoneTag.XamarinForms.Pages
             disputeDialog.Opened += DisputeDialog_Opened;
             disputeDialog.Timeout += DisputeDialog_Timeout;
 
-            showDialog(disputeDialog);
+            showDialogSlideDown(disputeDialog);
         }
 
         //When the dispute dialog times out.
         private void DisputeDialog_Timeout(object sender, EventArgs e)
         {
-            hideDialog();
+            if (m_CurrentlyShowingDialogs.Peek() is DisputeDialog)
+            {
+                hideDialogSlideUp();
+            }
         }
 
         //Shows the voting menu for the dispute.
         private void DisputeDialog_Opened(object sender, KillDisputeEventArgs e)
         {
-            KillRequestEvent killRequest = new KillRequestEvent(e.RoomId, e.AttackerFBID, e.KillCamId);
-            KillConfirmationDialog killConfirmationDialog = new KillConfirmationDialog(e.DisputeId, killRequest);
+            showDisputeDialog(e);
+        }
 
-            killConfirmationDialog.KillConfirmed += DisputeDialog_VoteKill;
-            killConfirmationDialog.KillDenied += DisputeDialog_VoteSpare;
-            
-            openDisputeDialog(killConfirmationDialog);
+        private async Task showDisputeDialog(KillDisputeEventArgs e)
+        {
+            UserView user = await UserView.GetUser(e.AttackedId);
+
+            if (user != null)
+            {
+                KillRequestEvent killRequest = new KillRequestEvent(e.RoomId, e.AttackerName, e.AttackerId, e.KillCamId);
+
+                KillConfirmationDialog killConfirmationDialog = new KillConfirmationDialog(e.DisputeId, killRequest,
+                    String.Format("Dispute!{0}Was {1} captured successfully?", Environment.NewLine, user.Username));
+
+                killConfirmationDialog.KillConfirmed += DisputeDialog_VoteKill;
+                killConfirmationDialog.KillDenied += DisputeDialog_VoteSpare;
+
+                openDisputeDialog(killConfirmationDialog);
+            }
         }
 
         private async Task openDisputeDialog(KillConfirmationDialog i_KillConfirmationDialog)
         {
-            await hideDialog();
-            await showDialog(i_KillConfirmationDialog);
+            await hideDialogSlideUp();
+            await showDialogSlideUp(i_KillConfirmationDialog);
         }
 
         //Votes to spare the player who disputed a kill.
@@ -203,6 +240,8 @@ namespace PhoneTag.XamarinForms.Pages
 
         private async Task disputeVote(KillDisputeEventArgs i_KillDisputeDetails, bool i_VoteToKill)
         {
+            hideDialogSlideDown();
+
             DisputeView dispute = await DisputeView.GetDispute(i_KillDisputeDetails.DisputeId);
 
             if (dispute != null)
@@ -215,17 +254,23 @@ namespace PhoneTag.XamarinForms.Pages
         private void handlePlayerKilledEvent(PlayerKilledEvent i_PlayerKilledEvent)
         {
             displayNotification(i_PlayerKilledEvent);
+
+            if (i_PlayerKilledEvent.PlayerFBID.Equals(UserView.Current.FBID) && !buttonShoot.Text.Equals("Quit"))
+            {
+                playerKilled();
+            }
         }
 
         //Triggers when another player issues a kill command on you.
         private void handleKillRequestEvent(KillRequestEvent i_KillRequestEvent)
         {
-            KillConfirmationDialog killConfirmationDialog = new KillConfirmationDialog(i_KillRequestEvent);
+            KillConfirmationDialog killConfirmationDialog = new KillConfirmationDialog(i_KillRequestEvent,
+                String.Format("You have been attacked by {0}", i_KillRequestEvent.RequestedBy));
 
             killConfirmationDialog.KillConfirmed += KillConfirmationDialog_KillConfirmed;
             killConfirmationDialog.KillDenied += KillConfirmationDialog_KillDenied;
 
-            showDialog(killConfirmationDialog);
+            showDialogSlideUp(killConfirmationDialog);
         }
         
         private void KillConfirmationDialog_KillDenied(object sender, KillDisputeEventArgs e)
@@ -243,7 +288,7 @@ namespace PhoneTag.XamarinForms.Pages
         //The disqualification is determined by the result of the votes.
         private async Task sendDispute(KillDisputeEventArgs i_KillDisputeDetails)
         {
-            await hideDialog();
+            await hideDialogSlideDown();
 
             await m_GameRoomView.DisputeKill(i_KillDisputeDetails);
         }
@@ -251,7 +296,7 @@ namespace PhoneTag.XamarinForms.Pages
         //Kill the current player and remove them from the game.
         private async Task playerKilled()
         {
-            await hideDialog();
+            await hideDialogSlideDown();
 
             await transitionToSpectatorMode();
 

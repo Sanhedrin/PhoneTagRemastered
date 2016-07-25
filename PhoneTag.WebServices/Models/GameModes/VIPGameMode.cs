@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System;
 using PhoneTag.WebServices.Utilities;
+using System.Linq;
+using PhoneTag.SharedCodebase.Events.GameEvents;
 
 namespace PhoneTag.WebServices.Models.GameModes
 {
@@ -84,7 +86,15 @@ namespace PhoneTag.WebServices.Models.GameModes
 
         public override void GameStateUpdate(List<String> i_LivingUsers)
         {
-            throw new NotImplementedException();
+            //If all members on this team are dead, the game ends.
+            if (!i_LivingUsers.Contains(VipForTeam[0]))
+            {
+                onGameEnded(new GameEndedEventArgs(new GameEndedEvent(Teams[1])));
+            }
+            else if (!i_LivingUsers.Contains(VipForTeam[1]))
+            {
+                onGameEnded(new GameEndedEventArgs(new GameEndedEvent(Teams[0])));
+            }
         }
     }
 }

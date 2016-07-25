@@ -12,6 +12,7 @@ using PhoneTag.WebServices.Utilities;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using PhoneTag.SharedCodebase.Views;
+using PhoneTag.SharedCodebase.Utils;
 
 namespace PhoneTag.WebServices.Controllers
 {
@@ -63,7 +64,7 @@ namespace PhoneTag.WebServices.Controllers
 
                     //Add the room to the expiration list.
                     ExpirationEntry expiration = new ExpirationEntry();
-                    expiration.ExpirationTime = DateTime.Now.AddSeconds(30);
+                    expiration.ExpirationTime = DateTime.Now.AddSeconds(1);
                     expiration._id = dispute._id;
                     await Mongo.Database.GetCollection<ExpirationEntry>("DisputeExpiration").InsertOneAsync(expiration);
                 }

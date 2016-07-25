@@ -45,6 +45,13 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
 
             if (roomView != null)
             {
+                //IEnumerable<UserView> shotSuggestionEnum = roomView.LivingUsers.Where((user) => 
+                //    { return !UserView.Current.FBID.Equals(user.FBID); });
+
+                //if(shotSuggestionEnum != null && shotSuggestionEnum.Count() > 0)
+                //{
+                //    shotSuggestions = shotSuggestionEnum.ToList();
+                //}
                 shotSuggestions = roomView.LivingUsers;
             }
             else

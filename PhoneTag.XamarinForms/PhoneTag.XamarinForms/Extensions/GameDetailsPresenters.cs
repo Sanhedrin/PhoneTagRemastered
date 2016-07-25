@@ -45,7 +45,7 @@ namespace PhoneTag.XamarinForms.Extensions
                 BackgroundColor = Color.Black
             };
             uavPicker.ItemsSource = new List<int>();
-            for(int i = 0; i <= k_HalfHourInSeconds; i += 10) { uavPicker.ItemsSource.Add(i); uavPicker.Items.Add(i.ToString()); }
+            for(int i = 10; i <= k_HalfHourInSeconds; i += 10) { uavPicker.ItemsSource.Add(i); uavPicker.Items.Add(i.ToString()); }
             uavPicker.SetBinding(BindablePicker.SelectedItemProperty, "GpsRefreshRate");
             uavPicker.BindingContext = i_DetailsView;
             uavPicker.SelectedItem = 60;

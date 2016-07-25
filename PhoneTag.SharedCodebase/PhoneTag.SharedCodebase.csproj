@@ -46,6 +46,7 @@
     <Compile Include="Extensions\HttpExtensions.cs" />
     <Compile Include="POCOs\KillDisputeEventArgs.cs" />
     <Compile Include="POCOs\LocationUpdateInfo.cs" />
+    <Compile Include="Utils\PlayerAllegiance.cs" />
     <Compile Include="StaticInfo\PhoneTagInfo.cs" />
     <Compile Include="Utils\GameModeFactory.cs" />
     <Compile Include="Utils\GeoPoint.cs" />

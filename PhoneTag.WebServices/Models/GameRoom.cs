@@ -143,7 +143,7 @@ namespace PhoneTag.WebServices.Models
         /// </summary>
         public async Task HandleKillDispute(KillDisputeEventArgs i_DisputeDetails)
         {
-            if(!String.IsNullOrEmpty(i_DisputeDetails.KillCamId) && !String.IsNullOrEmpty(i_DisputeDetails.AttackedFBID))
+            if(!String.IsNullOrEmpty(i_DisputeDetails.KillCamId) && !String.IsNullOrEmpty(i_DisputeDetails.AttackedName))
             {
                 IEnumerable<String> playerIds = LivingUsers.Union(DeadUsers);
 
@@ -240,12 +240,12 @@ namespace PhoneTag.WebServices.Models
                             .Set("DeadUsers", this.DeadUsers);
 
                         GameModeDetails.Mode.GameEnded += Mode_GameEnded;
-                        //GameModeDetails.Mode.GameStateUpdate(LivingUsers);
-
+                        GameModeDetails.Mode.GameStateUpdate(LivingUsers);
+                        
                         await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
                         
                         IEnumerable<String> playersInGame = LivingUsers.Union(DeadUsers);
-                        if(playersInGame != null && playersInGame.Count() > 0)
+                        if (playersInGame != null && playersInGame.Count() > 0)
                         {
                             PushNotificationUtils.PushEvent(new PlayerKilledEvent(i_PlayerFBID), LivingUsers.Union(DeadUsers).ToList());
                         }
@@ -265,7 +265,12 @@ namespace PhoneTag.WebServices.Models
         //Occurs if the last game state changed caused the game to end.
         private void Mode_GameEnded(object sender, GameEndedEventArgs e)
         {
-            PushNotificationUtils.PushEvent(e.EventDetails, LivingUsers.Union(DeadUsers) as List<String>);
+            IEnumerable<String> users = LivingUsers.Union(DeadUsers);
+
+            if (users != null && users.Count() > 0)
+            {
+                PushNotificationUtils.PushEvent(e.EventDetails, users.ToList());
+            }
         }
 
         /// <summary>

@@ -168,7 +168,7 @@ namespace PhoneTag.XamarinForms.Pages
             }
         }
 
-        private async Task showDialog(View i_Dialog)
+        private async Task showDialogSlideDown(View i_Dialog)
         {
             m_CurrentlyShowingDialogs.Push(i_Dialog);
             i_Dialog.TranslationX = i_Dialog.TranslationY = 0;
@@ -181,31 +181,101 @@ namespace PhoneTag.XamarinForms.Pages
             await i_Dialog.TranslateTo((Width - i_Dialog.Width) / 2, 0, 750, Easing.SpringOut);
         }
 
-        private async Task hideDialog()
+        private async Task showDialogSlideUp(View i_Dialog)
         {
-            View dialog = m_CurrentlyShowingDialogs.Pop();
+            m_CurrentlyShowingDialogs.Push(i_Dialog);
+            i_Dialog.TranslationX = i_Dialog.TranslationY = 0;
 
-            await dialog.TranslateTo(0, Height, 750, Easing.SpringIn);
+            (Content as RelativeLayout).Children.Add(i_Dialog,
+                xConstraint: Constraint.RelativeToParent((parent) => { return 0; }),
+                yConstraint: Constraint.RelativeToParent((parent) => { return parent.Height; }));
+            
+            await i_Dialog.TranslateTo((Width - i_Dialog.Width) / 2, -i_Dialog.Height, 750, Easing.SpringOut);
+        }
 
-            (Content as RelativeLayout).Children.Remove(dialog);
+        private async Task hideDialogSlideUp()
+        {
+            if (m_CurrentlyShowingDialogs.Count > 0)
+            {
+                View dialog = m_CurrentlyShowingDialogs.Pop();
 
-            buttonShoot.Text = "Shoot!";
-            buttonShoot.IsEnabled = true;
+                await dialog.TranslateTo(0, -dialog.Height, 750, Easing.SpringIn);
+
+                (Content as RelativeLayout).Children.Remove(dialog);
+
+                buttonShoot.Text = "Shoot!";
+                buttonShoot.IsEnabled = true;
+            }
+        }
+
+        private async Task hideDialogSlideDown()
+        {
+            if (m_CurrentlyShowingDialogs.Count > 0)
+            {
+                View dialog = m_CurrentlyShowingDialogs.Pop();
+
+                await dialog.TranslateTo(0, Height, 750, Easing.SpringIn);
+
+                (Content as RelativeLayout).Children.Remove(dialog);
+
+                buttonShoot.Text = "Shoot!";
+                buttonShoot.IsEnabled = true;
+            }
         }
 
         private async Task transitionToSpectatorMode()
+        {
+            if (buttonShoot.Text != "Quit")
+            {
+                buttonShoot.Text = "Quit";
+                buttonShoot.IsEnabled = true;
+
+                await m_CameraComponent.FadeTo(0, 750, Easing.Linear);
+
+                Label deadLabel = generateDeadLabel();
+
+                m_GameLayout.Children.Remove(m_CameraComponent);
+                m_GameLayout.Children.Insert(0, deadLabel);
+
+                deadLabel.FadeTo(1, 750, Easing.Linear);
+            }
+        }
+
+        private async Task transitionToGameEnd(List<String> i_WinnerIds)
         {
             buttonShoot.Text = "Quit";
             buttonShoot.IsEnabled = true;
 
             await m_CameraComponent.FadeTo(0, 750, Easing.Linear);
 
-            Label deadLabel = generateDeadLabel();
+            Label deadLabel = await generateGameEndLabel(i_WinnerIds);
 
-            m_GameLayout.Children.Remove(m_CameraComponent);
+            m_GameLayout.Children.RemoveAt(0);
             m_GameLayout.Children.Insert(0, deadLabel);
 
             deadLabel.FadeTo(1, 750, Easing.Linear);
+        }
+
+        private async Task<Label> generateGameEndLabel(List<String> i_WinnerIds)
+        {
+            StringBuilder gameEndMessage = new StringBuilder($"Game Over!.{Environment.NewLine}The winners are:{Environment.NewLine}");
+
+            foreach(String id in i_WinnerIds)
+            {
+                UserView user = await UserView.GetUser(id);
+                gameEndMessage.AppendLine(user.Username);
+            }
+
+            Label deadLabel = new Label()
+            {
+                Text = gameEndMessage.ToString(),
+                HeightRequest = m_Camera.Height,
+                VerticalTextAlignment = TextAlignment.Center,
+                HorizontalTextAlignment = TextAlignment.Center,
+                Opacity = 0
+            };
+
+            return deadLabel;
         }
 
         private Label generateDeadLabel()

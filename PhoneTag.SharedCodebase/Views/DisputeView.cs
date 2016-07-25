@@ -14,6 +14,8 @@ namespace PhoneTag.SharedCodebase.Views
         public string AttackedId { get; set; }
         public string AttackerId { get; set; }
         public string KillCamId { get; set; }
+        public string AttackerName { get; set; }
+        public string AttackedName { get; set; }
 
         public DisputeView()
         {
@@ -27,7 +29,7 @@ namespace PhoneTag.SharedCodebase.Views
         {
             using (HttpClient client = new HttpClient())
             {
-                return await client.GetMethodAsync(String.Format("disputes/{0}", i_DisputeId));
+                return await client.GetMethodAsync<DisputeView>(String.Format("disputes/{0}", i_DisputeId));
             }
         }
 

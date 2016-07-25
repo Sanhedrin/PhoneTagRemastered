@@ -31,8 +31,9 @@ namespace PhoneTag.XamarinForms.Droid
     /// </summary>
     class GameMapDisplayRenderer : MapRenderer
     {
-        private LatLng m_GameLocation;
-        private double m_GameRadius;
+        protected LatLng m_GameLocation;
+        protected double m_GameRadius;
+
         private double m_MinZoom;
         private double m_MaxZoom;
         private double? m_InitialZoom = null;
@@ -85,7 +86,7 @@ namespace PhoneTag.XamarinForms.Droid
             m_LastValidLocation = m_GameLocation = new LatLng(i_Location.Latitude, i_Location.Longitude);
             m_GameRadius = i_GameRadius;
 
-            markPlayArea(i_Location, i_GameRadius);
+            markPlayArea(i_Location, i_GameRadius, true);
         }
 
         /// <summary>
@@ -135,7 +136,7 @@ namespace PhoneTag.XamarinForms.Droid
             }
         }
 
-        private async Task markPlayArea(Position i_GameLocation, double i_GameRadius)
+        protected async Task markPlayArea(Position i_GameLocation, double i_GameRadius, bool i_CenterOnPosition)
         {
             if (i_GameLocation != null)
             {
@@ -157,13 +158,16 @@ namespace PhoneTag.XamarinForms.Droid
 
                 m_LastValidLocation = gameLocation;
 
-                if (m_LastZoom.HasValue)
+                if (i_CenterOnPosition)
                 {
-                    m_MapView.AnimateCamera(CameraUpdateFactory.NewLatLngZoom(m_LastValidLocation, m_LastZoom.Value));
-                }
-                else
-                {
-                    m_MapView.AnimateCamera(CameraUpdateFactory.NewLatLng(m_LastValidLocation));
+                    if (m_LastZoom.HasValue)
+                    {
+                        m_MapView.AnimateCamera(CameraUpdateFactory.NewLatLngZoom(m_LastValidLocation, m_LastZoom.Value));
+                    }
+                    else
+                    {
+                        m_MapView.AnimateCamera(CameraUpdateFactory.NewLatLng(m_LastValidLocation));
+                    }
                 }
             }
         }

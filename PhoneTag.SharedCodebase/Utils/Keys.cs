@@ -19,5 +19,7 @@ namespace PhoneTag.SharedCodebase.Utils
         public const String ImgurClientSecret = "5776a605fcbb4cc1958582bc81292e8e897591bb";
         public const String ImageHostingServiceUploadUrl = "https://api.imgur.com/3/image";
         public const String ImageHostingServiceDownloadUrl = "http://i.imgur.com";
+
+        public const int DisputeTimeInSeconds = 15;
     }
 }

@@ -49,7 +49,7 @@ namespace PhoneTag.WSTest
         {
             using (HttpClient client = new HttpClient())
             {
-                await client.GetMethodAsync("test/clear");
+                //await client.GetMethodAsync("test/clear");
 
                 tbResult.Text = "Cleared";
             }
