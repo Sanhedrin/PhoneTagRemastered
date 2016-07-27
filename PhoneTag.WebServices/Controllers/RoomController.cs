@@ -114,6 +114,8 @@ namespace PhoneTag.WebServices.Controllers
         /// <summary>
         /// Kills the player from the current game.
         /// </summary>
+        [Route("api/rooms/{i_RoomId}/kill/{i_PlayerFBID}")]
+        [HttpPost]
         public async Task KillPlayer(string i_RoomId, string i_PlayerFBID)
         {
             if(!String.IsNullOrEmpty(i_RoomId) && !String.IsNullOrEmpty(i_PlayerFBID))
@@ -148,7 +150,6 @@ namespace PhoneTag.WebServices.Controllers
                     {
                         success = await room.JoinGame(i_PlayerFBID);
                     }
-                   
                 }
             }
 

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using Plugin.Geolocator;
 
 namespace PhoneTag.XamarinForms.Pages
 {
@@ -71,8 +72,15 @@ namespace PhoneTag.XamarinForms.Pages
 
         private void ButtonReady_Clicked(object sender, EventArgs e)
         {
-            buttonReady.IsEnabled = false;
-            triggerReadyStatus();
+            if (CrossGeolocator.Current.IsGeolocationAvailable && CrossGeolocator.Current.IsGeolocationEnabled)
+            {
+                buttonReady.IsEnabled = false;
+                triggerReadyStatus();
+            }
+            else
+            {
+                DisplayAlert("Can't participate in a game!", $"No GPS signal found.{Environment.NewLine}Please try enabling your GPS and then try again.", "Ok");
+            }
         }
 
         //Changes the ready status of the player in the room.

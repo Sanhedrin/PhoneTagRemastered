@@ -232,12 +232,15 @@ namespace PhoneTag.XamarinForms.Pages
 
                 await m_CameraComponent.FadeTo(0, 750, Easing.Linear);
 
-                Label deadLabel = generateDeadLabel();
+                if (buttonShoot.Text != "Quit")
+                {
+                    Label deadLabel = generateDeadLabel();
 
-                m_GameLayout.Children.Remove(m_CameraComponent);
-                m_GameLayout.Children.Insert(0, deadLabel);
+                    m_GameLayout.Children.Remove(m_CameraComponent);
+                    m_GameLayout.Children.Insert(0, deadLabel);
 
-                deadLabel.FadeTo(1, 750, Easing.Linear);
+                    deadLabel.FadeTo(1, 750, Easing.Linear);
+                }
             }
         }
 

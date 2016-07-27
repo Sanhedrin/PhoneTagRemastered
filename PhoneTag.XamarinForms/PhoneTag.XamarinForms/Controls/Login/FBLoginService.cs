@@ -17,7 +17,8 @@ namespace PhoneTag.XamarinForms.Controls.Login
         private static Account s_LoginAccount = null;
 
         private static AccountStore s_AccountStore = null;
-        private static AccountStore CurrentAccountStore {
+        private static AccountStore CurrentAccountStore
+        {
             get
             {
                 if(s_AccountStore == null)

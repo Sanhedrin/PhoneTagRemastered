@@ -44,7 +44,7 @@ namespace PhoneTag.XamarinForms.Droid
         }
 
         //Adds the player location markers to the map.
-        private async Task updatePlayerLocations(List<Tuple<PlayerAllegiance, GeoPoint>> i_PlayerLocations)
+        private async Task updatePlayerLocations(List<Tuple<PlayerAllegiance, String, GeoPoint>> i_PlayerLocations)
         {
             while (m_MapView == null)
             {
@@ -53,7 +53,7 @@ namespace PhoneTag.XamarinForms.Droid
 
             markPlayArea(new Position(m_GameLocation.Latitude, m_GameLocation.Longitude), m_GameRadius, false);
 
-            foreach (Tuple<PlayerAllegiance, GeoPoint> marker in i_PlayerLocations)
+            foreach (Tuple<PlayerAllegiance, String, GeoPoint> marker in i_PlayerLocations)
             {
                 MarkerOptions markerOptions = getMarkerOptionsFor(marker);
 
@@ -62,36 +62,32 @@ namespace PhoneTag.XamarinForms.Droid
         }
 
         //Gets the relevant marker options for the given player information.
-        private MarkerOptions getMarkerOptionsFor(Tuple<PlayerAllegiance, GeoPoint> i_PlayerMarker)
+        private MarkerOptions getMarkerOptionsFor(Tuple<PlayerAllegiance, String, GeoPoint> i_PlayerMarker)
         {
             MarkerOptions markerOptions = new MarkerOptions();
 
             markerOptions.Draggable(false);
-            markerOptions.SetPosition(new LatLng(i_PlayerMarker.Item2.Latitude, i_PlayerMarker.Item2.Longitude));
+            markerOptions.SetPosition(new LatLng(i_PlayerMarker.Item3.Latitude, i_PlayerMarker.Item3.Longitude));
+            markerOptions.SetTitle(i_PlayerMarker.Item2);
             m_MapView.UiSettings.MapToolbarEnabled = false;
 
             BitmapDescriptor markerColor = BitmapDescriptorFactory.DefaultMarker(BitmapDescriptorFactory.HueMagenta);
             switch (i_PlayerMarker.Item1)
             {
                 case PlayerAllegiance.Ally:
-                    markerColor = BitmapDescriptorFactory.DefaultMarker(BitmapDescriptorFactory.HueGreen);
-                    markerOptions.SetTitle("Ally");
+                    markerColor = BitmapDescriptorFactory.FromResource(Resource.Drawable.heart);
                     break;
                 case PlayerAllegiance.Enemy:
-                    markerColor = BitmapDescriptorFactory.DefaultMarker(BitmapDescriptorFactory.HueRed);
-                    markerOptions.SetTitle("Enemy");
+                    markerColor = BitmapDescriptorFactory.FromResource(Resource.Drawable.attack);
                     break;
                 case PlayerAllegiance.Self:
-                    markerColor = BitmapDescriptorFactory.DefaultMarker(BitmapDescriptorFactory.HueBlue);
-                    markerOptions.SetTitle("Me");
+                    markerColor = BitmapDescriptorFactory.FromResource(Resource.Drawable.myself);
                     break;
                 case PlayerAllegiance.Special:
-                    markerColor = BitmapDescriptorFactory.DefaultMarker(BitmapDescriptorFactory.HueYellow);
-                    markerOptions.SetTitle("Special Ally");
+                    markerColor = BitmapDescriptorFactory.FromResource(Resource.Drawable.protect);
                     break;
                 case PlayerAllegiance.SpecialSelf:
-                    markerColor = BitmapDescriptorFactory.DefaultMarker(BitmapDescriptorFactory.HueOrange);
-                    markerOptions.SetTitle("Special Me");
+                    markerColor = BitmapDescriptorFactory.FromResource(Resource.Drawable.protect_me);
                     break;
             }
 

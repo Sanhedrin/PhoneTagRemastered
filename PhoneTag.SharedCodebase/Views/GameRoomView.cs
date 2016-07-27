@@ -100,6 +100,18 @@ namespace PhoneTag.SharedCodebase.Views
         }
 
         /// <summary>
+        /// When a player is cheating or leaving the game area, we can kill them off immediately without
+        /// requesting permission.
+        /// </summary>
+        public async Task UndisputableKill(string i_FBID)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                await client.PostMethodAsync(String.Format("rooms/{0}/kill/{1}", RoomId, i_FBID));
+            }
+        }
+
+        /// <summary>
         /// Adds the user with the given id to the room's player list.
         /// </summary>
         public async Task<bool> JoinRoom(string i_FBID)

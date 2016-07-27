@@ -1,5 +1,6 @@
 ﻿using PhoneTag.SharedCodebase.Views;
 using PhoneTag.XamarinForms.Pages;
+using Plugin.Geolocator;
 using Plugin.XamJam.Screen;
 using System;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace PhoneTag.XamarinForms.Controls.GameDetailsTile
                         Text = room.GameDetails.Name,
                         BackgroundColor = Color.Green,
                         WidthRequest = CrossScreen.Current.Size.Width / 4,
-                        Command = new Command(() => { Navigation.PushAsync(new GameLobbyPage(m_GameRoomId)); }),
+                        Command = new Command(() => { joinGameRoom(); }),
                         IsEnabled = !m_GameRoomId.Equals(UserView.Current?.PlayingIn) //Disable if already in room.
                     });
 
@@ -47,6 +48,19 @@ namespace PhoneTag.XamarinForms.Controls.GameDetailsTile
                         WidthRequest = CrossScreen.Current.Size.Width * 3 / 4
                     });
                 }
+            }
+        }
+
+
+        private void joinGameRoom()
+        {
+            if (CrossGeolocator.Current.IsGeolocationAvailable && CrossGeolocator.Current.IsGeolocationEnabled)
+            {
+                Navigation.PushAsync(new GameLobbyPage(m_GameRoomId));
+            }
+            else
+            {
+                TrailableContentPage.CurrentPage.DisplayAlert("Can't participate in a game!", $"No GPS signal found.{Environment.NewLine}Please try enabling your GPS and then try again.", "Ok");
             }
         }
 

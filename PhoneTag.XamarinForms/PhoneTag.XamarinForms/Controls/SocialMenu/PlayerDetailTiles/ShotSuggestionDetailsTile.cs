@@ -70,8 +70,9 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
             chooseTargetButton.Text = "Choose target";
             chooseTargetButton.Command = new Command(() => 
             {
-                UserView.Current?.TryKill(m_UserView.FBID, ShotDisplayPage.LastKillCam);
-                Application.Current.MainPage.Navigation.PopAsync();
+                UserView.Current?.TryKill(m_UserView.FBID, ShotDisplayDialog.LastKillCam);
+
+                (TrailableContentPage.CurrentPage as GamePage).ShotTargetChosen();
             });
 
             return chooseTargetButton;

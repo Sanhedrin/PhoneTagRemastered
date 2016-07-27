@@ -93,6 +93,15 @@ namespace PhoneTag.XamarinForms.Pages
                         m_GpsCancellationToken = null;
                         break;
                     }
+                    //If the player is cheating and trying to close the GPS during the game, we'll
+                    //Kill them and kick them out.
+                    if (!CrossGeolocator.Current.IsGeolocationEnabled)
+                    {
+                        m_GameRoomView.UndisputableKill(UserView.Current.FBID);
+                        Application.Current.MainPage = new ErrorPage($"Tsk tsk!{Environment.NewLine}Turning off your GPS is cheating, you know.");
+                        m_GpsCancellationToken = null;
+                        break;
+                    }
 
                     playersLocations = await m_GameRoomView.GetPlayersLocations();
 
@@ -117,14 +126,54 @@ namespace PhoneTag.XamarinForms.Pages
 
         private async Task pictureReady(byte[] i_PictureData)
         {
-            ShotDisplayPage shotDisplayPage = new ShotDisplayPage(i_PictureData);
-            shotDisplayPage.ShotCancelled += (o, e) =>
+            ShotDisplayDialog shotDisplayDialog = new ShotDisplayDialog(i_PictureData);
+            shotDisplayDialog.ShotCancelled += (o, e) =>
+            {
+                OnBackButtonPressed();
+            };
+
+            await showDialogSlideUp(shotDisplayDialog);
+        }
+
+        public void ShotTargetChosen()
+        {
+            OnBackButtonPressed();
+        }
+
+        //Closes the shot display button on back button press.
+        protected override bool OnBackButtonPressed()
+        {
+            //The hardware back button can only be used to back out of the shot display page, so if
+            //such is available, we'll pop it then put everything back.
+            IEnumerable<View> shotDisplayDialogs = m_CurrentlyShowingDialogs.Where(view => view is ShotDisplayDialog);
+            if (m_CurrentlyShowingDialogs.Count > 0 && shotDisplayDialogs.Count() > 0)
             {
                 buttonShoot.IsEnabled = true;
                 buttonShoot.Text = "Shoot!";
-            };
 
-            await Navigation.PushAsync(shotDisplayPage);
+                //We'll need to remove all the dialogs on top of this one, and then put them back.
+                Queue<View> removedViews = new Queue<View>();
+
+                while(!(m_CurrentlyShowingDialogs.Peek() is ShotDisplayDialog))
+                {
+                    removedViews.Enqueue(m_CurrentlyShowingDialogs.Pop());
+                }
+
+                //We don't await this as the pop on the item happens before the first await, and we don't
+                //need to maintain the state of the stack until the animation completes.
+                hideDialogSlideDown();
+
+                while (removedViews.Count > 0)
+                {
+                    m_CurrentlyShowingDialogs.Push(removedViews.Dequeue());
+                }
+
+                return false;
+            }
+            else
+            {
+                return base.OnBackButtonPressed();
+            }
         }
 
         private void ShootButton_Clicked(object sender, EventArgs e)

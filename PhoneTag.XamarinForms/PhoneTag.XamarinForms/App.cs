@@ -12,7 +12,7 @@ namespace PhoneTag.XamarinForms
     {        
         public App()
         {
-            CrossGeolocator.Current.DesiredAccuracy = 5;
+            CrossGeolocator.Current.DesiredAccuracy = 0.05;
             
             MainPage = new LoadingPage();
             //MainPage = new NavigationPage(new GamePage());

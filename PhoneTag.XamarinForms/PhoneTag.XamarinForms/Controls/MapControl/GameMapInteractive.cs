@@ -37,13 +37,15 @@ namespace PhoneTag.XamarinForms.Controls.MapControl
         {
             if (PlayerLocationMarkersUpdated != null)
             {
-                List<Tuple<PlayerAllegiance, GeoPoint>> playerMarkers = new List<Tuple<PlayerAllegiance, GeoPoint>>();
+                List<Tuple<PlayerAllegiance, String, GeoPoint>> playerMarkers = new List<Tuple<PlayerAllegiance, String, GeoPoint>>();
 
                 foreach (String userId in i_PlayersLocations.Keys)
                 {
                     PlayerAllegiance allegiance = i_GameRoomView.GameDetails.Mode.GetAllegianceFor(userId);
+                    String roleDescription = i_GameRoomView.GameDetails.Mode.GetRoleDescriptionFor(userId);
 
-                    playerMarkers.Add(new Tuple<PlayerAllegiance, GeoPoint>(allegiance, i_PlayersLocations[userId]));
+                    playerMarkers.Add(new Tuple<PlayerAllegiance, String, GeoPoint>(
+                        allegiance, roleDescription, i_PlayersLocations[userId]));
                 }
 
                 PlayerLocationMarkersUpdated(this, new PlayerLocationMarkerUpdateEventArgs(playerMarkers));

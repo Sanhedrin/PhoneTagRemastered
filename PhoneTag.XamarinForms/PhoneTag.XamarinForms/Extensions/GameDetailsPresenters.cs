@@ -33,26 +33,6 @@ namespace PhoneTag.XamarinForms.Extensions
 
 
 
-            ///Sets a picker for the gps interval time that binds to the field.
-            layout.Children.Add(
-                new Label()
-                {
-                    Text = "UAV tick rate in seconds:"
-                });
-            BindablePicker uavPicker = new BindablePicker()
-            {
-                Title = "Intervals for the player scanner",
-                BackgroundColor = Color.Black
-            };
-            uavPicker.ItemsSource = new List<int>();
-            for(int i = 10; i <= k_HalfHourInSeconds; i += 10) { uavPicker.ItemsSource.Add(i); uavPicker.Items.Add(i.ToString()); }
-            uavPicker.SetBinding(BindablePicker.SelectedItemProperty, "GpsRefreshRate");
-            uavPicker.BindingContext = i_DetailsView;
-            uavPicker.SelectedItem = 60;
-            layout.Children.Add(uavPicker);
-
-
-
             ///Sets a picker for the duration of the game that binds to the field.
             layout.Children.Add(
                 new Label()
@@ -79,6 +59,26 @@ namespace PhoneTag.XamarinForms.Extensions
             {
                 layout.Children.Add(view);
             }
+
+
+
+            ///Sets a picker for the gps interval time that binds to the field.
+            layout.Children.Add(
+                new Label()
+                {
+                    Text = "Player location scanner rate in seconds:"
+                });
+            BindablePicker uavPicker = new BindablePicker()
+            {
+                Title = "Intervals for the player scanner",
+                BackgroundColor = Color.Black
+            };
+            uavPicker.ItemsSource = new List<int>();
+            for (int i = 10; i <= k_HalfHourInSeconds; i += 10) { uavPicker.ItemsSource.Add(i); uavPicker.Items.Add(i.ToString()); }
+            uavPicker.SetBinding(BindablePicker.SelectedItemProperty, "GpsRefreshRate");
+            uavPicker.BindingContext = i_DetailsView;
+            uavPicker.SelectedItem = 60;
+            layout.Children.Add(uavPicker);
 
             return layout;
         }

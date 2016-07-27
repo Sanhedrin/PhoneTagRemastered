@@ -9,36 +9,41 @@ using Xamarin.Forms;
 
 namespace PhoneTag.XamarinForms.Pages
 {
-    public partial class ShotDisplayPage : TrailableContentPage
+    public partial class ShotDisplayDialog : RelativeLayout
     {
-        public event EventHandler ShotCancelled;
-
         private Image m_ShotView;
 
         private async Task initializeComponent()
         {
-            NavigationPage.SetHasNavigationBar(this, false);
+            BackgroundColor = Color.Black;
 
             m_ShotView = generateShotImage();
             ShotSuggestionListDisplay shotSuggestions = generatePlayerShotSuggestions();
+            Button cancelShotButton = generateCancelShotButton();
 
-            Title = "Main Page";
-            Content = new RelativeLayout
-            {
-                VerticalOptions = new LayoutOptions
-                {
-                    Alignment = LayoutAlignment.Fill
-                },
-                Children = {
-                }
-            };
+            Children.Add(cancelShotButton,
+                xConstraint: Constraint.RelativeToParent((parent) => { return 10; }),
+                yConstraint: Constraint.RelativeToParent((parent) => { return 10; }),
+                heightConstraint: Constraint.RelativeToParent((parent) => { return parent.Height/ 20; }));
 
-            (Content as RelativeLayout).Children.Add(m_ShotView,
-                Constraint.RelativeToParent((parent) => { return 0; }));
+            Children.Add(m_ShotView,
+                xConstraint: Constraint.RelativeToParent((parent) => { return 0; }),
+                yConstraint: Constraint.RelativeToParent((parent) => { return parent.Height / 5; }));
 
-            (Content as RelativeLayout).Children.Add(shotSuggestions,
+            Children.Add(shotSuggestions,
                 widthConstraint: Constraint.RelativeToParent((parent) => { return parent.Width; }),
                 yConstraint: Constraint.RelativeToParent((parent) => { return parent.Height - shotSuggestions.HeightRequest; }));
+        }
+
+        private Button generateCancelShotButton()
+        {
+            Button cancelShotButton = new Button();
+            
+            cancelShotButton.Text = "Cancel";
+            cancelShotButton.BackgroundColor = Color.Gray;
+            cancelShotButton.Clicked += CancelShotButton_Clicked;
+
+            return cancelShotButton;
         }
 
         private ShotSuggestionListDisplay generatePlayerShotSuggestions()
@@ -58,21 +63,6 @@ namespace PhoneTag.XamarinForms.Pages
                 HeightRequest = CrossScreen.Current.Size.Height * 2 / 5,
                 WidthRequest = CrossScreen.Current.Size.Width,
             };
-        }
-
-        protected override void OnDisappearing()
-        {
-            if (ShotCancelled != null)
-            {
-                ShotCancelled(this, new EventArgs());
-            }
-
-            base.OnDisappearing();
-        }
-
-        protected override bool OnBackButtonPressed()
-        {
-            return base.OnBackButtonPressed();
         }
     }
 }

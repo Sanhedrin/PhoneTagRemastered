@@ -14,15 +14,16 @@ namespace PhoneTag.XamarinForms.Pages
     /// <summary>
     /// This page comes up to show the player that was just shot and process the kill.
     /// </summary>
-    public partial class ShotDisplayPage : TrailableContentPage
+    public partial class ShotDisplayDialog : RelativeLayout
     {
         public static byte[] LastKillCam { get; private set; }
+        public event EventHandler ShotCancelled;
 
         /// <summary>
         /// Initializes the page with the given shot information.
         /// </summary>
         /// <param name="i_ShotPictureBuffer">The picture that was taken of the shot player.</param>
-        public ShotDisplayPage(byte[] i_ShotPictureBuffer) : base()
+        public ShotDisplayDialog(byte[] i_ShotPictureBuffer)
         {
             LastKillCam = i_ShotPictureBuffer;
 
@@ -30,11 +31,14 @@ namespace PhoneTag.XamarinForms.Pages
 
             m_ShotView.Source = ImageSource.FromStream(() => new MemoryStream(i_ShotPictureBuffer));
             m_ShotView.RelRotateTo(90);
-            Padding = new Thickness(0, CrossScreen.Current.Size.Height * 1 / 4, 0, 0);
         }
 
-        public override void ParseEvent(Event i_EventDetails)
+        private void CancelShotButton_Clicked(object sender, EventArgs e)
         {
+            if (ShotCancelled != null)
+            {
+                ShotCancelled(this, new EventArgs());
+            }
         }
     }
 }

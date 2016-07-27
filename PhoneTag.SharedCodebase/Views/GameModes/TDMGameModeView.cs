@@ -46,5 +46,26 @@ namespace PhoneTag.SharedCodebase.Views.GameModes
 
             return team;
         }
+
+        public override string GetRoleDescriptionFor(string i_UserId)
+        {
+            PlayerAllegiance allegiance = GetAllegianceFor(i_UserId);
+            String description = "";
+
+            switch (allegiance)
+            {
+                case PlayerAllegiance.Ally:
+                    description = "Ally";
+                    break;
+                case PlayerAllegiance.Enemy:
+                    description = "Enemy";
+                    break;
+                case PlayerAllegiance.Self:
+                    description = "Me";
+                    break;
+            }
+
+            return description;
+        }
     }
 }

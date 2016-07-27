@@ -51,6 +51,10 @@
     <Compile Include="Controls\KillDisputeResolver\KillConfirmationDialog.designer.cs">
       <DependentUpon>KillConfirmationDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\KillDisputeResolver\ShotDisplayDialog.cs" />
+    <Compile Include="Controls\KillDisputeResolver\ShotDisplayDialog.designer.cs">
+      <DependentUpon>ShotDisplayDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MapControl\PlayerLocationMarkerUpdateEventArgs.cs" />
     <Compile Include="Controls\SocialMenu\FriendListButton.cs" />
     <Compile Include="Controls\SocialMenu\FriendListButton.designer.cs">
@@ -122,9 +126,9 @@
     <Compile Include="Pages\MainMenuPage.designer.cs">
       <DependentUpon>MainMenuPage.cs</DependentUpon>
     </Compile>
-    <Compile Include="Pages\ShotDisplayPage.cs" />
-    <Compile Include="Pages\ShotDisplayPage.designer.cs">
-      <DependentUpon>ShotDisplayPage.cs</DependentUpon>
+    <Compile Include="Pages\SettingsMenuPage.cs" />
+    <Compile Include="Pages\SettingsMenuPage.designer.cs">
+      <DependentUpon>SettingsMenuPage.cs</DependentUpon>
     </Compile>
     <Compile Include="Pages\TrailableContentPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

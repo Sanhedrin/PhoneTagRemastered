@@ -9,9 +9,9 @@ namespace PhoneTag.XamarinForms.Controls.MapControl
 {
     public class PlayerLocationMarkerUpdateEventArgs : EventArgs
     {
-        public List<Tuple<PlayerAllegiance, GeoPoint>> PlayerLocations { get; set; }
+        public List<Tuple<PlayerAllegiance, String, GeoPoint>> PlayerLocations { get; set; }
 
-        public PlayerLocationMarkerUpdateEventArgs(List<Tuple<PlayerAllegiance, GeoPoint>> i_PlayerLocations)
+        public PlayerLocationMarkerUpdateEventArgs(List<Tuple<PlayerAllegiance, String, GeoPoint>> i_PlayerLocations)
         {
             PlayerLocations = i_PlayerLocations;
         }

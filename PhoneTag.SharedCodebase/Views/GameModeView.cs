@@ -28,5 +28,10 @@ namespace PhoneTag.SharedCodebase.Views
         /// Gets the team members of the given player.
         /// </summary>
         public abstract List<string> GetPlayerTeamFor(string i_UserId);
+
+        /// <summary>
+        /// Gets the description to be displayed on the player's map marker.
+        /// </summary>
+        public abstract string GetRoleDescriptionFor(string i_UserId);
     }
 }

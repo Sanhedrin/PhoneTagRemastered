@@ -61,7 +61,12 @@ namespace PhoneTag.XamarinForms.Pages
                             BackgroundColor = Color.Green,
                             Command = new Command(() => { CreateGameButton_Clicked(); })
                         },
-                        //TODO: Add friend list component here.
+                        new Button()
+                        {
+                            Text = "Settings",
+                            BackgroundColor = Color.Gray,
+                            Command = new Command(() => { SettingsButton_Clicked(); })
+                        }
                     }
             };
 
