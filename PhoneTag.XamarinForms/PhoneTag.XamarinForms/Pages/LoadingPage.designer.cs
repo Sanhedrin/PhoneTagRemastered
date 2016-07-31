@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using PhoneTag.XamarinForms.Controls.SocialMenu;
+using PhoneTag.XamarinForms.Controls.AnimatedImageControl;
 
 namespace PhoneTag.XamarinForms.Pages
 {
@@ -14,6 +15,7 @@ namespace PhoneTag.XamarinForms.Pages
         {
             Title = "Loading";
             Padding = new Thickness(0, 20, 0, 0);
+            BackgroundColor = Color.White;
             Content = new StackLayout
             {
                 VerticalOptions = new LayoutOptions
@@ -21,9 +23,16 @@ namespace PhoneTag.XamarinForms.Pages
                     Alignment = LayoutAlignment.Center
                 },
                 Children = {
+                    new AnimatedImage()
+                    {
+                        ImageName = "loading_logo",
+                        Animate = true
+                    },
                     new Label
                     {
-                        Text = "Loading..."
+                        Text = "Loading...",
+                        TextColor = Color.Black,
+                        HorizontalTextAlignment = TextAlignment.Center
                     }
                 }
             };

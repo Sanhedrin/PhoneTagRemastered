@@ -1,4 +1,6 @@
-﻿using PhoneTag.XamarinForms.Controls.SocialMenu;
+﻿using PhoneTag.XamarinForms.Controls.AnimatedImageControl;
+using PhoneTag.XamarinForms.Controls.MenuButtons;
+using PhoneTag.XamarinForms.Controls.SocialMenu;
 using Plugin.XamJam.Screen;
 using System;
 using System.Collections.Generic;
@@ -14,11 +16,13 @@ namespace PhoneTag.XamarinForms.Pages
     {
         private void initializeComponent()
         {
-            StackLayout layout = generatePageLayout();
+            RelativeLayout layout = generatePageLayout();
             FriendListButton friendListButton = generateFriendListButton();
 
+            BackgroundImage = "mainmenu_background.png";
             Title = "Main Menu";
             Padding = new Thickness(0, 20, 0, 0);
+            BackgroundColor = Color.White;
             Content = new AbsoluteLayout
             {
                 Children = {
@@ -35,9 +39,9 @@ namespace PhoneTag.XamarinForms.Pages
             return friendsButton;
         }
 
-        private StackLayout generatePageLayout()
+        private RelativeLayout generatePageLayout()
         {
-            StackLayout layout = new StackLayout
+            RelativeLayout layout = new RelativeLayout
             {
                 VerticalOptions = new LayoutOptions
                 {
@@ -48,26 +52,44 @@ namespace PhoneTag.XamarinForms.Pages
                     Alignment = LayoutAlignment.Fill
                 },
                 Children = {
-                        //TODO: Insert title image asset.
-                        new Button()
+                    {
+                        new ImageButton()
                         {
-                            Text = "Find Game In Your Area!",
-                            BackgroundColor = Color.Yellow,
-                            Command = new Command(() => { FindGameButton_Clicked(); })
+                            Source = new FileImageSource() {
+                                File = "create_button.png"
+                            },
+                            ClickAction = () => { CreateGameButton_Clicked(); }
                         },
-                        new Button()
+                        Constraint.RelativeToParent((parent) => { return parent.Width * 0.170; }),
+                        Constraint.RelativeToParent((parent) => { return parent.Height * 0.22; }),
+                        Constraint.RelativeToParent((parent) => { return parent.Width * 0.677; })
+                    },
+                    {
+                        new ImageButton()
                         {
-                            Text = "Create Game!",
-                            BackgroundColor = Color.Green,
-                            Command = new Command(() => { CreateGameButton_Clicked(); })
+                            Source = new FileImageSource() {
+                                File = "search_button.png"
+                            },
+                            ClickAction = () => { FindGameButton_Clicked(); }
                         },
-                        new Button()
+                        Constraint.RelativeToParent((parent) => { return parent.Width * 0.170; }),
+                        Constraint.RelativeToParent((parent) => { return parent.Height * 0.661; }),
+                        Constraint.RelativeToParent((parent) => { return parent.Width * 0.677; })
+
+                    },
+                    {
+                        new ImageButton()
                         {
-                            Text = "Settings",
-                            BackgroundColor = Color.Gray,
-                            Command = new Command(() => { SettingsButton_Clicked(); })
-                        }
+                            Source = new FileImageSource() {
+                                File = "settings_button.png"
+                            },
+                            ClickAction = () => { SettingsButton_Clicked(); }
+                        },
+                        Constraint.RelativeToParent((parent) => { return parent.Width * 0.05; }),
+                        Constraint.RelativeToParent((parent) => { return parent.Height * 0.68; }),
+                        Constraint.RelativeToParent((parent) => { return parent.Width * 0.15; })
                     }
+                }
             };
 
             AbsoluteLayout.SetLayoutBounds(layout, new Rectangle(1f, 1f, 1f, 1f));

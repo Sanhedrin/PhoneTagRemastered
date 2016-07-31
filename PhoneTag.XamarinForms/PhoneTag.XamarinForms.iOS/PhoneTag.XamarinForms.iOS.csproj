@@ -89,6 +89,7 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CustomControls\AnimatedImageControl\AnimatedImageRenderer.cs" />
     <Compile Include="CustomControls\CameraControl\CameraPreviewRenderer.cs" />
     <Compile Include="CustomControls\Login\LoginPageRenderer.cs" />
     <Compile Include="CustomControls\MapControl\GameMapDisplayRenderer.cs" />
@@ -261,6 +262,105 @@
   <ItemGroup>
     <BundleResource Include="Resources\add_friend_button.png" />
     <BundleResource Include="Resources\friend_indication.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_8.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_11.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_12.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_13.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_14.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_15.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_17.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_18.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_19.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_20.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_21.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_22.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_23.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_25.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_26.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_27.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_28.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\loading_logo_30.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\create_button.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\search_button.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\settings_button.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.3.0.46-pre3\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.0.46-pre3\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />

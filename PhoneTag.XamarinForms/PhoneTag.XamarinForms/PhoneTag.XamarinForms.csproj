@@ -37,6 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="Controls\AnimatedImageControl\AnimatedImage.cs" />
     <Compile Include="Controls\CameraControl\CameraOptions.cs" />
     <Compile Include="Controls\CameraControl\CameraPreview.cs" />
     <Compile Include="Controls\KillDisputeResolver\DisputeDialog.cs" />
@@ -56,6 +57,7 @@
       <DependentUpon>ShotDisplayDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\MapControl\PlayerLocationMarkerUpdateEventArgs.cs" />
+    <Compile Include="Controls\MenuButtons\ImageButton.cs" />
     <Compile Include="Controls\SocialMenu\FriendListButton.cs" />
     <Compile Include="Controls\SocialMenu\FriendListButton.designer.cs">
       <DependentUpon>FriendListButton.cs</DependentUpon>

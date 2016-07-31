@@ -1,4 +1,5 @@
-﻿using PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles;
+﻿using PhoneTag.XamarinForms.Controls.AnimatedImageControl;
+using PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,15 +13,23 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
     {
         private void initializeLoadingComponent()
         {
-            BackgroundColor = Color.Black;
-
             Content = new StackLayout
             {
-                Children =
+                VerticalOptions = new LayoutOptions
                 {
-                    new Label()
+                    Alignment = LayoutAlignment.Center
+                },
+                Children = {
+                    new AnimatedImage()
                     {
-                        Text = "Loading..."
+                        ImageName = "loading_logo",
+                        Animate = true
+                    },
+                    new Label
+                    {
+                        Text = "Loading...",
+                        TextColor = Color.Black,
+                        HorizontalTextAlignment = TextAlignment.Center
                     }
                 }
             };
