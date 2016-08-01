@@ -149,7 +149,6 @@ namespace PhoneTag.XamarinForms.Pages
             if (m_CurrentlyShowingDialogs.Count > 0 && shotDisplayDialogs.Count() > 0)
             {
                 buttonShoot.IsEnabled = true;
-                buttonShoot.Text = "Shoot!";
 
                 //We'll need to remove all the dialogs on top of this one, and then put them back.
                 Queue<View> removedViews = new Queue<View>();
@@ -176,12 +175,11 @@ namespace PhoneTag.XamarinForms.Pages
             }
         }
 
-        private void ShootButton_Clicked(object sender, EventArgs e)
+        private void ShootButton_Clicked()
         {
-            if (buttonShoot.Text.Equals("Shoot!"))
+            if (!m_GameOver)
             {
                 buttonShoot.IsEnabled = false;
-                buttonShoot.Text = "Processing shot...";
 
                 m_Camera.TakePicture();
             }
@@ -304,7 +302,7 @@ namespace PhoneTag.XamarinForms.Pages
         {
             displayNotification(i_PlayerKilledEvent);
 
-            if (i_PlayerKilledEvent.PlayerFBID.Equals(UserView.Current.FBID) && !buttonShoot.Text.Equals("Quit"))
+            if (i_PlayerKilledEvent.PlayerFBID.Equals(UserView.Current.FBID) && !m_GameOver)
             {
                 playerKilled();
             }

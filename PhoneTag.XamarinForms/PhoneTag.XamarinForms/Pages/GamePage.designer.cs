@@ -2,6 +2,7 @@
 using PhoneTag.SharedCodebase.Views;
 using PhoneTag.XamarinForms.Controls.CameraControl;
 using PhoneTag.XamarinForms.Controls.KillDisputeResolver;
+using PhoneTag.XamarinForms.Controls.MenuButtons;
 using Plugin.XamJam.Screen;
 using System;
 using System.Collections.Generic;
@@ -17,9 +18,10 @@ namespace PhoneTag.XamarinForms.Pages
     {
         private Stack<View> m_CurrentlyShowingDialogs = new Stack<View>();
 
-        private Button buttonShoot;
+        private ImageButton buttonShoot;
         private StackLayout m_GameLayout;
         private RelativeLayout m_CameraComponent;
+        private bool m_GameOver = false;
 
         private void initializeComponent()
         {
@@ -57,22 +59,19 @@ namespace PhoneTag.XamarinForms.Pages
                         Children = {
                             {
                                 m_GameMap,
-                                Constraint.RelativeToParent((parent) => { return 0; })
+                                Constraint.RelativeToParent((parent) => { return 0; }),
+                                Constraint.RelativeToParent((parent) => { return 0; }),
+                                Constraint.RelativeToParent((parent) => { return parent.Width; }),
+                                Constraint.RelativeToParent((parent) => { return parent.Height * 0.65; })
+                            },
+                            {
+                                buttonShoot,
+                                Constraint.RelativeToParent((parent) => { return parent.Width * 0.4; }),
+                                Constraint.RelativeToParent((parent) => { return parent.Height * 0.425; }),
+                                Constraint.RelativeToParent((parent) => { return parent.Width * 0.2125; })
                             }
                         }
                     },
-                    new StackLayout
-                    {
-                        Orientation = StackOrientation.Horizontal,
-                        HorizontalOptions = new LayoutOptions
-                        {
-                            Alignment = LayoutAlignment.Center,
-                            Expands = true
-                        },
-                        Children = {
-                            buttonShoot
-                        }
-                    }
                 }
             };
 
@@ -126,15 +125,14 @@ namespace PhoneTag.XamarinForms.Pages
             };
         }
 
-        private Button generateShootButton()
+        private ImageButton generateShootButton()
         {
-            Button shootButton = new Button
+            ImageButton shootButton = new ImageButton
             {
-                Text = "Shoot!",
-                BackgroundColor = Color.Red,
+                Source = "shoot_button.png",
+                IsEnabled = true,
+                ClickAction = () => { ShootButton_Clicked(); }
             };
-
-            shootButton.Clicked += ShootButton_Clicked;
 
             return shootButton;
         }
@@ -202,8 +200,7 @@ namespace PhoneTag.XamarinForms.Pages
                 await dialog.TranslateTo(0, -dialog.Height, 750, Easing.SpringIn);
 
                 (Content as RelativeLayout).Children.Remove(dialog);
-
-                buttonShoot.Text = "Shoot!";
+                
                 buttonShoot.IsEnabled = true;
             }
         }
@@ -217,27 +214,29 @@ namespace PhoneTag.XamarinForms.Pages
                 await dialog.TranslateTo(0, Height, 750, Easing.SpringIn);
 
                 (Content as RelativeLayout).Children.Remove(dialog);
-
-                buttonShoot.Text = "Shoot!";
+                
                 buttonShoot.IsEnabled = true;
             }
         }
 
         private async Task transitionToSpectatorMode()
         {
-            if (buttonShoot.Text != "Quit")
+            if (!m_GameOver)
             {
-                buttonShoot.Text = "Quit";
+                buttonShoot.Source = "exit_button.png";
+                m_GameOver = true;
                 buttonShoot.IsEnabled = true;
 
                 await m_CameraComponent.FadeTo(0, 750, Easing.Linear);
 
-                if (buttonShoot.Text != "Quit")
+                if (!m_GameOver)
                 {
                     Label deadLabel = generateDeadLabel();
 
                     m_GameLayout.Children.Remove(m_CameraComponent);
                     m_GameLayout.Children.Insert(0, deadLabel);
+
+                    buttonShoot.TranslateTo(0, Height / 12, 1, null);
 
                     deadLabel.FadeTo(1, 750, Easing.Linear);
                 }
@@ -246,15 +245,18 @@ namespace PhoneTag.XamarinForms.Pages
 
         private async Task transitionToGameEnd(List<String> i_WinnerIds)
         {
-            buttonShoot.Text = "Quit";
+            m_GameOver = true;
+            buttonShoot.Source = "exit_button.png";
             buttonShoot.IsEnabled = true;
 
             await m_CameraComponent.FadeTo(0, 750, Easing.Linear);
-
+            
             Label deadLabel = await generateGameEndLabel(i_WinnerIds);
 
             m_GameLayout.Children.RemoveAt(0);
             m_GameLayout.Children.Insert(0, deadLabel);
+
+            buttonShoot.TranslateTo(0, Height / 12, 1, null);
 
             deadLabel.FadeTo(1, 750, Easing.Linear);
         }
@@ -272,7 +274,7 @@ namespace PhoneTag.XamarinForms.Pages
             Label deadLabel = new Label()
             {
                 Text = gameEndMessage.ToString(),
-                HeightRequest = m_Camera.Height,
+                HeightRequest = m_Camera.Height / 2,
                 VerticalTextAlignment = TextAlignment.Center,
                 HorizontalTextAlignment = TextAlignment.Center,
                 Opacity = 0
@@ -286,7 +288,7 @@ namespace PhoneTag.XamarinForms.Pages
             Label deadLabel = new Label()
             {
                 Text = $"You are dead.{Environment.NewLine}You can leave the game or keep spectating.",
-                HeightRequest = m_Camera.Height,
+                HeightRequest = m_Camera.Height / 2,
                 VerticalTextAlignment = TextAlignment.Center,
                 HorizontalTextAlignment = TextAlignment.Center,
                 Opacity = 0

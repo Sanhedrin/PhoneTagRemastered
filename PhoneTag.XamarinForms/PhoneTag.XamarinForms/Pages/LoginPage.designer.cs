@@ -14,7 +14,7 @@ namespace PhoneTag.XamarinForms.Pages
         {
             Title = "Loading";
             Padding = new Thickness(0, 20, 0, 0);
-            BackgroundColor = Color.White;
+            BackgroundColor = Color.Black;
             Content = new StackLayout
             {
                 VerticalOptions = new LayoutOptions
@@ -30,7 +30,7 @@ namespace PhoneTag.XamarinForms.Pages
                     new Label
                     {
                         Text = "Loading...",
-                        TextColor = Color.Black,
+                        TextColor = Color.White,
                         HorizontalTextAlignment = TextAlignment.Center
                     }
                 }

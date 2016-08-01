@@ -28,7 +28,7 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
                     new Label
                     {
                         Text = "Loading...",
-                        TextColor = Color.Black,
+                        TextColor = Color.White,
                         HorizontalTextAlignment = TextAlignment.Center
                     }
                 }
