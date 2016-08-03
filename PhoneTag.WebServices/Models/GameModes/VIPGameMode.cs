@@ -56,7 +56,7 @@ namespace PhoneTag.WebServices.Models.GameModes
 
             List<String> usersToSplit = new List<String>(i_LivingUsers);
 
-            for (int i = 0; i <= i_LivingUsers.Count / 2; ++i)
+            for (int i = 0; i < Math.Ceiling((float)i_LivingUsers.Count / 2); ++i)
             {
                 int chosenUser = Randomizer.Range(usersToSplit.Count);
 
@@ -86,12 +86,12 @@ namespace PhoneTag.WebServices.Models.GameModes
 
         public override void GameStateUpdate(List<String> i_LivingUsers)
         {
-            //If all members on this team are dead, the game ends.
-            if (!i_LivingUsers.Contains(VipForTeam[0]))
+            //If all members on this team are dead, or the VIP was killed, the game ends.
+            if (i_LivingUsers.Intersect(Teams[0]).Count() == 0 || !i_LivingUsers.Contains(VipForTeam[0]))
             {
                 onGameEnded(new GameEndedEventArgs(new GameEndedEvent(Teams[1])));
             }
-            else if (!i_LivingUsers.Contains(VipForTeam[1]))
+            else if (i_LivingUsers.Intersect(Teams[1]).Count() == 0 || !i_LivingUsers.Contains(VipForTeam[1]))
             {
                 onGameEnded(new GameEndedEventArgs(new GameEndedEvent(Teams[0])));
             }

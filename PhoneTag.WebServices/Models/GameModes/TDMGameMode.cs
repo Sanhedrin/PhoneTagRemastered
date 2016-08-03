@@ -49,7 +49,7 @@ namespace PhoneTag.WebServices.Models.GameModes
 
             List<String> usersToSplit = new List<String>(i_LivingUsers);
 
-            for (int i = 0; i < i_LivingUsers.Count / 2; ++i)
+            for (int i = 0; i < Math.Ceiling((float)i_LivingUsers.Count / 2); ++i)
             {
                 int chosenUser = Randomizer.Range(usersToSplit.Count);
 

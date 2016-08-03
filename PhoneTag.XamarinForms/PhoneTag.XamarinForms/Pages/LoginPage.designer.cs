@@ -14,7 +14,7 @@ namespace PhoneTag.XamarinForms.Pages
         {
             Title = "Loading";
             Padding = new Thickness(0, 20, 0, 0);
-            BackgroundColor = Color.Black;
+            BackgroundColor = Color.Transparent;
             Content = new StackLayout
             {
                 VerticalOptions = new LayoutOptions

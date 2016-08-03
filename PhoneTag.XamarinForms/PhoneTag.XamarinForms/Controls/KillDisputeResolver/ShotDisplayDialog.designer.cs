@@ -1,4 +1,5 @@
-﻿using PhoneTag.XamarinForms.Controls.SocialMenu;
+﻿using PhoneTag.XamarinForms.Controls.MenuButtons;
+using PhoneTag.XamarinForms.Controls.SocialMenu;
 using Plugin.XamJam.Screen;
 using System;
 using System.Collections.Generic;
@@ -17,31 +18,56 @@ namespace PhoneTag.XamarinForms.Pages
         {
             BackgroundColor = Color.Black;
 
-            m_ShotView = generateShotImage();
+            AbsoluteLayout killcamLayout = generateKillcamLayout();
             ShotSuggestionListDisplay shotSuggestions = generatePlayerShotSuggestions();
-            Button cancelShotButton = generateCancelShotButton();
+            ImageButton cancelShotButton = generateCancelShotButton();
 
             Children.Add(cancelShotButton,
-                xConstraint: Constraint.RelativeToParent((parent) => { return 10; }),
-                yConstraint: Constraint.RelativeToParent((parent) => { return 10; }),
-                heightConstraint: Constraint.RelativeToParent((parent) => { return parent.Height/ 20; }));
-
-            Children.Add(m_ShotView,
-                xConstraint: Constraint.RelativeToParent((parent) => { return 0; }),
-                yConstraint: Constraint.RelativeToParent((parent) => { return parent.Height / 5; }));
-
+                Constraint.RelativeToParent((parent) => { return 0; }),
+                Constraint.RelativeToParent((parent) => { return -parent.Height/6; }),
+                Constraint.RelativeToParent((parent) => { return parent.Width/8; }));
+            Children.Add(killcamLayout,
+                Constraint.RelativeToParent((parent) => { return parent.Width / 5; }),
+                Constraint.RelativeToParent((parent) => { return parent.Height / 2; }));
             Children.Add(shotSuggestions,
                 widthConstraint: Constraint.RelativeToParent((parent) => { return parent.Width; }),
                 yConstraint: Constraint.RelativeToParent((parent) => { return parent.Height - shotSuggestions.HeightRequest; }));
         }
 
-        private Button generateCancelShotButton()
+        private AbsoluteLayout generateKillcamLayout()
         {
-            Button cancelShotButton = new Button();
-            
-            cancelShotButton.Text = "Cancel";
-            cancelShotButton.BackgroundColor = Color.Gray;
-            cancelShotButton.Clicked += CancelShotButton_Clicked;
+            AbsoluteLayout killcamLayout = new AbsoluteLayout();
+
+            Image killcamFrameImage = generateKillcamFrameImage();
+            AbsoluteLayout.SetLayoutFlags(killcamFrameImage, AbsoluteLayoutFlags.All);
+            AbsoluteLayout.SetLayoutBounds(killcamFrameImage, new Rectangle(0.5, 1.85, 1.5, 1.5));
+
+            m_ShotView = generateShotImage();
+            AbsoluteLayout.SetLayoutBounds(m_ShotView, new Rectangle(0.5, -2.88, 1.71, 0.8));
+            AbsoluteLayout.SetLayoutFlags(m_ShotView, AbsoluteLayoutFlags.All);
+
+            killcamLayout.Children.Add(m_ShotView);
+            killcamLayout.Children.Add(killcamFrameImage);
+
+            return killcamLayout;
+        }
+
+        private Image generateKillcamFrameImage()
+        {
+            Image killcamFrame = new Image()
+            {
+                Source = ImageSource.FromFile("killcam_frame.png")
+            };
+
+            return killcamFrame;
+        }
+
+        private ImageButton generateCancelShotButton()
+        {
+            ImageButton cancelShotButton = new ImageButton();
+
+            cancelShotButton.Source = "back_button.png";
+            cancelShotButton.ClickAction = () => { CancelShotButton_Clicked(); };
 
             return cancelShotButton;
         }
@@ -50,7 +76,7 @@ namespace PhoneTag.XamarinForms.Pages
         {
             ShotSuggestionListDisplay container = new ShotSuggestionListDisplay();
 
-            container.HeightRequest = CrossScreen.Current.Size.Height / 6;
+            container.HeightRequest = CrossScreen.Current.Size.Height * 1 / 4;
 
             return container;
         }

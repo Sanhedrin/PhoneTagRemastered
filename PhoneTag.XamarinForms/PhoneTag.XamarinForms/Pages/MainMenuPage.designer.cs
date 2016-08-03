@@ -19,6 +19,7 @@ namespace PhoneTag.XamarinForms.Pages
             RelativeLayout layout = generatePageLayout();
             FriendListButton friendListButton = generateFriendListButton();
 
+            //TODO: Switch to: BackgroundImage = "background_short.png"; and fix button positioning.
             BackgroundImage = "mainmenu_background.png";
             Title = "Main Menu";
             Padding = new Thickness(0, 20, 0, 0);

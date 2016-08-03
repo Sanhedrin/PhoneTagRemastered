@@ -33,7 +33,7 @@ namespace PhoneTag.XamarinForms.Pages
             m_ShotView.RelRotateTo(90);
         }
 
-        private void CancelShotButton_Clicked(object sender, EventArgs e)
+        private void CancelShotButton_Clicked()
         {
             if (ShotCancelled != null)
             {
