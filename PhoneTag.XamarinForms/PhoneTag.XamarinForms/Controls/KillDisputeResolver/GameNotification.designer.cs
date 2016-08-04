@@ -26,7 +26,8 @@ namespace PhoneTag.XamarinForms.Controls.KillDisputeResolver
         {
             Label messageLabel = new Label()
             {
-                Text = i_NotificationMessage
+                Text = i_NotificationMessage,
+                TextColor = Color.White
             };
 
             return messageLabel;

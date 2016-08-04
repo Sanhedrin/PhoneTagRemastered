@@ -86,6 +86,7 @@ namespace PhoneTag.XamarinForms.Pages
             Button button = new Button
             {
                 Text = "View Map",
+                TextColor = Color.Black,
                 BackgroundColor = Color.Yellow,
                 Command = new Command(() =>
                 {
@@ -101,6 +102,7 @@ namespace PhoneTag.XamarinForms.Pages
             Button buttonReady = new Button()
             {
                 Text = "Ready",
+                TextColor = Color.Black,
                 BackgroundColor = Color.Red
             };
 

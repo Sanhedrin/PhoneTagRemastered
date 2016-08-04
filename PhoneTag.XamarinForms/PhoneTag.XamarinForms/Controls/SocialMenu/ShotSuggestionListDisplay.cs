@@ -90,7 +90,9 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
             {
                 friendList.Children.Add(new Button()
                 {
+                    BackgroundColor = Color.Silver,
                     Text = "Can't find my target",
+                    TextColor = Color.Black,
                     Command = new Command(() => { refreshFullDetails(); })
                 });
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,13 +13,25 @@ namespace PhoneTag.SharedCodebase.Events.GameEvents
         public String RequestedBy { get; set; }
         public String KillCamId { get; set; }
         public string RequestedById { get; set; }
+        public string AttackedPlayerId { get; set; }
 
-        public KillRequestEvent(String i_RoomId, String i_RequestedBy, String i_RequestedById, String i_KillCamId)
+        [JsonConstructor]
+        public KillRequestEvent(String i_RoomId, String i_RequestedBy, String i_RequestedById, String i_KillCamId, String i_AttackedPlayerId)
         {
             RoomId = i_RoomId;
             RequestedBy = i_RequestedBy;
             KillCamId = i_KillCamId;
             RequestedById = i_RequestedById;
+            AttackedPlayerId = i_AttackedPlayerId;
+        }
+
+        public KillRequestEvent(String i_RoomId, String i_RequestedBy, String i_RequestedById, String i_AttackedPlayerId)
+        {
+            RoomId = i_RoomId;
+            RequestedBy = i_RequestedBy;
+            KillCamId = null;
+            RequestedById = i_RequestedById;
+            AttackedPlayerId = i_AttackedPlayerId;
         }
     }
 }

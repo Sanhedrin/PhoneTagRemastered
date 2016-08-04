@@ -91,6 +91,7 @@
   <ItemGroup>
     <Compile Include="CustomControls\AnimatedImageControl\AnimatedImageRenderer.cs" />
     <Compile Include="CustomControls\CameraControl\CameraPreviewRenderer.cs" />
+    <Compile Include="CustomControls\MenuButtons\SoundableControl.cs" />
     <Compile Include="CustomControls\Login\LoginPageRenderer.cs" />
     <Compile Include="CustomControls\MapControl\GameMapDisplayRenderer.cs" />
     <Compile Include="CustomControls\MapControl\GameMapSetupRenderer.cs" />

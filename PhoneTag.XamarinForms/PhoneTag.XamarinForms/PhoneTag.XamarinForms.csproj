@@ -52,12 +52,17 @@
     <Compile Include="Controls\KillDisputeResolver\KillConfirmationDialog.designer.cs">
       <DependentUpon>KillConfirmationDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\KillDisputeResolver\NotificationDialog.cs" />
+    <Compile Include="Controls\KillDisputeResolver\NotificationDialog.designer.cs">
+      <DependentUpon>NotificationDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\KillDisputeResolver\ShotDisplayDialog.cs" />
     <Compile Include="Controls\KillDisputeResolver\ShotDisplayDialog.designer.cs">
       <DependentUpon>ShotDisplayDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\MapControl\PlayerLocationMarkerUpdateEventArgs.cs" />
     <Compile Include="Controls\MenuButtons\ImageButton.cs" />
+    <Compile Include="Controls\MenuButtons\ISound.cs" />
     <Compile Include="Controls\SocialMenu\FriendListButton.cs" />
     <Compile Include="Controls\SocialMenu\FriendListButton.designer.cs">
       <DependentUpon>FriendListButton.cs</DependentUpon>

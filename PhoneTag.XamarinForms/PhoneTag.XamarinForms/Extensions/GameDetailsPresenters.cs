@@ -37,7 +37,8 @@ namespace PhoneTag.XamarinForms.Extensions
             layout.Children.Add(
                 new Label()
                 {
-                    Text = "Game Duration in minutes:"
+                    Text = "Game Duration in minutes:",
+                    TextColor = Color.White
                 });
             BindablePicker durationPicker = new BindablePicker()
             {
@@ -66,7 +67,8 @@ namespace PhoneTag.XamarinForms.Extensions
             layout.Children.Add(
                 new Label()
                 {
-                    Text = "Player location scanner rate in seconds:"
+                    Text = "Player location scanner rate in seconds:",
+                    TextColor = Color.White
                 });
             BindablePicker uavPicker = new BindablePicker()
             {
@@ -103,7 +105,8 @@ namespace PhoneTag.XamarinForms.Extensions
             items.Add(
                 new Label()
                 {
-                    Text = "Players per team:"
+                    Text = "Players per team:",
+                    TextColor = Color.White
                 });
 
             //Sets a picker for the number of players per team in a TDM game.
@@ -132,7 +135,8 @@ namespace PhoneTag.XamarinForms.Extensions
             items.Add(
                 new Label()
                 {
-                    Text = "Players per team:"
+                    Text = "Players per team:",
+                    TextColor = Color.White
                 });
 
             //Sets a picker for the number of players per team in a TDM game.

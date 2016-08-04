@@ -26,6 +26,8 @@ namespace PhoneTag.XamarinForms.Pages
                     new Button
                     {
                         Text = "Done",
+                        TextColor = Color.Black,
+                        BackgroundColor = Color.Silver,
                         Command = new Command(() => { DoneButton_Clicked(); })
                     }
                 }

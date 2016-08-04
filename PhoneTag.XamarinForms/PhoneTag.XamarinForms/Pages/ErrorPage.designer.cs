@@ -22,10 +22,12 @@ namespace PhoneTag.XamarinForms.Pages
                 Children = {
                     new Label
                     {
-                        Text = i_ErrorMessage
+                        Text = i_ErrorMessage,
+                        TextColor = Color.White
                     },
                     new Button{
                         Text = "Back to main menu",
+                        TextColor = Color.White,
                         Command = new Command(() => { RestartAppButton_Clicked(); })
                     }
                 }

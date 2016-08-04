@@ -31,6 +31,7 @@ namespace PhoneTag.XamarinForms.Pages
             Button logoutButton = new Button();
 
             logoutButton.Text = "Log out";
+            logoutButton.TextColor = Color.Black;
             logoutButton.BackgroundColor = Color.Red;
             logoutButton.Command = new Command(() => { logout(); });
 

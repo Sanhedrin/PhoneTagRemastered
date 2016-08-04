@@ -9,6 +9,8 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using PhoneTag.SharedCodebase.POCOs;
+using PhoneTag.SharedCodebase.Events.GameEvents;
+using System.Threading;
 
 namespace PhoneTag.SharedCodebase.Views
 {
@@ -17,6 +19,8 @@ namespace PhoneTag.SharedCodebase.Views
     /// </summary>
     public class GameRoomView : IUpdateable
     {
+        public event EventHandler<GameEventArrivedArgs> EventArrived;
+
         public String RoomId { get; set; }
         public GameDetailsView GameDetails { get; set; }
         public GeoPoint RoomLocation { get; set; }
@@ -29,10 +33,20 @@ namespace PhoneTag.SharedCodebase.Views
         public List<UserView> LivingUsers { get; private set; }
         public List<UserView> DeadUsers { get; private set; }
 
+        /// <summary>
+        /// The id of the last event processed by the client.
+        /// </summary>
+        public int CurrentEventId { get; private set; }
+        public double GameRadius { get; set; }
+
+        private CancellationTokenSource m_EventPollingCancellationToken;
+
         public GameRoomView()
         {
             LivingUsers = new List<UserView>();
             DeadUsers = new List<UserView>();
+
+            CurrentEventId = 0;
         }
 
         /// <summary>
@@ -171,6 +185,54 @@ namespace PhoneTag.SharedCodebase.Views
             }
 
             return friends;
+        }
+
+        /// <summary>
+        /// Polls the server for new events regarding this game room.
+        /// This runs continuously in an async task and quits when the game ends.
+        /// </summary>
+        public async Task PollGameEvents()
+        {
+            if (m_EventPollingCancellationToken == null)
+            {
+                m_EventPollingCancellationToken = new CancellationTokenSource();
+
+                bool wasReady = false;
+                while (UserView.Current.IsActive && (!wasReady || UserView.Current.IsReady) 
+                    && !m_EventPollingCancellationToken.IsCancellationRequested)
+                {
+                    if (UserView.Current.IsReady)
+                    {
+                        wasReady = true;
+                    }
+
+                    using (HttpClient client = new HttpClient())
+                    {
+                        List<Event> pendingEvents = await client.GetMethodAsync<List<Event>>($"rooms/{RoomId}/events/{CurrentEventId}");
+
+                        for (int i = 0; i < pendingEvents.Count; ++i)
+                        {
+                            onEventArrived(pendingEvents[i]);
+                            ++CurrentEventId;
+                        }
+                    }
+                }
+            }
+        }
+
+        public void CancelEventPolling()
+        {
+            m_EventPollingCancellationToken?.Cancel();
+            m_EventPollingCancellationToken = null;
+        }
+
+        //Sends a notice to anyone listening for new events.
+        private void onEventArrived(Event i_Event)
+        {
+            if(EventArrived != null)
+            {
+                EventArrived(this, new GameEventArrivedArgs(i_Event));
+            }
         }
 
         /// <summary>

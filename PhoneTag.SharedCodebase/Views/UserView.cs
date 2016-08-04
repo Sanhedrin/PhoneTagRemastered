@@ -185,13 +185,20 @@ namespace PhoneTag.SharedCodebase.Views
         {
             String imageId = String.Empty;
 
-            //First, we upload the image we just took to our image hosting service of choice
+            //First, we send a kill request to the server without the image.
+            //We don't even await this so that the image can upload during the post.
+            using (HttpClient client = new HttpClient())
+            {
+                await client.PostMethodAsync($"users/{UserView.Current?.FBID}/kill/{i_FBID}");
+            }
+
+            //Then, we upload the image we just took to our image hosting service of choice
             using (HttpClient uploadClient = new HttpClient())
             {
                 imageId = await uploadClient.PostImgurImageAsync(i_KillCam);
             }
 
-            //Then we upload the kill request with the image id we just obtained as the killcam image.
+            //Finally we post the image to join the kill request.
             if (!String.IsNullOrEmpty(imageId))
             {
                 using (HttpClient client = new HttpClient())

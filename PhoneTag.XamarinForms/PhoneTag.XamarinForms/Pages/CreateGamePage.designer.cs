@@ -19,13 +19,14 @@ namespace PhoneTag.XamarinForms.Pages
             textBoxGameName.Placeholder = "Game Name";
             textBoxGameName.SetBinding(Entry.TextProperty, "Name");
             textBoxGameName.BindingContext = m_GameDetails;
-            textBoxGameName.Keyboard = Keyboard.Url;
+            textBoxGameName.Keyboard = Keyboard.Text;
 
             pickerGameMode.WidthRequest = CrossScreen.Current.Size.Width;
             pickerGameMode.Title = "Choose a Game Mode";
             pickerGameMode.IsEnabled = false;
 
             buttonCreateGame.Text = "Create";
+            buttonCreateGame.TextColor = Color.Black;
             buttonCreateGame.IsEnabled = false;
             buttonCreateGame.BackgroundColor = Color.Red;
             
@@ -43,6 +44,7 @@ namespace PhoneTag.XamarinForms.Pages
                     new Button
                     {
                         Text = "Set Game Area",
+                        TextColor = Color.Black,
                         BackgroundColor = Color.Yellow,
                         Command = new Command(() => { SetGameAreaButton_Clicked(); })
                     },

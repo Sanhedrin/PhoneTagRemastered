@@ -26,5 +26,21 @@ namespace PhoneTag.XamarinForms.Controls.KillDisputeResolver
         {
             initializeComponent(i_Dispute, i_KillRequest, i_DisplayMessage);
         }
+
+        private void DenyButton_Clicked(object sender, EventArgs e)
+        {
+            if (KillDenied != null)
+            {
+                KillDenied(this, m_KillRequest);
+            }
+        }
+
+        private void ConfirmButton_Clicked(object sender, EventArgs e)
+        {
+            if (KillConfirmed != null)
+            {
+                KillConfirmed(this, m_KillRequest);
+            }
+        }
     }
 }

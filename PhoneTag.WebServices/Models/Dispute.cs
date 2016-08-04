@@ -53,6 +53,17 @@ namespace PhoneTag.WebServices.Models
                     .Set("Votes", Votes);
 
                 await Mongo.Database.GetCollection<BsonDocument>("Disputes").UpdateOneAsync(filter, update);
+                
+                GameRoom room = await RoomController.GetRoomModel(RoomId);
+
+                if (room != null)
+                {
+                    if (Votes[v_Kill] != Votes[v_Spare] &&
+                        Votes[v_Kill] + Votes[v_Spare] > room.LivingUsers.Union(room.DeadUsers).Count() / 2)
+                    {
+                        Expire();
+                    }
+                }
             }
             catch(Exception e)
             {

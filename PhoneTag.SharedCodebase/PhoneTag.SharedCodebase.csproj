@@ -36,12 +36,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Events\GameEvents\GameEndedEvent.cs" />
+    <Compile Include="Events\GameEvents\GameEventArrivedArgs.cs" />
     <Compile Include="Events\GameEvents\GameLobbyUpdateEvent.cs" />
     <Compile Include="Events\GameEvents\JoinRoomEvent.cs" />
     <Compile Include="Events\GameEvents\KillDisputeEvent.cs" />
     <Compile Include="Events\GameEvents\KillRequestEvent.cs" />
     <Compile Include="Events\GameEvents\LeaveRoomEvent.cs" />
     <Compile Include="Events\GameEvents\MessageEvent.cs" />
+    <Compile Include="Events\GameEvents\OutOfBoundsEvent.cs" />
     <Compile Include="Events\GameEvents\PlayerKilledEvent.cs" />
     <Compile Include="Extensions\HttpExtensions.cs" />
     <Compile Include="POCOs\KillDisputeEventArgs.cs" />

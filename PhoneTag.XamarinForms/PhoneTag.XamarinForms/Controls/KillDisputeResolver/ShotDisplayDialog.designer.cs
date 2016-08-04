@@ -24,8 +24,8 @@ namespace PhoneTag.XamarinForms.Pages
 
             Children.Add(cancelShotButton,
                 Constraint.RelativeToParent((parent) => { return 0; }),
-                Constraint.RelativeToParent((parent) => { return -parent.Height/6; }),
-                Constraint.RelativeToParent((parent) => { return parent.Width/8; }));
+                Constraint.RelativeToParent((parent) => { return -parent.Height / 6; }),
+                Constraint.RelativeToParent((parent) => { return parent.Width / 8; }));
             Children.Add(killcamLayout,
                 Constraint.RelativeToParent((parent) => { return parent.Width / 5; }),
                 Constraint.RelativeToParent((parent) => { return parent.Height / 2; }));

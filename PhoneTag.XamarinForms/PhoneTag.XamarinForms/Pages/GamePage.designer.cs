@@ -191,6 +191,15 @@ namespace PhoneTag.XamarinForms.Pages
             await i_Dialog.TranslateTo((Width - i_Dialog.Width) / 2, -i_Dialog.Height, 750, Easing.SpringOut);
         }
 
+        private async Task finishShowDialogSlideUp(View i_Dialog)
+        {
+            (Content as RelativeLayout).Children.Add(i_Dialog,
+                xConstraint: Constraint.RelativeToParent((parent) => { return 0; }),
+                yConstraint: Constraint.RelativeToParent((parent) => { return parent.Height; }));
+
+            await i_Dialog.TranslateTo((Width - i_Dialog.Width) / 2, -i_Dialog.Height, 750, Easing.SpringOut);
+        }
+
         private async Task hideDialogSlideUp()
         {
             if (m_CurrentlyShowingDialogs.Count > 0)
@@ -274,6 +283,7 @@ namespace PhoneTag.XamarinForms.Pages
             Label deadLabel = new Label()
             {
                 Text = gameEndMessage.ToString(),
+                TextColor = Color.White,
                 HeightRequest = m_Camera.Height / 2,
                 VerticalTextAlignment = TextAlignment.Center,
                 HorizontalTextAlignment = TextAlignment.Center,
@@ -288,6 +298,7 @@ namespace PhoneTag.XamarinForms.Pages
             Label deadLabel = new Label()
             {
                 Text = $"You are dead.{Environment.NewLine}You can leave the game or keep spectating.",
+                TextColor = Color.White,
                 HeightRequest = m_Camera.Height / 2,
                 VerticalTextAlignment = TextAlignment.Center,
                 HorizontalTextAlignment = TextAlignment.Center,

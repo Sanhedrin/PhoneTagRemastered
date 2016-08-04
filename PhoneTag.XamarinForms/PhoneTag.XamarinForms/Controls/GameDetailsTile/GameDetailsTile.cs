@@ -34,6 +34,7 @@ namespace PhoneTag.XamarinForms.Controls.GameDetailsTile
                     Children.Add(new Button()
                     {
                         Text = room.GameDetails.Name,
+                        TextColor = Color.Black,
                         BackgroundColor = Color.Green,
                         WidthRequest = CrossScreen.Current.Size.Width / 4,
                         Command = new Command(() => { joinGameRoom(); }),

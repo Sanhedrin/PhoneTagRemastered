@@ -73,6 +73,9 @@ namespace PhoneTag.XamarinForms.Pages
             CrossGeolocator.Current.PositionChanged += GPS_PositionChanged;
 
             startPlayersLocationsPolling();
+
+            Plugin.Geolocator.Abstractions.Position pos = await CrossGeolocator.Current.GetPositionAsync(3);
+            UserView.Current.UpdatePosition(UserView.Current.CurrentLocation = new GeoPoint(pos.Latitude, pos.Longitude));
         }
 
         //Continuously polls the server for updated user locations.
@@ -208,6 +211,24 @@ namespace PhoneTag.XamarinForms.Pages
             {
                 handleGameEndedEvent(i_EventDetails as GameEndedEvent);
             }
+            else if (i_EventDetails is OutOfBoundsEvent)
+            {
+                handleOutOfBoundsEvent(i_EventDetails as OutOfBoundsEvent);
+            }
+        }
+
+        //Triggers when a warning is issued for the player being out of bounds.
+        private void handleOutOfBoundsEvent(OutOfBoundsEvent i_OutOfBoundsEvent)
+        {
+            if (UserView.Current.FBID.Equals(i_OutOfBoundsEvent))
+            {
+                NotificationDialog dialog = new NotificationDialog(i_OutOfBoundsEvent.Message);
+
+                dialog.Opened += NotificationDialog_Timeout;
+                dialog.Timeout += NotificationDialog_Timeout;
+
+                showDialogSlideDown(dialog);
+            }
         }
 
         //Triggers when a win condition occured for one of the teams, ending the game.
@@ -229,24 +250,24 @@ namespace PhoneTag.XamarinForms.Pages
             DisputeDialog disputeDialog = new DisputeDialog(i_KillDisputeEvent);
 
             disputeDialog.Opened += DisputeDialog_Opened;
-            disputeDialog.Timeout += DisputeDialog_Timeout;
+            disputeDialog.Timeout += NotificationDialog_Timeout;
 
             showDialogSlideDown(disputeDialog);
         }
 
         //When the dispute dialog times out.
-        private void DisputeDialog_Timeout(object sender, EventArgs e)
+        private void NotificationDialog_Timeout(object sender, EventArgs e)
         {
-            if (m_CurrentlyShowingDialogs.Peek() is DisputeDialog)
+            if (m_CurrentlyShowingDialogs.Peek() is NotificationDialog)
             {
                 hideDialogSlideUp();
             }
         }
 
         //Shows the voting menu for the dispute.
-        private void DisputeDialog_Opened(object sender, KillDisputeEventArgs e)
+        private void DisputeDialog_Opened(object sender, EventArgs e)
         {
-            showDisputeDialog(e);
+            showDisputeDialog(e as KillDisputeEventArgs);
         }
 
         private async Task showDisputeDialog(KillDisputeEventArgs e)
@@ -255,7 +276,7 @@ namespace PhoneTag.XamarinForms.Pages
 
             if (user != null)
             {
-                KillRequestEvent killRequest = new KillRequestEvent(e.RoomId, e.AttackerName, e.AttackerId, e.KillCamId);
+                KillRequestEvent killRequest = new KillRequestEvent(e.RoomId, e.AttackerName, e.AttackerId, e.KillCamId, e.AttackedId);
 
                 KillConfirmationDialog killConfirmationDialog = new KillConfirmationDialog(e.DisputeId, killRequest,
                     String.Format("Dispute!{0}Was {1} captured successfully?", Environment.NewLine, user.Username));
@@ -309,15 +330,38 @@ namespace PhoneTag.XamarinForms.Pages
         }
 
         //Triggers when another player issues a kill command on you.
-        private void handleKillRequestEvent(KillRequestEvent i_KillRequestEvent)
+        private async Task handleKillRequestEvent(KillRequestEvent i_KillRequestEvent)
         {
-            KillConfirmationDialog killConfirmationDialog = new KillConfirmationDialog(i_KillRequestEvent,
-                String.Format("You have been attacked by {0}", i_KillRequestEvent.RequestedBy));
+            if (i_KillRequestEvent.AttackedPlayerId.Equals(UserView.Current.FBID))
+            {
+                //If this is the initial request, we show the dialog with no picture.
+                if (String.IsNullOrEmpty(i_KillRequestEvent.KillCamId))
+                {
+                    KillConfirmationDialog killConfirmationDialog = new KillConfirmationDialog(i_KillRequestEvent,
+                        String.Format("You have been attacked by {0}", i_KillRequestEvent.RequestedBy));
 
-            killConfirmationDialog.KillConfirmed += KillConfirmationDialog_KillConfirmed;
-            killConfirmationDialog.KillDenied += KillConfirmationDialog_KillDenied;
+                    killConfirmationDialog.KillConfirmed += KillConfirmationDialog_KillConfirmed;
+                    killConfirmationDialog.KillDenied += KillConfirmationDialog_KillDenied;
 
-            showDialogSlideUp(killConfirmationDialog);
+                    showDialogSlideUp(killConfirmationDialog);
+                }
+                //If we have the killcam, we attach it to the kill request.
+                else
+                {
+                    KillConfirmationDialog kcDialog = null;
+
+                    foreach (View view in m_CurrentlyShowingDialogs)
+                    {
+                        if (view is KillConfirmationDialog)
+                        {
+                            kcDialog = view as KillConfirmationDialog;
+                            await kcDialog.AttachImage(i_KillRequestEvent.KillCamId);
+                            finishShowDialogSlideUp(kcDialog);
+                            break;
+                        }
+                    }
+                }
+            }
         }
         
         private void KillConfirmationDialog_KillDenied(object sender, KillDisputeEventArgs e)

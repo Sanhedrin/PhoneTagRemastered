@@ -30,6 +30,7 @@ namespace PhoneTag.XamarinForms.Controls.MenuButtons
 
             if (ClickAction != null)
             {
+                DependencyService.Get<ISound>().ButtonClick();
                 ClickAction();
             }
         }

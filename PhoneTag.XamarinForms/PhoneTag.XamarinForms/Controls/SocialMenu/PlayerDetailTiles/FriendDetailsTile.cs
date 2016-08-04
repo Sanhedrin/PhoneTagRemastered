@@ -84,24 +84,28 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
             if (amIInGame && !areTheyInGame)
             {
                 gameOperationButton.Text = "Invite";
+                gameOperationButton.TextColor = Color.Black;
                 gameOperationButton.IsEnabled = false;
             }
             //Join button
             else if(areTheyInGame && !amIInGame)
             {
                 gameOperationButton.Text = "Invite";
+                gameOperationButton.TextColor = Color.Black;
                 gameOperationButton.IsEnabled = false;
             }
             //Both in game.
             else if(amIInGame && areTheyInGame)
             {
                 gameOperationButton.Text = "In Game";
+                gameOperationButton.TextColor = Color.Black;
                 gameOperationButton.IsEnabled = false;
             }
             //Both in menus
             else if (!amIInGame && !areTheyInGame)
             {
                 gameOperationButton.Text = "In Menus";
+                gameOperationButton.TextColor = Color.Black;
                 gameOperationButton.IsEnabled = false;
             }
 
@@ -114,6 +118,7 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
             Button chatButton = new Button();
 
             chatButton.Text = "Chat";
+            chatButton.TextColor = Color.Black;
             chatButton.IsEnabled = false;
 
             return chatButton;

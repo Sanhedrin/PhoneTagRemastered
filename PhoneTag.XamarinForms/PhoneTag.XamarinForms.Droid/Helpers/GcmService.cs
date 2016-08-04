@@ -87,7 +87,7 @@ namespace PhoneTag.XamarinForms.Droid.Helpers
 
             deleteRegistrationToken(i_RegistrationId);
 
-            createNotification("GCM Unregistered...", "The device has been unregistered, Tap to View!");
+            //createNotification("GCM Unregistered...", "The device has been unregistered, Tap to View!");
         }
 
         private async Task deleteRegistrationToken(string i_RegistrationId)
@@ -109,7 +109,8 @@ namespace PhoneTag.XamarinForms.Droid.Helpers
 
                 if (deserializedObject != null && deserializedObject is Event)
                 {
-                    GameEventDispatcher.Parse(deserializedObject as Event);
+                    //GameEventDispatcher.Parse(deserializedObject as Event);
+                    createNotification("Something went wrong", i_Intent.Extras.Get("message").ToString());
                 }
             }
             catch (Exception e)

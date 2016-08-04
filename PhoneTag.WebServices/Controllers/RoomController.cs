@@ -287,6 +287,34 @@ namespace PhoneTag.WebServices.Controllers
         }
 
         /// <summary>
+        /// Gets in Game players locations.
+        /// </summary>
+        /// <param name="i_RoomId"></param>
+        /// <returns>A dictionary of player id and his location</returns>
+        [Route("api/rooms/{i_RoomId}/events/{i_CurrentEventId}")]
+        [HttpGet]
+        public async Task<List<Event>> GetPlayersLocations(string i_RoomId, int i_CurrentEventId)
+        {
+            List<Event> events = new List<Event>();
+
+            if (!String.IsNullOrEmpty(i_RoomId))
+            {
+                GameRoom room = await GetRoomModel(i_RoomId);
+
+                if(room != null)
+                {
+                    events = room.GetRoomEvents(i_CurrentEventId);
+                }
+            }
+            else
+            {
+                ErrorLogger.Log("Invalid FBID given");
+            }
+
+            return events;
+        }
+
+        /// <summary>
         /// Gets the model for the room of the given ID
         /// </summary>
         public static async Task<GameRoom> GetRoomModel(string i_RoomId)

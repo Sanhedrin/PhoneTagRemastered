@@ -68,6 +68,8 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
             Button chooseTargetButton = new Button();
 
             chooseTargetButton.Text = "Choose target";
+            chooseTargetButton.BackgroundColor = Color.Silver;
+            chooseTargetButton.TextColor = Color.Black;
             chooseTargetButton.Command = new Command(() => 
             {
                 UserView.Current?.TryKill(m_UserView.FBID, ShotDisplayDialog.LastKillCam);

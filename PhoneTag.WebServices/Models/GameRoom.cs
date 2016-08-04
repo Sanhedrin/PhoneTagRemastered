@@ -17,6 +17,7 @@ using PhoneTag.SharedCodebase.Events.GameEvents;
 using PhoneTag.WebServices.Models.GameModes;
 using System.Diagnostics;
 using PhoneTag.SharedCodebase.POCOs;
+using Newtonsoft.Json;
 
 namespace PhoneTag.WebServices.Models
 {
@@ -34,8 +35,12 @@ namespace PhoneTag.WebServices.Models
         public GeoJsonPoint<GeoJson2DCoordinates> RoomLocation { get; private set; }
 
         public List<String> LivingUsers { get; private set; }
-        
         public List<String> DeadUsers { get; private set; }
+
+        /// <summary>
+        /// List of events that occured on this room.
+        /// </summary>
+        public List<String> EventList { get; private set; }
 
         public GameRoom(GameDetails i_GameDetails)
         {
@@ -46,6 +51,7 @@ namespace PhoneTag.WebServices.Models
             GameTime = 0;
             LivingUsers = new List<string>();
             DeadUsers = new List<string>();
+            EventList = new List<String>();
         }
 
         /// <summary>
@@ -117,7 +123,8 @@ namespace PhoneTag.WebServices.Models
                         await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
 
                         //Notify all players in the room that a player joined the room started.
-                        PushNotificationUtils.PushEvent(new LeaveRoomEvent(this._id.ToString()), this.LivingUsers);
+                        PushGameEvent(new LeaveRoomEvent(this._id.ToString()));
+                        //PushNotificationUtils.PushEvent(new LeaveRoomEvent(this._id.ToString()), this.LivingUsers);
                     }
                     catch (Exception e)
                     {
@@ -132,6 +139,27 @@ namespace PhoneTag.WebServices.Models
             else
             {
                 ErrorLogger.Log("Invalid FBID given");
+            }
+        }
+
+        public async Task PushGameEvent(Event i_NewEvent)
+        {
+            try
+            {
+                String eventJson = JsonConvert.SerializeObject(i_NewEvent, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+                EventList.Add(eventJson);
+
+                //Update the room to add the event to it.
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter
+                    .Eq("_id", _id);
+                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                    .Push("EventList", eventJson);
+
+                await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+            }
+            catch (Exception e)
+            {
+                ErrorLogger.Log(String.Format("{0}{1}{2}", e.Message, Environment.NewLine, e.StackTrace));
             }
         }
 
@@ -153,7 +181,8 @@ namespace PhoneTag.WebServices.Models
                     {
                         Dispute dispute = await DisputeController.CreateDispute(i_DisputeDetails);
                         DisputeView disputeView = await dispute.GenerateView();
-                        PushNotificationUtils.PushEvent(new KillDisputeEvent(disputeView), playerIds.ToList());
+                        PushGameEvent(new KillDisputeEvent(disputeView));
+                        //PushNotificationUtils.PushEvent(new KillDisputeEvent(disputeView), playerIds.ToList());
                     }
                     catch(Exception e)
                     {
@@ -247,7 +276,8 @@ namespace PhoneTag.WebServices.Models
                         IEnumerable<String> playersInGame = LivingUsers.Union(DeadUsers);
                         if (playersInGame != null && playersInGame.Count() > 0)
                         {
-                            PushNotificationUtils.PushEvent(new PlayerKilledEvent(i_PlayerFBID), LivingUsers.Union(DeadUsers).ToList());
+                            PushGameEvent(new PlayerKilledEvent(i_PlayerFBID));
+                            //PushNotificationUtils.PushEvent(new PlayerKilledEvent(i_PlayerFBID), LivingUsers.Union(DeadUsers).ToList());
                         }
                     }
                     catch (Exception e)
@@ -269,7 +299,8 @@ namespace PhoneTag.WebServices.Models
 
             if (users != null && users.Count() > 0)
             {
-                PushNotificationUtils.PushEvent(e.EventDetails, users.ToList());
+                PushGameEvent(e.EventDetails);
+                //PushNotificationUtils.PushEvent(e.EventDetails, users.ToList());
             }
         }
 
@@ -306,7 +337,8 @@ namespace PhoneTag.WebServices.Models
                             await user.JoinRoom(this._id.ToString());
 
                             //Notify all players in the room that a player joined the room started.
-                            PushNotificationUtils.PushEvent(new JoinRoomEvent(this._id.ToString()), this.LivingUsers);
+                            PushGameEvent(new JoinRoomEvent(this._id.ToString()));
+                            //PushNotificationUtils.PushEvent(new JoinRoomEvent(this._id.ToString()), this.LivingUsers);
 
                             success = true;
                         }
@@ -324,6 +356,34 @@ namespace PhoneTag.WebServices.Models
             }
 
             return success;
+        }
+
+        /// <summary>
+        /// Gets the list of events for this room up from the given event id.
+        /// </summary>
+        /// <param name="i_CurrentEventId"></param>
+        /// <returns></returns>
+        public List<Event> GetRoomEvents(int i_CurrentEventId)
+        {
+            List<Event> events = new List<Event>();
+
+            try
+            {
+                List<String> eventJsons = EventList.GetRange(i_CurrentEventId, EventList.Count - i_CurrentEventId);
+
+                IEnumerable<Event> eventEnum = eventJsons.Select((@event) => JsonConvert.DeserializeObject<Event>(@event, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }));
+
+                if(eventEnum != null && eventEnum.Count() > 0)
+                {
+                    events = eventEnum.ToList();
+                }
+            }
+            catch (Exception e)
+            {
+                ErrorLogger.Log($"{e.Message}{Environment.NewLine}{e.StackTrace}");
+            }
+
+            return events;
         }
 
         //Normally, we can track a user's quitting and remove them from the room they're currently listed in.
@@ -399,7 +459,8 @@ namespace PhoneTag.WebServices.Models
                 await Mongo.Database.GetCollection<BsonDocument>("RoomExpiration").UpdateOneAsync(filter, update);
 
                 //Notify all players in the room that the game started.
-                PushNotificationUtils.PushEvent(new GameStartEvent(this._id.ToString()), this.LivingUsers);
+                PushGameEvent(new GameStartEvent(this._id.ToString()));
+                //PushNotificationUtils.PushEvent(new GameStartEvent(this._id.ToString()), this.LivingUsers);
             }
             catch (Exception e)
             {

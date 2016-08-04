@@ -20,6 +20,8 @@ namespace PhoneTag.WebServices.Models
     /// </summary>
     public class User : IViewable
     {
+        private const double k_MaxDistanceOutOfBounds = 0.05;
+
         public ObjectId _id { get; set; }
         public String FBID { get; set; }
         public String Username { get; set; }
@@ -58,7 +60,8 @@ namespace PhoneTag.WebServices.Models
 
                 if (room != null && room.LivingUsers.Count > 0)
                 {
-                    PushNotificationUtils.PushEvent(new GameLobbyUpdateEvent(PlayingIn), room.LivingUsers);
+                    room.PushGameEvent(new GameLobbyUpdateEvent(PlayingIn));
+                    //PushNotificationUtils.PushEvent(new GameLobbyUpdateEvent(PlayingIn), room.LivingUsers);
                 }
 
                 if (newReadyStatus && room != null)
@@ -129,6 +132,33 @@ namespace PhoneTag.WebServices.Models
         /// Sends a kill request to this player by the given player, which should be displayed to the
         /// killed player.
         /// </summary>
+        public async Task KillRequest(string i_RequestedByFBID)
+        {
+            User killer = await UsersController.GetUserModel(i_RequestedByFBID);
+
+            if (killer != null)
+            {
+                try
+                {
+                    if (!String.IsNullOrEmpty(PlayingIn))
+                    {
+                        KillRequestEvent killRequestEvent = new KillRequestEvent(PlayingIn, killer.Username, i_RequestedByFBID, FBID);
+
+                        GameRoom room = await RoomController.GetRoomModel(PlayingIn);
+                        room.PushGameEvent(killRequestEvent);
+                        //PushNotificationUtils.PushEvent(killRequestEvent, new List<string>() { FBID });
+                    }
+                }
+                catch (Exception e)
+                {
+                    ErrorLogger.Log(String.Format("{0}{1}{2}", e.Message, Environment.NewLine, e.StackTrace));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Attaches a kill cam to the already sent kill request.
+        /// </summary>
         public async Task KillRequest(string i_RequestedByFBID, String i_KillCamId)
         {
             User killer = await UsersController.GetUserModel(i_RequestedByFBID);
@@ -137,8 +167,14 @@ namespace PhoneTag.WebServices.Models
             {
                 try
                 {
-                    KillRequestEvent killRequestEvent = new KillRequestEvent(PlayingIn, killer.Username, i_RequestedByFBID, i_KillCamId);
-                    PushNotificationUtils.PushEvent(killRequestEvent, new List<string>() { FBID });
+                    if (!String.IsNullOrEmpty(PlayingIn))
+                    {
+                        KillRequestEvent killRequestEvent = new KillRequestEvent(PlayingIn, killer.Username, i_RequestedByFBID, i_KillCamId, FBID);
+
+                        GameRoom room = await RoomController.GetRoomModel(PlayingIn);
+                        room.PushGameEvent(killRequestEvent);
+                        //PushNotificationUtils.PushEvent(killRequestEvent, new List<string>() { FBID });
+                    }
                 }
                 catch(Exception e)
                 {
@@ -185,12 +221,43 @@ namespace PhoneTag.WebServices.Models
 
         public async Task UpdatePosition(double i_Latitude, double i_Longitude)
         {
+            CurrentLocation = new GeoJsonPoint<GeoJson2DCoordinates>(new GeoJson2DCoordinates(i_Longitude, i_Latitude));
+
             //update current user position. 
             FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", FBID);
-            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
-                .Set("CurrentLocation", new GeoJsonPoint<GeoJson2DCoordinates>(new GeoJson2DCoordinates(i_Longitude, i_Latitude)));
+            UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update.Set("CurrentLocation", CurrentLocation);
 
             await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+
+            checkLocationOutOfGameArea();
+        }
+
+        //Checks if the player is out of the game area or if they're getting close to leaving it.
+        private async Task checkLocationOutOfGameArea()
+        {
+            if (!String.IsNullOrEmpty(PlayingIn))
+            {
+                GameRoom room = await RoomController.GetRoomModel(PlayingIn);
+                
+                if(room != null)
+                {
+                    double distanceFromSource = GeoUtils.GetDistanceBetween(
+                        new GeoPoint(CurrentLocation.Coordinates.Y, CurrentLocation.Coordinates.X),
+                        new GeoPoint(room.RoomLocation.Coordinates.Y, room.RoomLocation.Coordinates.X));
+
+                    //If we're so far away it warrants a disqualification.
+                    //if (distanceFromSource >= room.GameModeDetails.GameRadius + k_MaxDistanceOutOfBounds)
+                    //{
+                    //    room.KillPlayer(FBID);
+                    //}
+                    //If we're out of bounds, but could still be a gps error, we'll show a warning for
+                    //the user.
+                    if(distanceFromSource >= room.GameModeDetails.GameRadius)
+                    {
+                        room.PushGameEvent(new OutOfBoundsEvent("You are nearing the edge of the game area, if you leave the area you will be removed from the game.", FBID));
+                    }
+                }
+            }
         }
 
         /// <summary>

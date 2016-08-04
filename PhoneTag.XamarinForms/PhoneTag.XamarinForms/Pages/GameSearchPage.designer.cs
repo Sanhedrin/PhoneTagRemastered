@@ -25,7 +25,8 @@ namespace PhoneTag.XamarinForms.Pages
             ScrollView scrollView = generateRoomScrollView(
                 new Label()
                 {
-                    Text = "No rooms were found in the given search range."
+                    Text = "No rooms were found in the given search range.",
+                    TextColor = Color.White
                 });
 
             StackLayout bottomButtonBatch = generateSearchRadiusPicker(oldSearchRadius);
@@ -79,6 +80,8 @@ namespace PhoneTag.XamarinForms.Pages
             Button refreshButton = new Button
             {
                 Text = "Refresh",
+                TextColor = Color.Black,
+                BackgroundColor = Color.Silver,
                 Command = new Command(() => { IsEnabled = false; populateRoomList(); })
             };
             AbsoluteLayout.SetLayoutBounds(refreshButton, new Rectangle(0, 1, 1, 0.1));
@@ -97,7 +100,8 @@ namespace PhoneTag.XamarinForms.Pages
                 {
                     new Label()
                     {
-                        Text = "Search Radius"
+                        Text = "Search Radius",
+                        TextColor = Color.White
                     },
                     pickerSearchRadius
                 }

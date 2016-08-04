@@ -9,29 +9,22 @@ using Xamarin.Forms;
 
 namespace PhoneTag.XamarinForms.Controls.KillDisputeResolver
 {
-    public partial class DisputeDialog : StackLayout
+    public partial class DisputeDialog : NotificationDialog
     {
-        public event EventHandler<KillDisputeEventArgs> Opened;
-        public event EventHandler Timeout;
-
         private KillDisputeEvent m_KillDisputeEvent;
 
-        public DisputeDialog(KillDisputeEvent i_KillDisputeEvent)
+        public DisputeDialog(KillDisputeEvent i_KillDisputeEvent) : base("Pending kill dispute")
         {
             m_KillDisputeEvent = i_KillDisputeEvent;
-
-            initializeComponent(i_KillDisputeEvent);
-
+            
             TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer();
             tapGestureRecognizer.Tapped += TapGestureRecognizer_Tapped;
             GestureRecognizers.Add(tapGestureRecognizer);
         }
 
-        private void TapGestureRecognizer_Tapped(object sender, EventArgs e)
+        protected override void TapGestureRecognizer_Tapped(object sender, EventArgs e)
         {
-            if(Opened != null)
-            {
-                Opened(this, new KillDisputeEventArgs(
+            onOpened(new KillDisputeEventArgs(
                     m_KillDisputeEvent.DisputeDetails.DisputeId,
                     m_KillDisputeEvent.DisputeDetails.RoomId,
                     m_KillDisputeEvent.DisputeDetails.AttackedId,
@@ -39,7 +32,6 @@ namespace PhoneTag.XamarinForms.Controls.KillDisputeResolver
                     m_KillDisputeEvent.DisputeDetails.AttackedName,
                     m_KillDisputeEvent.DisputeDetails.AttackerName,
                     m_KillDisputeEvent.DisputeDetails.KillCamId));
-            }
         }
     }
 }

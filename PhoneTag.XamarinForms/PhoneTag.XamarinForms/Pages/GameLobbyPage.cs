@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Plugin.Geolocator;
+using PhoneTag.XamarinForms.Helpers;
 
 namespace PhoneTag.XamarinForms.Pages
 {
@@ -55,6 +56,7 @@ namespace PhoneTag.XamarinForms.Pages
                 {
                     await m_GameRoom.JoinRoom(UserView.Current.FBID);
                     await UserView.Current.Update();
+                    GameEventDispatcher.ListenToEventsOn(m_GameRoom);
 
                     initializeComponent(i_GameRoomId);
                 }
@@ -94,6 +96,7 @@ namespace PhoneTag.XamarinForms.Pages
 
                 buttonReady.IsEnabled = true;
                 buttonReady.Text = UserView.Current.IsReady ? "Unready" : "Ready";
+                buttonReady.TextColor = Color.Black;
             }
         }
 
