@@ -46,6 +46,6 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
         /// <summary>
         /// Refreshes the display to show more recent user status.
         /// </summary>
-        public abstract void Refresh();
+        public abstract PlayerListDisplay Refresh();
     }
 }

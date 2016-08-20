@@ -14,15 +14,17 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
     /// </summary>
     public abstract partial class PlayerDetailsTile : RelativeLayout
     {
-        protected UserView m_UserView;
+        public UserView UserView { get; set; }
 
         public PlayerDetailsTile(UserView i_UserView)
         {
-            m_UserView = i_UserView;
+            UserView = i_UserView;
 
             initializeComponent();
         }
 
         protected abstract void setupTile();
+
+        public abstract void Refresh(PlayerDetailsTile i_PlayerDetails);
     }
 }

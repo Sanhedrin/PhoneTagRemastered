@@ -17,9 +17,11 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
     {
         private bool m_ShowingAllTargets = false;
 
-        public override void Refresh()
+        public override PlayerListDisplay Refresh()
         {
             refresh();
+
+            return this;
         }
 
         private async Task refresh()

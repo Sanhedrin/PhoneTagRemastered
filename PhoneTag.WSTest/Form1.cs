@@ -19,11 +19,14 @@ using Keys = PhoneTag.SharedCodebase.Utils.Keys;
 using com.shephertz.app42.paas.sdk.csharp.pushNotification;
 using PhoneTag.SharedCodebase.Events;
 using PhoneTag.SharedCodebase.Events.GameEvents;
+using PhoneTag.SharedCodebase.Utils;
 
 namespace PhoneTag.WSTest
 {
     public partial class Form1 : Form
     {
+        private Dictionary<String, GameRoomView> m_Rooms = new Dictionary<string, GameRoomView>();
+
         public Form1()
         {
             App42API.Initialize(Keys.App42APIKey, Keys.App42SecretKey);
@@ -89,6 +92,76 @@ namespace PhoneTag.WSTest
 
             List<String> userPushTokens = new List<string>() { "1205536756157623" };
             pushService.SendPushMessageToGroup(gameStartEventMessage, userPushTokens);
+        }
+
+        private void buttonEitanJoinRoom_Click(object sender, EventArgs e)
+        {
+            joinRoom(buttonEitanJoinRoom, "10209125269876338");
+        }
+
+        private async Task joinRoom(Button i_Button, String i_FBID)
+        {
+            i_Button.Enabled = false;
+
+            if (m_Rooms.ContainsKey(i_FBID))
+            {
+                await m_Rooms[i_FBID].LeaveRoom(i_FBID);
+
+                m_Rooms.Remove(i_FBID);
+                i_Button.Text = "Join Room";
+            }
+            else
+            {
+                List<String> roomIds = await GameRoomView.GetAllRoomsInRange(new GeoPoint(0, 0), 6371);
+
+                if (roomIds.Count > 0)
+                {
+                    m_Rooms.Add(i_FBID, await GameRoomView.GetRoom(roomIds[0]));
+
+                    m_Rooms[i_FBID].JoinRoom(i_FBID);
+
+                    i_Button.Text = "Leave Room";
+                }
+                else
+                {
+                    MessageBox.Show("No rooms found");
+                }
+            }
+
+            i_Button.Enabled = true;
+        }
+
+        private void buttonEitanReady_Click(object sender, EventArgs e)
+        {
+            ready(buttonEitanReadyRoom, "10209125269876338");
+        }
+
+        private async Task ready(Button i_Button, String i_FBID)
+        {
+            i_Button.Enabled = false;
+
+            if (m_Rooms.ContainsKey(i_FBID))
+            {
+                UserView user = await UserView.GetUser(i_FBID);
+
+                await user.PlayerSetReady(!user.IsReady);
+            }
+            else
+            {
+                MessageBox.Show("Not in a room");
+            }
+
+            i_Button.Enabled = true;
+        }
+
+        private void buttonDimaJoinRoom_Click(object sender, EventArgs e)
+        {
+            joinRoom(buttonDimaJoinRoom, "10154417504178701");
+        }
+
+        private void buttonDimaReadyRoom_Click(object sender, EventArgs e)
+        {
+            ready(buttonDimaReadyRoom, "10154417504178701");
         }
     }
 }

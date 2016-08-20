@@ -78,7 +78,7 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
             Button gameOperationButton = new Button();
 
             bool amIInGame = !String.IsNullOrEmpty(UserView.Current.PlayingIn);
-            bool areTheyInGame = !String.IsNullOrEmpty(m_UserView.PlayingIn);
+            bool areTheyInGame = !String.IsNullOrEmpty(UserView.PlayingIn);
 
             //Invite button
             if (amIInGame && !areTheyInGame)
@@ -122,6 +122,12 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
             chatButton.IsEnabled = false;
 
             return chatButton;
+        }
+
+        public override void Refresh(PlayerDetailsTile i_PlayerDetails)
+        {
+            //TODO: Add updating to friend's activity.
+            throw new NotImplementedException();
         }
     }
 }

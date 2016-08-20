@@ -12,6 +12,7 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
     public class LobbyPlayerDetailsTile : PlayerDetailsTile
     {
         private Image m_SocialButton;
+        private BoxView m_ReadyBox;
 
         public LobbyPlayerDetailsTile(UserView i_UserView) : base(i_UserView)
         {
@@ -51,7 +52,7 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
         {
             StackLayout layout = new StackLayout();
             
-            View readyBox = generateReadyBox();
+            m_ReadyBox = generateReadyBox();
             View profilePic = generateProfilePicture();
             View nameLabel = generateUserNameLabel();
 
@@ -59,7 +60,7 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
             layout.HorizontalOptions = new LayoutOptions() { Alignment = LayoutAlignment.Start };
             layout.VerticalOptions = new LayoutOptions() { Alignment = LayoutAlignment.Center };
 
-            layout.Children.Add(readyBox);
+            layout.Children.Add(m_ReadyBox);
             layout.Children.Add(profilePic);
             layout.Children.Add(nameLabel);
 
@@ -78,8 +79,8 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
                 Alignment = LayoutAlignment.Fill
             };
 
-            bool isFriended = UserView.Current.Friends.Exists(user => user.FBID.Equals(m_UserView.FBID));
-            bool isMe = UserView.Current.FBID.Equals(m_UserView.FBID);
+            bool isFriended = UserView.Current.Friends.Exists(user => user.FBID.Equals(UserView.FBID));
+            bool isMe = UserView.Current.FBID.Equals(UserView.FBID);
 
             //Show icon indicating that you're already friends.
             if (isFriended)
@@ -114,9 +115,14 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
         {
             BoxView readyBox = new BoxView();
 
-            readyBox.Color = m_UserView.IsReady ? Color.Green : Color.Red;
+            readyBox.Color = UserView.IsReady ? Color.Green : Color.Red;
 
             return readyBox;
+        }
+
+        public override void Refresh(PlayerDetailsTile i_PlayerDetails)
+        {
+            m_ReadyBox.Color = i_PlayerDetails.UserView.IsReady ? Color.Green : Color.Red;
         }
     }
 }

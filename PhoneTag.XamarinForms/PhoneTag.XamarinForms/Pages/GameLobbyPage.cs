@@ -54,11 +54,17 @@ namespace PhoneTag.XamarinForms.Pages
 
                 if (m_GameRoom != null)
                 {
-                    await m_GameRoom.JoinRoom(UserView.Current.FBID);
-                    await UserView.Current.Update();
-                    GameEventDispatcher.ListenToEventsOn(m_GameRoom);
+                    if (await m_GameRoom.JoinRoom(UserView.Current.FBID))
+                    {
+                        await UserView.Current.Update();
+                        GameEventDispatcher.ListenToEventsOn(m_GameRoom);
 
-                    initializeComponent(i_GameRoomId);
+                        initializeComponent(i_GameRoomId);
+                    }
+                    else
+                    {
+                        Application.Current.MainPage = new ErrorPage("Game room is full.");
+                    }
                 }
                 else
                 {
@@ -117,12 +123,6 @@ namespace PhoneTag.XamarinForms.Pages
             if (i_GameLobbyUpdateEvent.GameId.Equals(m_GameRoom.RoomId))
             {
                 initializeComponent(i_GameLobbyUpdateEvent.GameId);
-            }
-            else
-            {
-#if DEBUG
-                throw new Exception("Event GameId doesn't fit current GameId.");
-#endif
             }
         }
 

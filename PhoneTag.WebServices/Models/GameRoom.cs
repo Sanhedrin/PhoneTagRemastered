@@ -101,7 +101,7 @@ namespace PhoneTag.WebServices.Models
             if (!String.IsNullOrEmpty(i_PlayerFBID))
             {
                 //We need to separate between the case a user leaves in the middle of a game or in the lobby
-                //Game case(If the player is already dead we don't need to doy anything)
+                //Game case(If the player is already dead, we don't need to do anything)
                 if (this.Started && this.LivingUsers.Contains(i_PlayerFBID))
                 {
                     //In the case the user left in the middle of the game, we'll consider it as the player
@@ -125,6 +125,8 @@ namespace PhoneTag.WebServices.Models
                         //Notify all players in the room that a player joined the room started.
                         PushGameEvent(new LeaveRoomEvent(this._id.ToString()));
                         //PushNotificationUtils.PushEvent(new LeaveRoomEvent(this._id.ToString()), this.LivingUsers);
+                        
+                        checkEmptyRoom();
                     }
                     catch (Exception e)
                     {
@@ -139,6 +141,15 @@ namespace PhoneTag.WebServices.Models
             else
             {
                 ErrorLogger.Log("Invalid FBID given");
+            }
+        }
+
+        private async Task checkEmptyRoom()
+        {
+            if(LivingUsers.Count + DeadUsers.Count == 0)
+            {
+                FilterDefinition<BsonDocument> roomFilter = Builders<BsonDocument>.Filter.Eq("_id", _id);
+                await Mongo.Database.GetCollection<BsonDocument>("Rooms").DeleteOneAsync(roomFilter);
             }
         }
 
@@ -246,6 +257,8 @@ namespace PhoneTag.WebServices.Models
             //Add the room as the user's current playing room.
             User user = await UsersController.GetUserModel(i_PlayerFBID);
             await user.LeaveRoom();
+
+            checkEmptyRoom();
         }
 
         /// <summary>

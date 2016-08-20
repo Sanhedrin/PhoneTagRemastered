@@ -57,7 +57,7 @@ namespace PhoneTag.XamarinForms.Pages
                     GameDetailsTile roomTile = await generateRoomTile(i_GameRoomId);
                     buttonReady = generateReadyButton();
                     Button viewMapButton = generateViewMapButton();
-                    m_LobbyPlayerList = new LobbyPlayerListDisplay();
+                    m_LobbyPlayerList = (LobbyPlayerListDisplay)(m_LobbyPlayerList?.Refresh()) ?? new LobbyPlayerListDisplay();
 
                     Title = "Game Lobby";
                     Padding = new Thickness(0, 20, 0, 0);
@@ -99,9 +99,9 @@ namespace PhoneTag.XamarinForms.Pages
 
         private Button generateReadyButton()
         {
-            Button buttonReady = new Button()
+            buttonReady = new Button()
             {
-                Text = "Ready",
+                Text = buttonReady?.Text ?? "Ready",
                 TextColor = Color.Black,
                 BackgroundColor = Color.Red
             };

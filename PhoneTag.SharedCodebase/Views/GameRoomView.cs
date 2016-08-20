@@ -71,7 +71,13 @@ namespace PhoneTag.SharedCodebase.Views
         {
             using (HttpClient client = new HttpClient())
             {
-                return await client.GetMethodAsync<GameRoomView>(String.Format("rooms/{0}", i_RoomId));
+                GameRoomView room = await client.GetMethodAsync<GameRoomView>(String.Format("rooms/{0}", i_RoomId));
+
+                //Set the current event to the latest one since we only enter during the lobby phase.
+                List<Event> pendingEvents = await client.GetMethodAsync<List<Event>>($"rooms/{room.RoomId}/events/{room.CurrentEventId}");
+                room.CurrentEventId = pendingEvents.Count;
+
+                return room;
             }
         }
 
@@ -197,16 +203,10 @@ namespace PhoneTag.SharedCodebase.Views
             if (m_EventPollingCancellationToken == null)
             {
                 m_EventPollingCancellationToken = new CancellationTokenSource();
-
-                bool wasReady = false;
-                while (UserView.Current.IsActive && (!wasReady || UserView.Current.IsReady) 
+                
+                while (UserView.Current.IsActive && !(Started && !UserView.Current.IsReady) 
                     && !m_EventPollingCancellationToken.IsCancellationRequested)
                 {
-                    if (UserView.Current.IsReady)
-                    {
-                        wasReady = true;
-                    }
-
                     using (HttpClient client = new HttpClient())
                     {
                         List<Event> pendingEvents = await client.GetMethodAsync<List<Event>>($"rooms/{RoomId}/events/{CurrentEventId}");

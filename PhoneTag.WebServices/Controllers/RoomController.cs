@@ -238,7 +238,9 @@ namespace PhoneTag.WebServices.Controllers
 
                     if(matchingRooms != null && matchingRooms.Count() > 0)
                     {
-                        roomIds = matchingRooms.Select(room => room._id.ToString()).ToList();
+                        roomIds = matchingRooms.Where(
+                            (room) => room.LivingUsers.Count < room.GameModeDetails.Mode.TotalNumberOfPlayers)
+                            .Select(room => room._id.ToString()).ToList();
                     }
                 }
             }
@@ -297,7 +299,7 @@ namespace PhoneTag.WebServices.Controllers
         /// <returns>A dictionary of player id and his location</returns>
         [Route("api/rooms/{i_RoomId}/events/{i_CurrentEventId}")]
         [HttpGet]
-        public async Task<List<Event>> GetPlayersLocations(string i_RoomId, int i_CurrentEventId)
+        public async Task<List<Event>> GetEvents(string i_RoomId, int i_CurrentEventId)
         {
             List<Event> events = new List<Event>();
 

@@ -29,7 +29,7 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
         {
             Image profilePicture = new Image();
 
-            profilePicture.Source = ImageSource.FromUri(new Uri(m_UserView.ProfilePicUrl));
+            profilePicture.Source = ImageSource.FromUri(new Uri(UserView.ProfilePicUrl));
 
             return profilePicture;
         }
@@ -40,7 +40,7 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
             Label nameLabel = new Label();
 
             nameLabel.TextColor = Color.Black;
-            nameLabel.Text = m_UserView.Username.Substring(0, Math.Min(m_UserView.Username.IndexOf(" "), m_UserView.Username.Length));
+            nameLabel.Text = UserView.Username.Substring(0, Math.Min(UserView.Username.IndexOf(" "), UserView.Username.Length));
 
             return nameLabel;
         }

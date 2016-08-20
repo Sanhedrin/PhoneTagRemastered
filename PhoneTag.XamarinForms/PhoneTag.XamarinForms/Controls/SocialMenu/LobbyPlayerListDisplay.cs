@@ -14,11 +14,13 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
         /// <summary>
         /// Refreshes the display to show more recent user status.
         /// </summary>
-        public override void Refresh()
+        public override PlayerListDisplay Refresh()
         {
             IEnumerable<UserView> players = getLobbyPlayers();
 
             updatePlayerList(players, PlayerDetailsTileType.Lobby);
+
+            return this;
         }
 
         //Returns a collection of friend ids for the current player.

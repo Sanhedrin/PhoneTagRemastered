@@ -72,12 +72,18 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
             chooseTargetButton.TextColor = Color.Black;
             chooseTargetButton.Command = new Command(() => 
             {
-                UserView.Current?.TryKill(m_UserView.FBID, ShotDisplayDialog.LastKillCam);
+                UserView.Current?.TryKill(UserView.FBID, ShotDisplayDialog.LastKillCam);
 
                 (TrailableContentPage.CurrentPage as GamePage).ShotTargetChosen();
             });
 
             return chooseTargetButton;
+        }
+
+        //Should never be called, there shouldn't be any refresh worthy information in the shot suggestions.
+        public override void Refresh(PlayerDetailsTile i_PlayerDetails)
+        {
+            throw new NotImplementedException();
         }
     }
 }
