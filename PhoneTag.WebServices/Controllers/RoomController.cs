@@ -184,11 +184,14 @@ namespace PhoneTag.WebServices.Controllers
 
                 if (room != null)
                 {
-                    List<User> enemiesInSight = await room.GetEnemiesInSight(i_FBID, location, i_Heading);
+                    //List<User> enemiesInSight = await room.GetEnemiesInSight(i_FBID, location, i_Heading);
+                    IEnumerable<String> enemies = room.GameModeDetails.Mode.GetEnemiesFor(i_FBID).Union(room.LivingUsers);
 
-                    foreach (User enemy in enemiesInSight)
+                    foreach (String enemyId in enemies)
                     {
-                        if (enemy != null && !enemy.FBID.Equals(i_FBID))
+                        User enemy = await UsersController.GetUserModel(enemyId);
+
+                        if (enemy != null /*&& !enemy.FBID.Equals(i_FBID)*/)
                         {
                             targets.Add(await enemy.GenerateView());
                         }
@@ -251,12 +254,12 @@ namespace PhoneTag.WebServices.Controllers
         /// Gets in Game players locations.
         /// </summary>
         /// <param name="i_RoomId"></param>
-        /// <returns>A dictionary of player id and his location</returns>
+        /// <returns>A dictionary of player id and a dynamic containing their name and location</returns>
         [Route("api/rooms/playersLocations/{i_RoomId}")]
         [HttpGet]
-        public async Task<Dictionary<string, GeoPoint>> GetPlayersLocations(string i_RoomId)
+        public async Task<Dictionary<string, LocationUpdateInfo>> GetPlayersLocations(string i_RoomId)
         {
-            Dictionary<string, GeoPoint> playersLocations = new Dictionary<string, GeoPoint>();
+            Dictionary<string, LocationUpdateInfo> playersLocations = new Dictionary<string, LocationUpdateInfo>();
 
             if (!String.IsNullOrEmpty(i_RoomId))
             {
@@ -273,7 +276,8 @@ namespace PhoneTag.WebServices.Controllers
                             GeoPoint location = new GeoPoint(player.CurrentLocation.Coordinates.Y,
                                                              player.CurrentLocation.Coordinates.X);
 
-                            playersLocations.Add(userFBID, location);
+                            LocationUpdateInfo playerInfo = new LocationUpdateInfo(player.FBID, player.Username, location);
+                            playersLocations.Add(userFBID, playerInfo);
                         }
                     }
                 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using PhoneTag.SharedCodebase.Utils;
 using PhoneTag.SharedCodebase.Views;
 using Xamarin.Forms.Maps;
+using PhoneTag.SharedCodebase.POCOs;
 
 namespace PhoneTag.XamarinForms.Controls.MapControl
 {
@@ -33,7 +34,7 @@ namespace PhoneTag.XamarinForms.Controls.MapControl
         /// Takes a given game room and player locations associated with the players in the room and passes
         /// marker information for each relevant player to the underlying map for display.
         /// </summary>
-        public void UpdateUAV(Dictionary<string, GeoPoint> i_PlayersLocations, GameRoomView i_GameRoomView)
+        public void UpdateUAV(Dictionary<string, LocationUpdateInfo> i_PlayersLocations, GameRoomView i_GameRoomView)
         {
             if (PlayerLocationMarkersUpdated != null)
             {
@@ -42,10 +43,12 @@ namespace PhoneTag.XamarinForms.Controls.MapControl
                 foreach (String userId in i_PlayersLocations.Keys)
                 {
                     PlayerAllegiance allegiance = i_GameRoomView.GameDetails.Mode.GetAllegianceFor(userId);
-                    String roleDescription = i_GameRoomView.GameDetails.Mode.GetRoleDescriptionFor(userId);
+                    String roleDescription = String.Format("{0} - {1}", 
+                        i_PlayersLocations[userId].Username,
+                        i_GameRoomView.GameDetails.Mode.GetRoleDescriptionFor(userId));
 
                     playerMarkers.Add(new Tuple<PlayerAllegiance, String, GeoPoint>(
-                        allegiance, roleDescription, i_PlayersLocations[userId]));
+                        allegiance, roleDescription, i_PlayersLocations[userId].Location));
                 }
 
                 PlayerLocationMarkersUpdated(this, new PlayerLocationMarkerUpdateEventArgs(playerMarkers));

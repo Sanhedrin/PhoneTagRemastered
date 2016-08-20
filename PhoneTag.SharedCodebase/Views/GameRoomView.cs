@@ -90,12 +90,13 @@ namespace PhoneTag.SharedCodebase.Views
 
         /// <summary>
         /// Gets a list of player locations, queryable by user FBID.
+        /// <returns>A dictionary from user id to their username and location</returns>
         /// </summary>
-        public async Task<Dictionary<string, GeoPoint>> GetPlayersLocations()
+        public async Task<Dictionary<string, LocationUpdateInfo>> GetPlayersLocations()
         {
             using (HttpClient client = new HttpClient())
             {
-                return await client.GetMethodAsync<Dictionary<string, GeoPoint>>(String.Format("rooms/playersLocations/{0}", RoomId));
+                return await client.GetMethodAsync<Dictionary<string, LocationUpdateInfo>>(String.Format("rooms/playersLocations/{0}", RoomId));
             }
         }
 

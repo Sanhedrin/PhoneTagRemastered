@@ -13,7 +13,11 @@ using PhoneTag.SharedCodebase.Views;
 namespace PhoneTag.XamarinForms.Droid
 {
 	//You can specify additional application information in this attribute
-    [Application]
+    #if DEBUG
+    [Application(Debuggable=true)]
+    #else
+    [Application(Debuggable=false)]
+    #endif
     public class MainApplication : Application, Application.IActivityLifecycleCallbacks
     {
         public static Context AppContext;

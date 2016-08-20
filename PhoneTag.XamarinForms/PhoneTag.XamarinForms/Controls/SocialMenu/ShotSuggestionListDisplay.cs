@@ -1,4 +1,4 @@
-﻿using PhoneTag.SharedCodebase.Utils;
+﻿    using PhoneTag.SharedCodebase.Utils;
 using PhoneTag.SharedCodebase.Views;
 using PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles;
 using PhoneTag.XamarinForms.Pages;
@@ -88,13 +88,13 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
 
             if (!m_ShowingAllTargets)
             {
-                friendList.Children.Add(new Button()
-                {
-                    BackgroundColor = Color.Silver,
-                    Text = "Can't find my target",
-                    TextColor = Color.Black,
-                    Command = new Command(() => { refreshFullDetails(); })
-                });
+                //friendList.Children.Add(new Button()
+                //{
+                //    BackgroundColor = Color.Silver,
+                //    Text = "Can't find my target",
+                //    TextColor = Color.Black,
+                //    Command = new Command(() => { refreshFullDetails(); })
+                //});
 
                 m_ShowingAllTargets = true;
             }

@@ -72,10 +72,10 @@ namespace PhoneTag.SharedCodebase.Views.GameModes
                     description = "Me";
                     break;
                 case PlayerAllegiance.Special:
-                    description = "Ally - VIP";
+                    description = "Ally *VIP*";
                     break;
                 case PlayerAllegiance.SpecialSelf:
-                    description = "Me - VIP";
+                    description = "Me *VIP*";
                     break;
             }
 

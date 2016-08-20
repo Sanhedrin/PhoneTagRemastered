@@ -81,7 +81,7 @@ namespace PhoneTag.XamarinForms.Pages
         //Continuously polls the server for updated user locations.
         private async Task startPlayersLocationsPolling()
         {
-            Dictionary<string, GeoPoint> playersLocations;
+            Dictionary<string, LocationUpdateInfo> playersLocations;
 
             if (m_GpsCancellationToken == null)
             {
