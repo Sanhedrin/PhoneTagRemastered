@@ -17,6 +17,12 @@ namespace PhoneTag.SharedCodebase.Utils
             { "VIP", typeof(VIPGameModeView) }
         };
 
+        private static readonly Dictionary<String, String> sr_ModeDescriptions = new Dictionary<string, string>()
+        {
+            { "Team Deathmatch", getTDMDescription() },
+            { "VIP", getVIPDescription() }
+        };
+
         //Makes sure that all the types entered in the above dictionary are types of game mode objects.
         static GameModeFactory()
         {
@@ -66,6 +72,21 @@ namespace PhoneTag.SharedCodebase.Utils
             }
 
             return gameModeView;
+        }
+
+        public static string GetDescriptionForMode(string i_ModeName)
+        {
+            return sr_ModeDescriptions.ContainsKey(i_ModeName) ? sr_ModeDescriptions[i_ModeName] : "Invalid game mode";
+        }
+
+        private static String getVIPDescription()
+        {
+            return String.Format("VIP is a spin on Team Deathmatch where 2 teams of equal size are faced against eachother.{0}In VIP, each team is assigned a VIP out of the participating players.{0}The winning team is the one that manages to kill their enemies' VIP first.", Environment.NewLine);
+        }
+
+        private static String getTDMDescription()
+        {
+            return String.Format("Team Deathmatch is a simple team based game where players are divided into 2 teams of equal sizes.{0}The last team left with living player wins.", Environment.NewLine);
         }
     }
 }

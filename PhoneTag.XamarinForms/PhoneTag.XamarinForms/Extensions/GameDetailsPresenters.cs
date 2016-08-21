@@ -67,12 +67,12 @@ namespace PhoneTag.XamarinForms.Extensions
             layout.Children.Add(
                 new Label()
                 {
-                    Text = "Player location scanner rate in seconds:",
+                    Text = "Seconds per player location update on the map:",
                     TextColor = Color.White
                 });
             BindablePicker uavPicker = new BindablePicker()
             {
-                Title = "Intervals for the player scanner",
+                Title = "Seconds per player location update on the map",
                 BackgroundColor = Color.Black
             };
             uavPicker.ItemsSource = new List<int>();

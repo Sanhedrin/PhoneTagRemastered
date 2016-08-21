@@ -25,6 +25,13 @@ namespace PhoneTag.XamarinForms.Pages
                     m_GameMap,
                     new Button
                     {
+                        Text = "Help",
+                        TextColor = Color.Black,
+                        BackgroundColor = Color.Silver,
+                        Command = new Command(() => { showTip(); })
+                    },
+                    new Button
+                    {
                         Text = "Done",
                         TextColor = Color.Black,
                         BackgroundColor = Color.Silver,

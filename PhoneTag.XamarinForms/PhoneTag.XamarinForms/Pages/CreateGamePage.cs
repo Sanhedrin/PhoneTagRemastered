@@ -11,6 +11,8 @@ using Xamarin.Forms;
 using PhoneTag.XamarinForms.Extensions;
 using PhoneTag.SharedCodebase.Utils;
 using PhoneTag.SharedCodebase.Events.GameEvents;
+using Plugin.Settings.Abstractions;
+using Plugin.Settings;
 
 namespace PhoneTag.XamarinForms.Pages
 {
@@ -92,8 +94,23 @@ namespace PhoneTag.XamarinForms.Pages
         //Updates the selected game mode.
         private void PickerGameMode_SelectedIndexChanged(object sender, EventArgs e)
         {
+            checkDisplayModeTypeTips();
             validateData();
             updateGameModeBox();
+        }
+
+        private async Task checkDisplayModeTypeTips()
+        {
+            String modeName = pickerGameMode.Items[pickerGameMode.SelectedIndex];
+            bool displayTip = CrossSettings.Current.GetValueOrDefault(modeName, true);
+
+            if (displayTip)
+            {
+                bool understood = await DisplayAlert(String.Format("Game Mode Information: {0}", modeName), 
+                    GameModeFactory.GetDescriptionForMode(modeName), "Don't show again", "Ok");
+
+                CrossSettings.Current.AddOrUpdateValue(modeName, !understood);
+            }
         }
 
         //Makes sure that the data is valid

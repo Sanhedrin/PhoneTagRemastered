@@ -14,6 +14,7 @@ namespace PhoneTag.XamarinForms.Pages
         {
             NavigationPage.SetHasBackButton(this, true);
 
+            Button showTipsButton = generateShowTipsButton();
             Button logoutButton = generateLogoutButton();
 
             Title = "Settings";
@@ -21,9 +22,22 @@ namespace PhoneTag.XamarinForms.Pages
             Content = new StackLayout
             {
                 Children = {
+                    showTipsButton,
                     logoutButton
                 }
             };
+        }
+
+        private Button generateShowTipsButton()
+        {
+            Button logoutButton = new Button();
+
+            logoutButton.Text = "Show tips";
+            logoutButton.TextColor = Color.Black;
+            logoutButton.BackgroundColor = Color.Gray;
+            logoutButton.Command = new Command(() => { showTips(); });
+
+            return logoutButton;
         }
 
         private Button generateLogoutButton()

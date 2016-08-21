@@ -1,6 +1,7 @@
 ﻿using PhoneTag.SharedCodebase.Events.GameEvents;
 using PhoneTag.XamarinForms.Controls.MapControl;
 using Plugin.Geolocator;
+using Plugin.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,6 +61,27 @@ namespace PhoneTag.XamarinForms.Pages
 
                 initializeComponent();
             }
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            checkShowTip();   
+        }
+
+        private async Task checkShowTip()
+        {
+            if (CrossSettings.Current.GetValueOrDefault("AreaChooser", true))
+            {
+                bool understood = await showTip();
+                CrossSettings.Current.AddOrUpdateValue("AreaChooser", !understood);
+            }
+        }
+
+        private async Task<bool> showTip()
+        {
+            return await DisplayAlert("Choose game area", String.Format("The area shown within the large red circle is the game's area, going outside it will result in a loss.{0}To choose the game area tap where you want it to be placed.{0}You can pan the map by dragging it, or zoom in and out by pinching.{0}The area size is determined by the zoom level when tapping.", Environment.NewLine), "Don't show again", "Ok");
         }
 
         //When the area is chosen return to the last page.

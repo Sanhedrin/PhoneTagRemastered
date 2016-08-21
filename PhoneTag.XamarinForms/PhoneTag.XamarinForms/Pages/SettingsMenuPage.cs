@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using PhoneTag.SharedCodebase.Events.GameEvents;
 using Xamarin.Forms;
 using PhoneTag.XamarinForms.Controls.Login;
+using PhoneTag.SharedCodebase.StaticInfo;
+using Plugin.Settings;
 
 namespace PhoneTag.XamarinForms.Pages
 {
@@ -18,6 +20,20 @@ namespace PhoneTag.XamarinForms.Pages
 
         public override void ParseEvent(Event i_EventDetails)
         {
+        }
+
+        private async Task showTips()
+        {
+            DisplayAlert("Tips showing", "Tips will now show again for all menus.", "Ok");
+
+            CrossSettings.Current.AddOrUpdateValue("AreaChooser", true);
+
+            List<String> gameModeNames = await PhoneTagInfo.GetGameModeList();
+
+            foreach(String modeName in gameModeNames)
+            {
+                CrossSettings.Current.AddOrUpdateValue(modeName, true);
+            }
         }
 
         private async Task logout()
