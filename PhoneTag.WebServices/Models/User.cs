@@ -74,6 +74,24 @@ namespace PhoneTag.WebServices.Models
         }
 
         /// <summary>
+        /// Tries to add the given id as a friend to this user.
+        /// </summary>
+        public async Task AddFriend(string i_FBID)
+        {
+            //See if the friend can be added.
+            if (!Friends.Contains(i_FBID))
+            {
+                Friends.Add(i_FBID);
+
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", FBID);
+                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
+                    .Set("Friends", Friends);
+
+                await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
+            }
+        }
+
+        /// <summary>
         /// Marks the player as active and updates their details.
         /// </summary>
         /// <returns></returns>

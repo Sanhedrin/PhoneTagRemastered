@@ -27,6 +27,8 @@ namespace PhoneTag.XamarinForms.Droid.CustomControls.Login
 {
     public class LoginPageRenderer : PageRenderer
     {
+        private bool m_TriedFullLogin = false;
+
         public LoginPageRenderer() : base()
         {
             login();
@@ -50,9 +52,11 @@ namespace PhoneTag.XamarinForms.Droid.CustomControls.Login
         //Displays the login dialog
         private void fullLogin()
         {
+            m_TriedFullLogin = true;
+
             OAuth2Authenticator auth = new OAuth2Authenticator(
                 clientId: Keys.FacebookAppId,
-                scope: "",
+                scope: "user_friends",
                 authorizeUrl: new Uri("https://m.facebook.com/dialog/oauth"),
                 redirectUrl: new Uri("http://www.facebook.com/connect/login_success.html"));
 
@@ -105,7 +109,7 @@ namespace PhoneTag.XamarinForms.Droid.CustomControls.Login
                     UserSocialView socialInfo = new UserSocialView();
 
                     //Get basic user info.
-                    IDictionary<String, object> info = (IDictionary<String, object>)await client.GetTaskAsync("me?fields=id,name,email,picture");
+                    IDictionary<String, object> info = (IDictionary<String, object>)await client.GetTaskAsync("me?fields=id,name,email,picture,friends");
 
                     socialInfo.Id = (string)info["id"];
                     socialInfo.Name = (string)info["name"];
@@ -115,13 +119,31 @@ namespace PhoneTag.XamarinForms.Droid.CustomControls.Login
                     IDictionary<String, object> pictureData = (IDictionary<String, object>)picture["data"];
                     socialInfo.ProfilePictureUrl = (string)pictureData["url"];
 
+                    //Gets friend list
+                    IDictionary<String, object> friends = (IDictionary<String, object>)info["friends"];
+                    IList<object> friendList = (IList<object>)friends["data"];
+                    foreach(object friend in friendList)
+                    {
+                        socialInfo.FriendList.Add((string)((IDictionary<String, object>)friend)["id"]);
+                    }
+
+                    //If the user doesn't already exist in the database, this will add them.
+                    await UserView.TryGetUser(socialInfo);
+
                     await LoadingPage.SuccessfulLoginAction(socialInfo, i_UserAccount);
                 }
                 catch (Exception e)
                 {
-                    System.Diagnostics.Debug.WriteLine("EXCEPTION!");
-                    System.Diagnostics.Debug.WriteLine(e.Message);
-                    LoadingPage.LoginFailedAction();
+                    if (!m_TriedFullLogin)
+                    {
+                        fullLogin();
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("EXCEPTION!");
+                        System.Diagnostics.Debug.WriteLine(e.Message);
+                        LoadingPage.LoginFailedAction();
+                    }
                 }
             }
             else

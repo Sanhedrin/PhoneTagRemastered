@@ -15,5 +15,19 @@ namespace PhoneTag.SharedCodebase.Views
         public String Id { get; set; }
         public String Name { get; set; }
         public String ProfilePictureUrl { get; set; }
+
+        private readonly List<String> r_FriendList;
+        public List<String> FriendList
+        {
+            get
+            {
+                return r_FriendList;
+            }
+        }
+
+        public UserSocialView()
+        {
+            r_FriendList = new List<string>();
+        }
     }
 }

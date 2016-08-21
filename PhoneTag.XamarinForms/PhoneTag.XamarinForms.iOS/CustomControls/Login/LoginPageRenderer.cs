@@ -18,6 +18,8 @@ namespace PhoneTag.XamarinForms.iOS.CustomControls.Login
 {
     public class LoginPageRenderer : PageRenderer
     {
+        private bool m_TriedFullLogin;
+
         public override void ViewDidAppear(bool animated)
         {
             login();
@@ -41,9 +43,11 @@ namespace PhoneTag.XamarinForms.iOS.CustomControls.Login
         //Displays the login dialog
         private void fullLogin()
         {
+            m_TriedFullLogin = true;
+
             OAuth2Authenticator auth = new OAuth2Authenticator(
                 clientId: Keys.FacebookAppId,
-                scope: "",
+                scope: "user_friends",
                 authorizeUrl: new Uri("https://m.facebook.com/dialog/oauth"),
                 redirectUrl: new Uri("http://www.facebook.com/connect/login_success.html"));
 
@@ -109,9 +113,16 @@ namespace PhoneTag.XamarinForms.iOS.CustomControls.Login
                 }
                 catch (Exception e)
                 {
-                    System.Diagnostics.Debug.WriteLine("EXCEPTION!");
-                    System.Diagnostics.Debug.WriteLine(e.Message);
-                    LoadingPage.LoginFailedAction();
+                    if (!m_TriedFullLogin)
+                    {
+                        fullLogin();
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("EXCEPTION!");
+                        System.Diagnostics.Debug.WriteLine(e.Message);
+                        LoadingPage.LoginFailedAction();
+                    }
                 }
             }
             else
