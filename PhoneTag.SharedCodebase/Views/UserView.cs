@@ -112,6 +112,17 @@ namespace PhoneTag.SharedCodebase.Views
         }
 
         /// <summary>
+        /// Adds the given user as a friend to this user.
+        /// </summary>
+        public async Task AddFriend(string i_FriendFBID)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                await client.PostMethodAsync($"users/{FBID}/befriend/{i_FriendFBID}");
+            }
+        }
+
+        /// <summary>
         /// Removes the player from the current game they're on.
         /// </summary>
         public async Task LeaveGame()

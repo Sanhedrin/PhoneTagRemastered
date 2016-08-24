@@ -1,4 +1,5 @@
 ﻿using PhoneTag.SharedCodebase.Views;
+using PhoneTag.XamarinForms.Controls.MenuButtons;
 using Plugin.XamJam.Screen;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
 {
     public class LobbyPlayerDetailsTile : PlayerDetailsTile
     {
-        private Image m_SocialButton;
+        private ImageButton m_SocialButton;
         private BoxView m_ReadyBox;
 
         public LobbyPlayerDetailsTile(UserView i_UserView) : base(i_UserView)
@@ -68,9 +69,9 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
         }
 
         //Returns a button that shows whether this player is your friend or lets you add them as a friend.
-        private Image generateSocialOperationButton()
+        private ImageButton generateSocialOperationButton()
         {
-            Image socialButton = new Image();
+            ImageButton socialButton = new ImageButton();
 
             socialButton.Aspect = Aspect.AspectFill;
 
@@ -82,32 +83,25 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
             bool isFriended = UserView.Current.Friends.Exists(user => user.FBID.Equals(UserView.FBID));
             bool isMe = UserView.Current.FBID.Equals(UserView.FBID);
 
-            //Show icon indicating that you're already friends.
-            if (isFriended)
-            {
-                socialButton.Source = "friend_indication.png";
-            }
-            //Show add friend button if the player isn't me.
-            else if(!isMe)
+            //Show the add friend button if relevant.
+            if (!isMe && !isFriended)
             {
                 socialButton.Source = "add_friend_button.png";
 
-                TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer();
-                tapGestureRecognizer.Tapped += TapGestureRecognizer_Tapped;
-                GestureRecognizers.Add(tapGestureRecognizer);
+                socialButton.ClickAction = () => { addFriend(); };
             }
 
             return socialButton;
         }
 
-        private void TapGestureRecognizer_Tapped(object sender, EventArgs e)
-        {
-            addFriend();
-        }
-
         private async Task addFriend()
         {
             m_SocialButton.IsEnabled = false;
+
+            await UserView.Current.AddFriend(UserView.FBID);
+
+            m_SocialButton.Source = null;
+            m_SocialButton.ClickAction = null;
         }
 
         //Returns a box that's colored according to the player's ready status.

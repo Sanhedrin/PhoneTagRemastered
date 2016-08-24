@@ -84,8 +84,7 @@ namespace PhoneTag.WebServices.Models
                 Friends.Add(i_FBID);
 
                 FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Eq("FBID", FBID);
-                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
-                    .Set("Friends", Friends);
+                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update.Set("Friends", Friends);
 
                 await Mongo.Database.GetCollection<BsonDocument>("Users").UpdateOneAsync(filter, update);
             }

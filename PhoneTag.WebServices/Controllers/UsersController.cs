@@ -92,6 +92,26 @@ namespace PhoneTag.WebServices.Controllers
         }
 
         /// <summary>
+        /// Gets a view of the user with the given username.
+        /// </summary>
+        [Route("api/users/{i_UserFBID}/befriend/{i_FriendFBID}")]
+        [HttpGet]
+        public async Task AddFriend(string i_UserFBID, string i_FriendFBID)
+        {
+            if (!String.IsNullOrEmpty(i_FriendFBID) && !String.IsNullOrEmpty(i_UserFBID))
+            {
+                User user = await GetUserModel(i_UserFBID);
+                User friend = await GetUserModel(i_FriendFBID);
+
+                if (user != null && friend != null)
+                {
+                    user.AddFriend(friend.FBID);
+                    friend.AddFriend(user.FBID);
+                }
+            }
+        }
+
+        /// <summary>
         /// Sets the player's ready status
         /// </summary>
         [Route("api/users/ready/{i_PlayerFBID}")]
