@@ -9,6 +9,9 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
 {
     public partial class FriendListButton : Image
     {
+        private FriendListDisplay m_FriendDisplay = null;
+        private Image m_MenuBackground;
+
         public FriendListButton()
         {
             initializeComponent();
@@ -16,7 +19,14 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
 
         private void TapGestureRecognizer_Tapped(object sender, EventArgs e)
         {
-            showFriendMenu();
+            if (m_FriendDisplay == null)
+            {
+                showFriendMenu();
+            }
+            else
+            {
+                closeFriendMenu();
+            }
         }
 
         //Shows the friend menu.
@@ -27,17 +37,38 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
 
             if (this.Parent != null && this.Parent.GetType().Equals(typeof(AbsoluteLayout)))
             {
-                FriendListDisplay friendList = new FriendListDisplay();
+                m_FriendDisplay = new FriendListDisplay();
+                m_MenuBackground = new Image(){ Source = ImageSource.FromFile("killcam_frame.png"), Aspect = Aspect.Fill };
+                
+                AbsoluteLayout.SetLayoutBounds(m_FriendDisplay, new Rectangle(0.30, 10.5, 0.65, 0.9));
+                AbsoluteLayout.SetLayoutFlags(m_FriendDisplay, AbsoluteLayoutFlags.All);
+                AbsoluteLayout.SetLayoutBounds(m_MenuBackground, new Rectangle(0.15, 10, 0.8, 0.9));
+                AbsoluteLayout.SetLayoutFlags(m_MenuBackground, AbsoluteLayoutFlags.All);
 
-                AbsoluteLayout.SetLayoutBounds(friendList, new Rectangle(0.9, 0.1, 0.8, 0.8));
-                AbsoluteLayout.SetLayoutFlags(friendList, AbsoluteLayoutFlags.All);
+                ((AbsoluteLayout)this.Parent).Children.Add(m_FriendDisplay);
+                ((AbsoluteLayout)this.Parent).Children.Add(m_MenuBackground);
 
-                ((AbsoluteLayout)this.Parent).Children.Add(friendList);
+                m_FriendDisplay.TranslateTo(0, -m_FriendDisplay.Height, 250, Easing.Linear);
+                await m_MenuBackground.TranslateTo(0, -m_FriendDisplay.Height, 250, Easing.Linear);
             }
             else
             {
                 throw new InvalidOperationException("Friend list button must be childed by an AbsoluteLayout");
             }
+        }
+
+        private async Task closeFriendMenu()
+        {
+            await this.ScaleTo(0.8, 75, Easing.CubicOut);
+            await this.ScaleTo(1, 75, Easing.CubicIn);
+            
+            m_FriendDisplay.TranslateTo(0, m_FriendDisplay.Height, 250, Easing.Linear);
+            await m_MenuBackground.TranslateTo(0, m_FriendDisplay.Height, 250, Easing.Linear);
+
+            ((AbsoluteLayout)this.Parent).Children.Remove(m_FriendDisplay);
+            ((AbsoluteLayout)this.Parent).Children.Remove(m_MenuBackground);
+            m_FriendDisplay = null;
+            m_MenuBackground = null;
         }
     }
 }

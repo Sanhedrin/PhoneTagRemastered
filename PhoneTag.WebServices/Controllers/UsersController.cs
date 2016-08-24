@@ -62,7 +62,7 @@ namespace PhoneTag.WebServices.Controllers
                     foreach(String friendId in newUser.Friends)
                     {
                         User friend = await GetUserModel(friendId);
-                        friend.AddFriend(newUser.FBID);
+                        friend?.AddFriend(newUser.FBID);
                     }
                 }
                 catch (Exception e)

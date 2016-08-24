@@ -40,19 +40,19 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
 
         private StackLayout generateDetailStack()
         {
-            StackLayout layout = new StackLayout();
+            StackLayout verticalLayout = new StackLayout() { Orientation = StackOrientation.Vertical };
 
             View profilePic = generateProfilePicture();
             View nameLabel = generateUserNameLabel();
 
-            layout.Orientation = StackOrientation.Horizontal;
-            layout.HorizontalOptions = new LayoutOptions() { Alignment = LayoutAlignment.Start };
-            layout.VerticalOptions = new LayoutOptions() { Alignment = LayoutAlignment.Center };
+            verticalLayout.Orientation = StackOrientation.Horizontal;
+            verticalLayout.HorizontalOptions = new LayoutOptions() { Alignment = LayoutAlignment.Start };
+            verticalLayout.VerticalOptions = new LayoutOptions() { Alignment = LayoutAlignment.Center };
 
-            layout.Children.Add(profilePic);
-            layout.Children.Add(nameLabel);
+            verticalLayout.Children.Add(profilePic);
+            verticalLayout.Children.Add(nameLabel);
 
-            return layout;
+            return verticalLayout;
         }
 
         private StackLayout generateActionStack()
@@ -60,13 +60,13 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
             StackLayout layout = new StackLayout();
 
             View chatButton = generateChatButton();
-            View gameOperationButton = generateGameOperationButton();
+            //View gameOperationButton = generateGameOperationButton();
 
             layout.Orientation = StackOrientation.Horizontal;
             layout.HorizontalOptions = new LayoutOptions() { Alignment = LayoutAlignment.End };
 
+            //layout.Children.Add(gameOperationButton);
             layout.Children.Add(chatButton);
-            layout.Children.Add(gameOperationButton);
 
             return layout;
         }
@@ -85,14 +85,14 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
             {
                 gameOperationButton.Text = "Invite";
                 gameOperationButton.TextColor = Color.Black;
-                gameOperationButton.IsEnabled = false;
+                gameOperationButton.IsEnabled = true;
             }
             //Join button
             else if(areTheyInGame && !amIInGame)
             {
                 gameOperationButton.Text = "Invite";
                 gameOperationButton.TextColor = Color.Black;
-                gameOperationButton.IsEnabled = false;
+                gameOperationButton.IsEnabled = true;
             }
             //Both in game.
             else if(amIInGame && areTheyInGame)

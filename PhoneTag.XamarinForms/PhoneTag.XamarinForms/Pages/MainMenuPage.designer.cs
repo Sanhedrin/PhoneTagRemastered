@@ -28,7 +28,7 @@ namespace PhoneTag.XamarinForms.Pages
             {
                 Children = {
                     layout,
-                    //friendListButton
+                    friendListButton
                 }
             };
         }
