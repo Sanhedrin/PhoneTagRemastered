@@ -19,6 +19,11 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
 
         private void TapGestureRecognizer_Tapped(object sender, EventArgs e)
         {
+            TriggerFriendMenu();
+        }
+
+        public void TriggerFriendMenu()
+        {
             if (m_FriendDisplay == null)
             {
                 showFriendMenu();

@@ -134,6 +134,29 @@ namespace PhoneTag.WebServices.Controllers
         /// Adds the player whose FBID is given to the given room.
         /// </summary>
         /// <returns>True or false based on if joining was successful</returns>
+        [Route("api/rooms/{i_RoomId}/message/{i_PlayerFBID}")]
+        [HttpPost]
+        public async Task SendMessage([FromUri]string i_RoomId, [FromUri]string i_PlayerFBID, [FromBody]String i_Message)
+        {
+            if (!String.IsNullOrEmpty(i_RoomId) && !String.IsNullOrEmpty(i_PlayerFBID))
+            {
+                GameRoom room = await GetRoomModel(i_RoomId);
+
+                if (room != null)
+                {
+                    await room.SendMessage(i_PlayerFBID, i_Message);
+                }
+            }
+            else
+            {
+                ErrorLogger.Log(String.Format("Missing parameters: {0} {1} {2}", i_RoomId, i_PlayerFBID, i_Message));
+            }
+        }
+
+        /// <summary>
+        /// Adds the player whose FBID is given to the given room.
+        /// </summary>
+        /// <returns>True or false based on if joining was successful</returns>
         [Route("api/rooms/{i_RoomId}/join/{i_PlayerFBID}")]
         [HttpPost]
         public async Task<bool> JoinRoom(string i_RoomId, string i_PlayerFBID)

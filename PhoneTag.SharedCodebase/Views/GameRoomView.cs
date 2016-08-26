@@ -49,6 +49,14 @@ namespace PhoneTag.SharedCodebase.Views
             CurrentEventId = 0;
         }
 
+        public async Task SendMessage(string i_Message)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                await client.PostMethodAsync<String>($"rooms/{RoomId}/message/{UserView.Current.FBID}", i_Message);
+            }
+        }
+
         /// <summary>
         /// Creates a new game room.
         /// </summary>

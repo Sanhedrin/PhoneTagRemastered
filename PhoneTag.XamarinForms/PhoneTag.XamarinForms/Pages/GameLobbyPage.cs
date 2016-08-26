@@ -13,7 +13,7 @@ using PhoneTag.XamarinForms.Helpers;
 
 namespace PhoneTag.XamarinForms.Pages
 {
-    public partial class GameLobbyPage : TrailableContentPage
+    public partial class GameLobbyPage : ChatEmbeddedContentPage
     {
         private bool ReadyRequestComplete { get; set; }
 
@@ -115,6 +115,10 @@ namespace PhoneTag.XamarinForms.Pages
             else if (i_Event is GameLobbyUpdateEvent)
             {
                 updateGameLobby(i_Event as GameLobbyUpdateEvent);
+            }
+            else
+            {
+                base.ParseEvent(i_Event);
             }
         }
 

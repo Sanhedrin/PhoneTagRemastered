@@ -59,14 +59,14 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
         {
             StackLayout layout = new StackLayout();
 
-            View chatButton = generateChatButton();
+            //View chatButton = generateChatButton();
             //View gameOperationButton = generateGameOperationButton();
 
             layout.Orientation = StackOrientation.Horizontal;
             layout.HorizontalOptions = new LayoutOptions() { Alignment = LayoutAlignment.End };
 
             //layout.Children.Add(gameOperationButton);
-            layout.Children.Add(chatButton);
+            //layout.Children.Add(chatButton);
 
             return layout;
         }
@@ -80,8 +80,15 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
             bool amIInGame = !String.IsNullOrEmpty(UserView.Current.PlayingIn);
             bool areTheyInGame = !String.IsNullOrEmpty(UserView.PlayingIn);
 
+            //Offline
+            if (!UserView.IsActive)
+            {
+                gameOperationButton.Text = "Offline";
+                gameOperationButton.TextColor = Color.Black;
+                gameOperationButton.IsEnabled = false;
+            }
             //Invite button
-            if (amIInGame && !areTheyInGame)
+            else if (amIInGame && !areTheyInGame)
             {
                 gameOperationButton.Text = "Invite";
                 gameOperationButton.TextColor = Color.Black;

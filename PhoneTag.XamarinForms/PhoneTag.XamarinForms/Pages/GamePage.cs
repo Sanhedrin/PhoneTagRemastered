@@ -23,7 +23,7 @@ namespace PhoneTag.XamarinForms.Pages
     /// <summary>
     /// The game page, 
     /// </summary>
-    public partial class GamePage : TrailableContentPage
+    public partial class GamePage : ChatEmbeddedContentPage
     {
         private const double k_DefaultGameRadius = 0.5;
         private const double k_DefaultGameZoom = 1;
@@ -214,6 +214,10 @@ namespace PhoneTag.XamarinForms.Pages
             else if (i_EventDetails is OutOfBoundsEvent)
             {
                 handleOutOfBoundsEvent(i_EventDetails as OutOfBoundsEvent);
+            }
+            else
+            {
+                base.ParseEvent(i_EventDetails);
             }
         }
 

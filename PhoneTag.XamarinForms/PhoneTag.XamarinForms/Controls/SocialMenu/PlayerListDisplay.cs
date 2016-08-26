@@ -34,10 +34,26 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
         {
             StackLayout playerDetailsList = new StackLayout();
 
+            playerDetailsList.Children.Add(new Label() { Text = "Online friends:", BackgroundColor = Color.Black, TextColor = Color.White });
             foreach(UserView user in m_Players)
             {
                 await user.Update();
-                playerDetailsList.Children.Add(PlayerDetailsTileFactory.GetPlayerDetailsTileFor(i_DetailType, user));
+
+                if (user.IsActive)
+                {
+                    playerDetailsList.Children.Add(PlayerDetailsTileFactory.GetPlayerDetailsTileFor(i_DetailType, user));
+                }
+            }
+
+            playerDetailsList.Children.Add(new Label() { Text = "Offline friends:", BackgroundColor = Color.Black, TextColor = Color.White });
+            foreach (UserView user in m_Players)
+            {
+                await user.Update();
+
+                if (!user.IsActive)
+                {
+                    playerDetailsList.Children.Add(PlayerDetailsTileFactory.GetPlayerDetailsTileFor(i_DetailType, user));
+                }
             }
 
             return playerDetailsList;

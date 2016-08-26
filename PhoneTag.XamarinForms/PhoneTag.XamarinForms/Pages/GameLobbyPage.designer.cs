@@ -11,10 +11,11 @@ using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using PhoneTag.XamarinForms.Controls.SocialMenu;
 using PhoneTag.XamarinForms.Controls.AnimatedImageControl;
+using PhoneTag.XamarinForms.Controls.MenuButtons;
 
 namespace PhoneTag.XamarinForms.Pages
 {
-    public partial class GameLobbyPage : TrailableContentPage
+    public partial class GameLobbyPage : ChatEmbeddedContentPage
     {
         private LobbyPlayerListDisplay m_LobbyPlayerList;
 
@@ -22,7 +23,9 @@ namespace PhoneTag.XamarinForms.Pages
         {
             Title = "Loading";
             Padding = new Thickness(0, 20, 0, 0);
-            Content = new StackLayout
+            Content = new AbsoluteLayout();
+
+            StackLayout lobbyLayout = new StackLayout
             {
                 VerticalOptions = new LayoutOptions
                 {
@@ -54,29 +57,43 @@ namespace PhoneTag.XamarinForms.Pages
 
                 if (m_GameRoom != null)
                 {
-                    GameDetailsTile roomTile = await generateRoomTile(i_GameRoomId);
-                    buttonReady = generateReadyButton();
-                    Button viewMapButton = generateViewMapButton();
-                    m_LobbyPlayerList = (LobbyPlayerListDisplay)(m_LobbyPlayerList?.Refresh()) ?? new LobbyPlayerListDisplay();
-
                     Title = "Game Lobby";
                     Padding = new Thickness(0, 20, 0, 0);
-                    Content = new StackLayout
-                    {
-                        VerticalOptions = new LayoutOptions
-                        {
-                            Alignment = LayoutAlignment.Fill
-                        },
-                        Children = {
-                            roomTile,
-                            m_LobbyPlayerList,
-                            //TODO: Insert chat box.
-                            viewMapButton,
-                            buttonReady
-                        }
-                    };
+                    
+                    StackLayout lobbyLayout = await generateLobbyLayout(i_GameRoomId);
+                    AbsoluteLayout.SetLayoutBounds(lobbyLayout, new Rectangle(0, 0, lobbyLayout.Width, lobbyLayout.Height));
+                    
+                    Content = new AbsoluteLayout();
+                    (Content as AbsoluteLayout).Children.Add(lobbyLayout);
+
+                    initializeChat();
                 }
             }
+        }
+
+        private async Task<StackLayout> generateLobbyLayout(String i_GameRoomId)
+        {
+            GameDetailsTile roomTile = await generateRoomTile(i_GameRoomId);
+            buttonReady = generateReadyButton();
+            Button viewMapButton = generateViewMapButton();
+            m_LobbyPlayerList = (LobbyPlayerListDisplay)(m_LobbyPlayerList?.Refresh()) ?? new LobbyPlayerListDisplay();
+
+            StackLayout lobbyLayout = new StackLayout
+            {
+                VerticalOptions = new LayoutOptions
+                {
+                    Alignment = LayoutAlignment.Fill
+                },
+                Children = {
+                    roomTile,
+                    m_LobbyPlayerList,
+                    //TODO: Insert chat box.
+                    viewMapButton,
+                    buttonReady
+                }
+            };
+
+            return lobbyLayout;
         }
 
         private Button generateViewMapButton()

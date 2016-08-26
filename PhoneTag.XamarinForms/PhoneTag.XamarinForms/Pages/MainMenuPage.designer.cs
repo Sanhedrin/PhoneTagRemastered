@@ -14,6 +14,8 @@ namespace PhoneTag.XamarinForms.Pages
 {
     public partial class MainMenuPage: TrailableContentPage
     {
+        private FriendListButton m_FriendsButton;
+
         private void initializeComponent()
         {
             RelativeLayout layout = generatePageLayout();
@@ -35,9 +37,9 @@ namespace PhoneTag.XamarinForms.Pages
 
         private FriendListButton generateFriendListButton()
         {
-            FriendListButton friendsButton = new FriendListButton();
+            m_FriendsButton = new FriendListButton();
 
-            return friendsButton;
+            return m_FriendsButton;
         }
 
         private RelativeLayout generatePageLayout()

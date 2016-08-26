@@ -52,6 +52,13 @@ namespace PhoneTag.XamarinForms.Pages
             Navigation.PushAsync(new SettingsMenuPage());
         }
 
+        protected override bool OnBackButtonPressed()
+        {
+            m_FriendsButton.TriggerFriendMenu();
+
+            return base.OnBackButtonPressed();
+        }
+
         public override void ParseEvent(Event i_EventDetails)
         {
         }

@@ -14,7 +14,7 @@ using Xamarin.Forms.Maps;
 
 namespace PhoneTag.XamarinForms.Pages
 {
-    public partial class GamePage : TrailableContentPage
+    public partial class GamePage : ChatEmbeddedContentPage
     {
         private Stack<View> m_CurrentlyShowingDialogs = new Stack<View>();
 
@@ -41,6 +41,9 @@ namespace PhoneTag.XamarinForms.Pages
                     }
                 }
             };
+
+            //TODO: Check why this makes the game page to not load.
+            //initializeChat();
         }
 
         private StackLayout generateGameLayout()

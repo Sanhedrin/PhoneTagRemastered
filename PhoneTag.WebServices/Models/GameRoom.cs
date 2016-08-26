@@ -136,11 +136,28 @@ namespace PhoneTag.WebServices.Models
                     //Add the room as the user's current playing room.
                     User user = await UsersController.GetUserModel(i_PlayerFBID);
                     await user.LeaveRoom();
+
+                    checkEmptyRoom();
                 }
             }
             else
             {
                 ErrorLogger.Log("Invalid FBID given");
+            }
+        }
+
+        /// <summary>
+        /// Sends a chat message to the room.
+        /// </summary>
+        /// <param name="i_PlayerFBID">Sending player.</param>
+        /// <param name="i_Message">Sent message</param>
+        public async Task SendMessage(string i_PlayerFBID, string i_Message)
+        {
+            User user = await UsersController.GetUserModel(i_PlayerFBID);
+
+            if (user != null)
+            {
+                await PushGameEvent(new ChatMessageEvent(i_PlayerFBID, user.Username, i_Message));
             }
         }
 
@@ -248,6 +265,8 @@ namespace PhoneTag.WebServices.Models
                     .Set<List<String>>("DeadUsers", this.DeadUsers);
 
                 await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+
+                checkEmptyRoom();
             }
             catch (Exception e)
             {
