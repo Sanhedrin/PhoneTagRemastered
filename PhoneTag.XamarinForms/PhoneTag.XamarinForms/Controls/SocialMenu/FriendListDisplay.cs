@@ -19,6 +19,38 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
             Padding = new Thickness { Left = CrossScreen.Current.Size.Width / 50, Right = CrossScreen.Current.Size.Width / 50 };
         }
 
+
+
+        //Creates a list containing player detail tiles for display.
+        protected override async Task<StackLayout> generatePlayerListPresenter(PlayerDetailsTileType i_DetailType)
+        {
+            StackLayout playerDetailsList = new StackLayout();
+
+            playerDetailsList.Children.Add(new Label() { Text = "Online friends:", BackgroundColor = Color.Black, TextColor = Color.White });
+            foreach (UserView user in m_Players)
+            {
+                await user.Update();
+
+                if (user.IsActive)
+                {
+                    playerDetailsList.Children.Add(PlayerDetailsTileFactory.GetPlayerDetailsTileFor(i_DetailType, user));
+                }
+            }
+
+            playerDetailsList.Children.Add(new Label() { Text = "Offline friends:", BackgroundColor = Color.Black, TextColor = Color.White });
+            foreach (UserView user in m_Players)
+            {
+                await user.Update();
+
+                if (!user.IsActive)
+                {
+                    playerDetailsList.Children.Add(PlayerDetailsTileFactory.GetPlayerDetailsTileFor(i_DetailType, user));
+                }
+            }
+
+            return playerDetailsList;
+        }
+
         /// <summary>
         /// Refreshes the display to show more recent user status.
         /// </summary>

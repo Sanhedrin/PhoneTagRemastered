@@ -17,11 +17,11 @@ namespace PhoneTag.XamarinForms.Pages
         {
             m_ChatDialog = generateChatDialog();
             AbsoluteLayout.SetLayoutFlags(m_ChatDialog, AbsoluteLayoutFlags.All);
-            AbsoluteLayout.SetLayoutBounds(m_ChatDialog, new Rectangle(-4, 0.5, 0.8, 0.8));
+            AbsoluteLayout.SetLayoutBounds(m_ChatDialog, new Rectangle(-4, 0.45, 0.8, 0.8));
 
             m_ChatButton = generateChatButton();
             AbsoluteLayout.SetLayoutFlags(m_ChatButton, AbsoluteLayoutFlags.All);
-            AbsoluteLayout.SetLayoutBounds(m_ChatButton, new Rectangle(-0.1, 0.5, 0.2, 0.2));
+            AbsoluteLayout.SetLayoutBounds(m_ChatButton, new Rectangle(-0.1, 0.45, 0.2, 0.2));
             (Content as AbsoluteLayout).Children.Add(m_ChatDialog);
             (Content as AbsoluteLayout).Children.Add(m_ChatButton);
         }

@@ -107,6 +107,12 @@ namespace PhoneTag.WebServices.Models
                     //In the case the user left in the middle of the game, we'll consider it as the player
                     //having died.
                     await QuitRoom(i_PlayerFBID);
+
+                    await removePlayerFromRoom(i_PlayerFBID);
+                }
+                else if(this.Started && this.DeadUsers.Contains(i_PlayerFBID))
+                {
+                    await removePlayerFromRoom(i_PlayerFBID);
                 }
                 //If the game didn't yet start, we just remove the player
                 else if (!this.Started && this.LivingUsers.Contains(i_PlayerFBID))
@@ -125,8 +131,6 @@ namespace PhoneTag.WebServices.Models
                         //Notify all players in the room that a player joined the room started.
                         PushGameEvent(new LeaveRoomEvent(this._id.ToString()));
                         //PushNotificationUtils.PushEvent(new LeaveRoomEvent(this._id.ToString()), this.LivingUsers);
-                        
-                        checkEmptyRoom();
                     }
                     catch (Exception e)
                     {
@@ -428,13 +432,24 @@ namespace PhoneTag.WebServices.Models
         {
             try
             {
-                //Update the room to add the player to it.
-                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter
-                    .AnyEq("LivingUsers", i_FBID);
-                UpdateDefinition<BsonDocument> update = Builders<BsonDocument>.Update
-                    .Pull("LivingUsers", i_FBID);
+                //Update the room to remove the player from it.
+                FilterDefinition<BsonDocument> filter = Builders<BsonDocument>.Filter.Or(
+                    Builders<BsonDocument>.Filter.AnyEq("LivingUsers", i_FBID),
+                    Builders<BsonDocument>.Filter.AnyEq("DeadUsers", i_FBID));
+                
+                using (IAsyncCursor<BsonDocument> cursor = await Mongo.Database.GetCollection<BsonDocument>("Rooms").FindAsync(filter))
+                {
+                    await cursor.ForEachAsync(async document =>
+                    {
+                        ObjectId roomId = document.GetValue("_id").AsObjectId;
+                        String roomIdString = roomId.ToString();
 
-                await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
+                        GameRoom room = await RoomController.GetRoomModel(roomIdString);
+                        await room.LeaveRoom(i_FBID);
+
+                        room.checkEmptyRoom();
+                    });
+                }
             }
             catch (Exception e)
             {

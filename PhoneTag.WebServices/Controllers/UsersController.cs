@@ -52,18 +52,25 @@ namespace PhoneTag.WebServices.Controllers
                 newUser.Ammo = 3;
                 newUser.IsReady = false;
                 newUser.IsActive = false;
-                newUser.Friends = i_UserSocialView.FriendList;
 
+                //Only add friends that are actually registered.
                 try
                 {
-                    await Mongo.Database.GetCollection<User>("Users").InsertOneAsync(newUser);
+                    newUser.Friends = new List<string>();
 
-                    //Add this user as a new friend to each of the friends on their list.
-                    foreach(String friendId in newUser.Friends)
+                    foreach (String friendId in i_UserSocialView.FriendList)
                     {
+                        //Add this user as a new friend to each of the friends on their list.
                         User friend = await GetUserModel(friendId);
-                        friend?.AddFriend(newUser.FBID);
+
+                        if (friend != null)
+                        {
+                            friend.AddFriend(newUser.FBID);
+                            newUser.Friends.Add(friendId);
+                        }
                     }
+
+                    await Mongo.Database.GetCollection<User>("Users").InsertOneAsync(newUser);
                 }
                 catch (Exception e)
                 {

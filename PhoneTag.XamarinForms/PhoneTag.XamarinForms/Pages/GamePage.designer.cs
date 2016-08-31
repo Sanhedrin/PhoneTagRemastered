@@ -32,7 +32,9 @@ namespace PhoneTag.XamarinForms.Pages
 
             Title = "PhoneTag!";
             Padding = new Thickness(0, 20, 0, 0);
-            Content = new RelativeLayout
+            Content = new AbsoluteLayout();
+            
+            RelativeLayout gameLayout = new RelativeLayout
             {
                 Children = {
                     {
@@ -41,9 +43,12 @@ namespace PhoneTag.XamarinForms.Pages
                     }
                 }
             };
+            AbsoluteLayout.SetLayoutFlags(gameLayout, AbsoluteLayoutFlags.All);
+            AbsoluteLayout.SetLayoutBounds(gameLayout, new Rectangle(0, 0, 1, 1));
 
-            //TODO: Check why this makes the game page to not load.
-            //initializeChat();
+            (Content as AbsoluteLayout).Children.Add(gameLayout);
+
+            initializeChat();
         }
 
         private StackLayout generateGameLayout()
@@ -151,11 +156,11 @@ namespace PhoneTag.XamarinForms.Pages
                 {
                     GameNotification notification = new GameNotification($"{user.Username} was killed!");
 
-                    RelativeLayout contentLayout = Content as RelativeLayout;
-
-                    if(contentLayout != null)
+                    RelativeLayout contentLayout = ((Content as AbsoluteLayout).Children.Where((view) => view is RelativeLayout).First() as RelativeLayout);
+                    
+                    if (contentLayout != null)
                     {
-                        contentLayout.Children.Add(notification,
+                        contentLayout?.Children.Add(notification,
                             xConstraint: Constraint.RelativeToParent((parent) => { return parent.Width; }),
                             yConstraint: Constraint.RelativeToParent((parent) => { return 0; }));
 
@@ -174,7 +179,9 @@ namespace PhoneTag.XamarinForms.Pages
             m_CurrentlyShowingDialogs.Push(i_Dialog);
             i_Dialog.TranslationX = i_Dialog.TranslationY = 0;
 
-            (Content as RelativeLayout).Children.Add(i_Dialog, 
+            RelativeLayout layout = ((Content as AbsoluteLayout).Children.Where((view) => view is RelativeLayout).First() as RelativeLayout);
+
+            layout?.Children.Add(i_Dialog, 
                 xConstraint: Constraint.RelativeToParent((parent) => { return 0; }),
                 yConstraint: Constraint.RelativeToParent((parent) => { return 0; }));
 
@@ -187,7 +194,9 @@ namespace PhoneTag.XamarinForms.Pages
             m_CurrentlyShowingDialogs.Push(i_Dialog);
             i_Dialog.TranslationX = i_Dialog.TranslationY = 0;
 
-            (Content as RelativeLayout).Children.Add(i_Dialog,
+            RelativeLayout layout = ((Content as AbsoluteLayout).Children.Where((view) => view is RelativeLayout).First() as RelativeLayout);
+
+            layout?.Children.Add(i_Dialog,
                 xConstraint: Constraint.RelativeToParent((parent) => { return 0; }),
                 yConstraint: Constraint.RelativeToParent((parent) => { return parent.Height; }));
             
@@ -196,7 +205,9 @@ namespace PhoneTag.XamarinForms.Pages
 
         private async Task finishShowDialogSlideUp(View i_Dialog)
         {
-            (Content as RelativeLayout).Children.Add(i_Dialog,
+            RelativeLayout layout = ((Content as AbsoluteLayout).Children.Where((view) => view is RelativeLayout).First() as RelativeLayout);
+
+            layout?.Children.Add(i_Dialog,
                 xConstraint: Constraint.RelativeToParent((parent) => { return 0; }),
                 yConstraint: Constraint.RelativeToParent((parent) => { return parent.Height; }));
 
@@ -210,8 +221,10 @@ namespace PhoneTag.XamarinForms.Pages
                 View dialog = m_CurrentlyShowingDialogs.Pop();
 
                 await dialog.TranslateTo(0, -dialog.Height, 750, Easing.SpringIn);
+                
+                RelativeLayout layout = ((Content as AbsoluteLayout).Children.Where((view) => view is RelativeLayout).First() as RelativeLayout);
 
-                (Content as RelativeLayout).Children.Remove(dialog);
+                layout?.Children.Remove(dialog);
                 
                 buttonShoot.IsEnabled = true;
             }
@@ -225,7 +238,9 @@ namespace PhoneTag.XamarinForms.Pages
 
                 await dialog.TranslateTo(0, Height, 750, Easing.SpringIn);
 
-                (Content as RelativeLayout).Children.Remove(dialog);
+                RelativeLayout layout = ((Content as AbsoluteLayout).Children.Where((view) => view is RelativeLayout).First() as RelativeLayout);
+
+                layout?.Children.Remove(dialog);
                 
                 buttonShoot.IsEnabled = true;
             }
