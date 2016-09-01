@@ -102,7 +102,7 @@ namespace PhoneTag.WebServices.Controllers
         /// Gets a view of the user with the given username.
         /// </summary>
         [Route("api/users/{i_UserFBID}/befriend/{i_FriendFBID}")]
-        [HttpGet]
+        [HttpPost]
         public async Task AddFriend(string i_UserFBID, string i_FriendFBID)
         {
             if (!String.IsNullOrEmpty(i_FriendFBID) && !String.IsNullOrEmpty(i_UserFBID))
