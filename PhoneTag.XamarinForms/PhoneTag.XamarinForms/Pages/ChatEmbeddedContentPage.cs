@@ -26,8 +26,10 @@ namespace PhoneTag.XamarinForms.Pages
             }
             else
             {
-                m_ChatDialog.TranslateTo(m_ChatDialog.Width, 0, 250, Easing.Linear);
-                m_ChatButton.TranslateTo(m_ChatDialog.Width, 0, 250, Easing.Linear);
+                m_ChatDialog.TranslateTo(-m_ChatDialog.Width, 0, 250, Easing.Linear);
+                m_ChatButton.TranslateTo(-m_ChatDialog.Width, 0, 250, Easing.Linear);
+
+                m_ChatButton.Source = "chat_button.png";
             }
 
             m_ChatDialogOpen = !m_ChatDialogOpen;
@@ -50,7 +52,22 @@ namespace PhoneTag.XamarinForms.Pages
 
         private void addMessageToBox(ChatMessageEvent i_EventDetails)
         {
+            if (!m_ChatDialogOpen)
+            {
+                m_ChatButton.Source = "chat_button_new_message.png";
+            }
+
+            if (i_EventDetails.Message.StartsWith(Environment.NewLine))
+            {
+                i_EventDetails.Message = i_EventDetails.Message.Substring(1);
+            }
+
             m_ChatBox.Text += String.Format("{0}: {1}", i_EventDetails.PlayerName, i_EventDetails.Message);
+
+            if (!m_ChatBox.Text.EndsWith(Environment.NewLine))
+            {
+                m_ChatBox.Text += Environment.NewLine;
+            }
         }
 
         private async Task sendMessage(string i_Message)
