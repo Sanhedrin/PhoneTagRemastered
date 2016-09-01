@@ -133,8 +133,7 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
 
         public override void Refresh(PlayerDetailsTile i_PlayerDetails)
         {
-            //TODO: Add updating to friend's activity.
-            throw new NotImplementedException();
+            //Nothing to update on friend tile.
         }
     }
 }

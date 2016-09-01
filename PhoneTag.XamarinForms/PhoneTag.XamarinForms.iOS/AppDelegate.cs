@@ -30,8 +30,6 @@ namespace PhoneTag.XamarinForms.iOS
 
             UIApplication.SharedApplication.IdleTimerDisabled = true;
             
-            //TODO: Add push notification support.
-
             LoadApplication(new App());
 
             return base.FinishedLaunching(app, options);

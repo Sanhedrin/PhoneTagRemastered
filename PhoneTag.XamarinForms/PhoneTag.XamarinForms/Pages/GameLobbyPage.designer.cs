@@ -74,9 +74,11 @@ namespace PhoneTag.XamarinForms.Pages
         private async Task<StackLayout> generateLobbyLayout(String i_GameRoomId)
         {
             GameDetailsTile roomTile = await generateRoomTile(i_GameRoomId);
-            buttonReady = generateReadyButton();
+            m_ButtonReady = generateReadyButton();
             Button viewMapButton = generateViewMapButton();
             m_LobbyPlayerList = (LobbyPlayerListDisplay)(m_LobbyPlayerList?.Refresh()) ?? new LobbyPlayerListDisplay();
+
+            m_ButtonReady.IsEnabled = m_GameRoom.LivingUsers.Count > 1;
 
             StackLayout lobbyLayout = new StackLayout
             {
@@ -87,9 +89,8 @@ namespace PhoneTag.XamarinForms.Pages
                 Children = {
                     roomTile,
                     m_LobbyPlayerList,
-                    //TODO: Insert chat box.
                     viewMapButton,
-                    buttonReady
+                    m_ButtonReady
                 }
             };
 
@@ -116,18 +117,18 @@ namespace PhoneTag.XamarinForms.Pages
 
         private Button generateReadyButton()
         {
-            buttonReady = new Button()
+            m_ButtonReady = new Button()
             {
-                Text = buttonReady?.Text ?? "Ready",
+                Text = m_ButtonReady?.Text ?? "Ready",
                 TextColor = Color.Black,
                 BackgroundColor = Color.Red
             };
 
-            buttonReady.BindingContext = this;
+            m_ButtonReady.BindingContext = this;
             //buttonReady.SetBinding(Button.IsEnabledProperty, "ReadyRequestComplete");
-            buttonReady.Clicked += ButtonReady_Clicked;
+            m_ButtonReady.Clicked += ButtonReady_Clicked;
 
-            return buttonReady;
+            return m_ButtonReady;
         }
 
         private async Task<GameDetailsTile> generateRoomTile(String i_GameRoomId)

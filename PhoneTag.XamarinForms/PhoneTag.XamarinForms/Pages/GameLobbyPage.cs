@@ -27,7 +27,7 @@ namespace PhoneTag.XamarinForms.Pages
             }
         }
 
-        private Button buttonReady;
+        private Button m_ButtonReady;
 
         public GameLobbyPage(String i_GameRoomId) : base()
         {
@@ -82,7 +82,7 @@ namespace PhoneTag.XamarinForms.Pages
         {
             if (CrossGeolocator.Current.IsGeolocationAvailable && CrossGeolocator.Current.IsGeolocationEnabled)
             {
-                buttonReady.IsEnabled = false;
+                m_ButtonReady.IsEnabled = false;
                 triggerReadyStatus();
             }
             else
@@ -100,9 +100,9 @@ namespace PhoneTag.XamarinForms.Pages
 
                 UserView.Current.IsReady = await UserView.Current.PlayerSetReady(!UserView.Current.IsReady);
 
-                buttonReady.IsEnabled = true;
-                buttonReady.Text = UserView.Current.IsReady ? "Unready" : "Ready";
-                buttonReady.TextColor = Color.Black;
+                m_ButtonReady.IsEnabled = true;
+                m_ButtonReady.Text = UserView.Current.IsReady ? "Unready" : "Ready";
+                m_ButtonReady.TextColor = Color.Black;
             }
         }
 

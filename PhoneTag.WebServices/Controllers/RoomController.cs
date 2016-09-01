@@ -208,13 +208,13 @@ namespace PhoneTag.WebServices.Controllers
                 if (room != null)
                 {
                     //List<User> enemiesInSight = await room.GetEnemiesInSight(i_FBID, location, i_Heading);
-                    IEnumerable<String> enemies = room.GameModeDetails.Mode.GetEnemiesFor(i_FBID).Union(room.LivingUsers);
+                    IEnumerable<String> enemies = room.GameModeDetails.Mode.GetEnemiesFor(i_FBID).Intersect(room.LivingUsers);
 
                     foreach (String enemyId in enemies)
                     {
                         User enemy = await UsersController.GetUserModel(enemyId);
 
-                        if (enemy != null /*&& !enemy.FBID.Equals(i_FBID)*/)
+                        if (enemy != null)
                         {
                             targets.Add(await enemy.GenerateView());
                         }
