@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using UIKit;
 using Xamarin.Auth;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
@@ -99,15 +100,44 @@ namespace PhoneTag.XamarinForms.iOS.CustomControls.Login
                     UserSocialView socialInfo = new UserSocialView();
 
                     //Get basic user info.
-                    IDictionary<String, object> info = (IDictionary<String, object>)await client.GetTaskAsync("me?fields=id,name,email,picture");
+                    IDictionary<String, object> info = (IDictionary<String, object>)await client.GetTaskAsync("me?fields=id,name,email,picture,friends");
 
                     socialInfo.Id = (string)info["id"];
-                    socialInfo.Name = (string)info["name"];
 
-                    //Gets user profile picture url
-                    IDictionary<String, object> picture = (IDictionary<String, object>)info["picture"];
-                    IDictionary<String, object> pictureData = (IDictionary<String, object>)picture["data"];
-                    socialInfo.ProfilePictureUrl = (string)pictureData["url"];
+                    try
+                    {
+                        socialInfo.Name = (string)info["name"];
+
+                        //Gets user profile picture url
+                        IDictionary<String, object> picture = (IDictionary<String, object>)info["picture"];
+                        IDictionary<String, object> pictureData = (IDictionary<String, object>)picture["data"];
+                        socialInfo.ProfilePictureUrl = (string)pictureData["url"];
+                    }
+                    catch (Exception e)
+                    {
+                        UIAlertController alertController = UIAlertController.Create("Error accessing Facebook information!", "Please make sure that you have granted Facebook the required permissions", UIAlertControllerStyle.Alert);
+                        PresentViewController(alertController, true, null);
+                        LoadingPage.LoginFailedAction();
+                    }
+
+                    try
+                    {
+                        //Gets friend list
+                        IDictionary<String, object> friends = (IDictionary<String, object>)info["friends"];
+                        IList<object> friendList = (IList<object>)friends["data"];
+                        foreach (object friend in friendList)
+                        {
+                            socialInfo.FriendList.Add((string)((IDictionary<String, object>)friend)["id"]);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        UIAlertController alertController = UIAlertController.Create("Error accessing Facebook friend information!", "This doesn't prevent you from playing the game, but will limit your interactions.", UIAlertControllerStyle.Alert);
+                        PresentViewController(alertController, true, null);
+                    }
+
+                    //If the user doesn't already exist in the database, this will add them.
+                    await UserView.TryGetUser(socialInfo);
 
                     await LoadingPage.SuccessfulLoginAction(socialInfo, i_UserAccount);
                 }

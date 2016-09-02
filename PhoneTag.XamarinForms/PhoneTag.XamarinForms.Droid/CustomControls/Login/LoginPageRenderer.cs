@@ -112,19 +112,35 @@ namespace PhoneTag.XamarinForms.Droid.CustomControls.Login
                     IDictionary<String, object> info = (IDictionary<String, object>)await client.GetTaskAsync("me?fields=id,name,email,picture,friends");
 
                     socialInfo.Id = (string)info["id"];
-                    socialInfo.Name = (string)info["name"];
 
-                    //Gets user profile picture url
-                    IDictionary<String, object> picture = (IDictionary<String, object>)info["picture"];
-                    IDictionary<String, object> pictureData = (IDictionary<String, object>)picture["data"];
-                    socialInfo.ProfilePictureUrl = (string)pictureData["url"];
-
-                    //Gets friend list
-                    IDictionary<String, object> friends = (IDictionary<String, object>)info["friends"];
-                    IList<object> friendList = (IList<object>)friends["data"];
-                    foreach(object friend in friendList)
+                    try
                     {
-                        socialInfo.FriendList.Add((string)((IDictionary<String, object>)friend)["id"]);
+                        socialInfo.Name = (string)info["name"];
+
+                        //Gets user profile picture url
+                        IDictionary<String, object> picture = (IDictionary<String, object>)info["picture"];
+                        IDictionary<String, object> pictureData = (IDictionary<String, object>)picture["data"];
+                        socialInfo.ProfilePictureUrl = (string)pictureData["url"];
+                    }
+                    catch(Exception e)
+                    {
+                        Toast.MakeText(Context, $"Error accessing Facebook information!{System.Environment.NewLine}Please make sure that you have granted Facebook the required permissions", ToastLength.Long);
+                        LoadingPage.LoginFailedAction();
+                    }
+
+                    try
+                    { 
+                        //Gets friend list
+                        IDictionary<String, object> friends = (IDictionary<String, object>)info["friends"];
+                        IList<object> friendList = (IList<object>)friends["data"];
+                        foreach(object friend in friendList)
+                        {
+                            socialInfo.FriendList.Add((string)((IDictionary<String, object>)friend)["id"]);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Toast.MakeText(Context, $"Error accessing Facebook friends information!{System.Environment.NewLine}This doesn't prevent you from playing the game, but will limit your interactions.", ToastLength.Long);
                     }
 
                     //If the user doesn't already exist in the database, this will add them.
