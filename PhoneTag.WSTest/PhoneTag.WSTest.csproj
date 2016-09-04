@@ -37,6 +37,10 @@
     <Reference Include="App42_CSHARP_SDK_2.0">
       <HintPath>..\packages\App42\App42_CSHARP_SDK_2.0.dll</HintPath>
     </Reference>
+    <Reference Include="FreshEssentials, Version=1.0.6079.29046, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FreshEssentials.2.1.1\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\FreshEssentials.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MongoDB.Bson, Version=2.2.4.26, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MongoDB.Bson.2.2.4\lib\net45\MongoDB.Bson.dll</HintPath>
       <Private>True</Private>

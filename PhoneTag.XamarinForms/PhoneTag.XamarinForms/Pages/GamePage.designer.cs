@@ -25,6 +25,8 @@ namespace PhoneTag.XamarinForms.Pages
 
         private void initializeComponent()
         {
+            BackgroundColor = Color.Black;
+
             NavigationPage.SetHasNavigationBar(this, false);
 
             buttonShoot = generateShootButton();

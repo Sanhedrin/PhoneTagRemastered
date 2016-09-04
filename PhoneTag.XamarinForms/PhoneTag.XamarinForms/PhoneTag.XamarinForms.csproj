@@ -160,8 +160,8 @@
       <HintPath>..\..\packages\CrossPlatformLibrary.1.0.73\lib\portable-net45+dnxcore50+wp80+wpa81+win81+netcore45+monoandroid10+monotouch10+xamarin.ios10\CrossPlatformLibrary.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FreshEssentials, Version=1.0.5976.18464, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\FreshEssentials.2.0.1\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\FreshEssentials.dll</HintPath>
+    <Reference Include="FreshEssentials, Version=1.0.6079.29046, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FreshEssentials.2.1.1\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\FreshEssentials.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Guards, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ac6aedb73a72f46e, processorArchitecture=MSIL">

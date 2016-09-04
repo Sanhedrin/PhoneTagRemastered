@@ -50,7 +50,7 @@ namespace PhoneTag.XamarinForms.iOS.CustomControls.Login
                 clientId: Keys.FacebookAppId,
                 scope: "user_friends",
                 authorizeUrl: new Uri("https://m.facebook.com/dialog/oauth"),
-                redirectUrl: new Uri("http://www.facebook.com/connect/login_success.html"));
+                redirectUrl: new Uri("https://www.facebook.com/connect/login_success.html"));
 
             auth.Completed += Login_OnCompleted;
             auth.Error += Login_Error;
@@ -93,7 +93,7 @@ namespace PhoneTag.XamarinForms.iOS.CustomControls.Login
                 fullLogin();
             }
 
-            if (client == null)
+            if (client != null)
             {
                 try
                 {

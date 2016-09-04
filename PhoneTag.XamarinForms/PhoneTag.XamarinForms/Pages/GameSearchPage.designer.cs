@@ -18,6 +18,8 @@ namespace PhoneTag.XamarinForms.Pages
         
         private void initializeNoResultComponent()
         {
+            BackgroundColor = Color.Black;
+
             int oldSearchRadius = SearchRadius;
 
             NavigationPage.SetHasBackButton(this, true);
@@ -49,6 +51,8 @@ namespace PhoneTag.XamarinForms.Pages
 
         private void initializeComponent()
         {
+            BackgroundColor = Color.Black;
+
             int oldSearchRadius = SearchRadius;
 
             NavigationPage.SetHasBackButton(this, true);

@@ -68,6 +68,8 @@ namespace PhoneTag.XamarinForms.Pages
             {
                 m_ChatBox.Text += Environment.NewLine;
             }
+
+            m_ChatBox.Text = m_ChatBox.Text.Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine);
         }
 
         private async Task sendMessage(string i_Message)
