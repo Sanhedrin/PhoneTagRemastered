@@ -4,6 +4,8 @@ using PhoneTag.SharedCodebase.POCOs;
 using PhoneTag.SharedCodebase.Utils;
 using PhoneTag.SharedCodebase.Views;
 using PhoneTag.XamarinForms.Controls.AnimatedImageControl;
+using PhoneTag.XamarinForms.Pages;
+using Plugin.Settings;
 using Plugin.XamJam.Screen;
 using System;
 using System.Collections.Generic;
@@ -26,6 +28,16 @@ namespace PhoneTag.XamarinForms.Controls.KillDisputeResolver
 
         private async Task initializeComponent(String i_DisputeId, KillRequestEvent i_KillRequest, String i_DisplayMessage)
         {
+            bool displayTip = CrossSettings.Current.GetValueOrDefault("KillConfirmations", true);
+
+            if (displayTip)
+            {
+                bool understood = await TrailableContentPage.CurrentPage.DisplayAlert("Kill Confirmations",
+                    $"When a player shoots you, you will be shown the shot they've taken of you, and be given a chance to confirm or deny the shot, this is done to prevent cheating.{Environment.NewLine}If the shot captured you in it, press the confirm button.{Environment.NewLine}If you don't think you were rightfully killed, press the deny button;{Environment.NewLine}Denying will send a dispute to the rest of the players, showing the shot image and letting everyone vote on the result. If the majory of players vote to keep you alive, the attacker will be killed instead as penalty.", "Don't show again", "Ok");
+
+                CrossSettings.Current.AddOrUpdateValue("KillConfirmations", !understood);
+            }
+
             BackgroundColor = Color.Black;
             Padding = new Thickness() { Top = 20, Bottom = 20 };
             WidthRequest = CrossScreen.Current.Size.Width * 15 / 16;

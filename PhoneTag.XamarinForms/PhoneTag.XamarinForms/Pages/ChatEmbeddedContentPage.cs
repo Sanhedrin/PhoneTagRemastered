@@ -39,9 +39,9 @@ namespace PhoneTag.XamarinForms.Pages
         {
             if (!String.IsNullOrEmpty(m_ChatInput.Text))
             {
-                if (!String.IsNullOrEmpty(m_ChatBox.Text))
+                if (!String.IsNullOrEmpty(m_ChatBoxText.Text))
                 {
-                    m_ChatBox.Text += Environment.NewLine;
+                    m_ChatBoxText.Text += Environment.NewLine;
                 }
 
                 sendMessage(m_ChatInput.Text);
@@ -62,14 +62,16 @@ namespace PhoneTag.XamarinForms.Pages
                 i_EventDetails.Message = i_EventDetails.Message.Substring(1);
             }
 
-            m_ChatBox.Text += String.Format("{0}: {1}", i_EventDetails.PlayerName, i_EventDetails.Message);
+            m_ChatBoxText.Text += String.Format("{0}: {1}", i_EventDetails.PlayerName, i_EventDetails.Message);
 
-            if (!m_ChatBox.Text.EndsWith(Environment.NewLine))
+            if (!m_ChatBoxText.Text.EndsWith(Environment.NewLine))
             {
-                m_ChatBox.Text += Environment.NewLine;
+                m_ChatBoxText.Text += Environment.NewLine;
             }
 
-            m_ChatBox.Text = m_ChatBox.Text.Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine);
+            m_ChatBoxText.Text = m_ChatBoxText.Text.Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine);
+
+            m_ChatBoxScrollView.ScrollToAsync(m_ChatBoxScrollView.ScrollX, m_ChatBoxText.Height, false);
         }
 
         private async Task sendMessage(string i_Message)

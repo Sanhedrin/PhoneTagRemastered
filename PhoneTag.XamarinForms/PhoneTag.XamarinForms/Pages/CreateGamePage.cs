@@ -123,6 +123,10 @@ namespace PhoneTag.XamarinForms.Pages
         //It's needed to be done in this way because multibinding is not yet supported in Xamarin.
         private void validateData()
         {
+            if (m_GameDetails != null)
+            {
+                m_GameDetails.Name = textBoxGameName.Text;
+            }
             buttonCreateGame.IsEnabled = pickerGameMode.SelectedIndex >= 0 && !String.IsNullOrEmpty(textBoxGameName.Text);
         }
 

@@ -27,6 +27,9 @@ namespace PhoneTag.XamarinForms.Pages
             DisplayAlert("Tips showing", "Tips will now show again for all menus.", "Ok");
 
             CrossSettings.Current.AddOrUpdateValue("AreaChooser", true);
+            CrossSettings.Current.AddOrUpdateValue("KillConfirmations", true);
+            CrossSettings.Current.AddOrUpdateValue("KillDispute", true);
+            CrossSettings.Current.AddOrUpdateValue("IconTips", true);
 
             List<String> gameModeNames = await PhoneTagInfo.GetGameModeList();
 

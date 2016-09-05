@@ -146,7 +146,8 @@ namespace PhoneTag.XamarinForms.Extensions
             BindablePicker playersPerTeamPicker = new BindablePicker()
             {
                 Title = "Number of players per team",
-                BackgroundColor = Color.Black
+                BackgroundColor = Color.Black,
+                TextColor = Color.White
             };
             playersPerTeamPicker.ItemsSource = new List<int>();
             for (int i = 1; i <= k_MaxPlayersPerTeam; i++) { playersPerTeamPicker.ItemsSource.Add(i); playersPerTeamPicker.Items.Add(i.ToString()); }

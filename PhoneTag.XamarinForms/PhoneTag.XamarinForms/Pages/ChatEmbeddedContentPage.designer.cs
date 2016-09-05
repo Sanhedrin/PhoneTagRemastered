@@ -11,8 +11,9 @@ namespace PhoneTag.XamarinForms.Pages
     public partial class ChatEmbeddedContentPage : TrailableContentPage
     {
         private bool m_IsInitialized = false;
-        private Label m_ChatBox;
+        private Label m_ChatBoxText;
         private Entry m_ChatInput;
+        private ScrollView m_ChatBoxScrollView;
 
         protected void initializeChat()
         {
@@ -65,12 +66,12 @@ namespace PhoneTag.XamarinForms.Pages
 
         private ScrollView generateChatBox()
         {
-            ScrollView chatBox = new ScrollView();;
+            m_ChatBoxScrollView = new ScrollView();;
 
-            chatBox.Content = m_ChatBox = new Label();
-            m_ChatBox.TextColor = Color.White;
+            m_ChatBoxScrollView.Content = m_ChatBoxText = new Label();
+            m_ChatBoxText.TextColor = Color.White;
 
-            return chatBox;
+            return m_ChatBoxScrollView;
         }
 
         private ImageButton generateChatButton()

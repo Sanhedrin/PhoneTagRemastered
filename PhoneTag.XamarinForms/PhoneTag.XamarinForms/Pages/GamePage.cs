@@ -17,6 +17,7 @@ using PositionEventArgs = Plugin.Geolocator.Abstractions.PositionEventArgs;
 using PhoneTag.SharedCodebase.Utils;
 using PhoneTag.SharedCodebase.POCOs;
 using System.Threading;
+using Plugin.Settings;
 
 namespace PhoneTag.XamarinForms.Pages
 {
@@ -46,10 +47,20 @@ namespace PhoneTag.XamarinForms.Pages
             setupPage();
         }
 
-        private void setupPage()
+        private async Task setupPage()
         {
             m_Camera.PictureReady += GamePage_PictureReady;
             startGeoLocationListening();
+
+            bool displayTip = CrossSettings.Current.GetValueOrDefault("IconTips", true);
+
+            if (displayTip)
+            {
+                bool understood = await DisplayAlert("Player Icons",
+                    "On the game map, you can see icons representing the players in the game, tap any of them to get more information about the specific player", "Don't show again", "Ok");
+
+                CrossSettings.Current.AddOrUpdateValue("IconTips", !understood);
+            }
         }
 
         //Starts listening to the geolocator, while looking for errors.
@@ -289,6 +300,16 @@ namespace PhoneTag.XamarinForms.Pages
                 killConfirmationDialog.KillDenied += DisputeDialog_VoteSpare;
 
                 openDisputeDialog(killConfirmationDialog);
+
+                bool displayTip = CrossSettings.Current.GetValueOrDefault("KillDispute", true);
+
+                if (displayTip)
+                {
+                    bool understood = await TrailableContentPage.CurrentPage.DisplayAlert("Kill Dispute",
+                        $"{user.Username} claims they have been wrongfully marked as dead.{Environment.NewLine}This dialog will be shown to all players, letting them vote whether they think the shot image justifies killing {user.Username} or not.{Environment.NewLine}The majority of the votes decides what happens; If the majority voted yes, {user.Username} will be killed, but if the majority voted no the player taking the shot will be killed instead as penalty.", "Don't show again", "Ok");
+
+                    CrossSettings.Current.AddOrUpdateValue("KillDispute", !understood);
+                }
             }
         }
 
