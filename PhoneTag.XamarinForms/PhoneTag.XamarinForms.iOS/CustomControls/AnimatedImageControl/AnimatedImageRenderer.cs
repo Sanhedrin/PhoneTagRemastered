@@ -41,7 +41,8 @@ namespace PhoneTag.XamarinForms.iOS.CustomControls.AnimatedImageControl
                     m_ImageArray = new UIImage[m_AnimationFrames];
                     for (int i = 0; i < m_AnimationFrames; i++)
                     {
-                        m_ImageArray[i] = UIImage.FromFile(new NSString($"{m_ImageName}_{i}.png"));
+                        m_ImageArray[i] = UIImage.FromFile(new NSString($"{m_ImageName}_{i+1}.png"));
+                        Control.Image = m_ImageArray[0];
                     }
 
                     Control.AnimationImages = m_ImageArray;

@@ -13,6 +13,8 @@ namespace PhoneTag.XamarinForms.Pages
     {
         private void initializeComponent()
         {
+            BackgroundColor = Color.Black;
+
             Title = "Loading";
             Padding = new Thickness(0, 20, 0, 0);
             BackgroundColor = Color.Black;
@@ -26,7 +28,8 @@ namespace PhoneTag.XamarinForms.Pages
                     new AnimatedImage()
                     {
                         ImageName = "loading_logo",
-                        Animate = true
+                        Animate = true,
+                        AnimationFrames = 30
                     },
                     new Label
                     {

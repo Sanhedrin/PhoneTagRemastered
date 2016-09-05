@@ -11,6 +11,7 @@ namespace PhoneTag.XamarinForms.Pages
     {
         private void initializeComponent(string i_ErrorMessage)
         {
+            BackgroundColor = Color.Black;
             Title = "Error!";
             Padding = new Thickness(0, 20, 0, 0);
             Content = new StackLayout

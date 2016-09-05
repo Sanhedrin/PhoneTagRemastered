@@ -80,6 +80,14 @@
       <HintPath>..\..\packages\Xamarin.Forms.2.3.0.46-pre3\lib\MonoAndroid10\FormsViewGroup.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="FreshEssentials, Version=1.0.6079.29046, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FreshEssentials.2.1.1\lib\MonoAndroid10\FreshEssentials.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FreshEssentials.Droid, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FreshEssentials.2.1.1\lib\MonoAndroid10\FreshEssentials.Droid.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="GCM.Client">
       <HintPath>..\..\packages\GCMClient-1.0\lib\android\GCM.Client.dll</HintPath>
     </Reference>

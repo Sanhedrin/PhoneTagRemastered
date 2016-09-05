@@ -10,20 +10,27 @@ namespace PhoneTag.XamarinForms.Pages
 {
     public partial class ChatEmbeddedContentPage : TrailableContentPage
     {
+        private bool m_IsInitialized = false;
         private Label m_ChatBox;
         private Entry m_ChatInput;
 
         protected void initializeChat()
         {
-            m_ChatDialog = generateChatDialog();
-            AbsoluteLayout.SetLayoutFlags(m_ChatDialog, AbsoluteLayoutFlags.All);
-            AbsoluteLayout.SetLayoutBounds(m_ChatDialog, new Rectangle(5, 0.45, 0.8, 0.8));
+            if (!m_IsInitialized)
+            {
+                m_IsInitialized = true;
 
-            m_ChatButton = generateChatButton();
-            AbsoluteLayout.SetLayoutFlags(m_ChatButton, AbsoluteLayoutFlags.All);
-            AbsoluteLayout.SetLayoutBounds(m_ChatButton, new Rectangle(1.125, 0.45, 0.2, 0.2));
-            (Content as AbsoluteLayout).Children.Add(m_ChatDialog);
+                m_ChatDialog = generateChatDialog();
+                AbsoluteLayout.SetLayoutFlags(m_ChatDialog, AbsoluteLayoutFlags.All);
+                AbsoluteLayout.SetLayoutBounds(m_ChatDialog, new Rectangle(5, 0.45, 0.8, 0.8));
+
+                m_ChatButton = generateChatButton();
+                AbsoluteLayout.SetLayoutFlags(m_ChatButton, AbsoluteLayoutFlags.All);
+                AbsoluteLayout.SetLayoutBounds(m_ChatButton, new Rectangle(1.125, 0.45, 0.2, 0.2));
+            }
+
             (Content as AbsoluteLayout).Children.Add(m_ChatButton);
+            (Content as AbsoluteLayout).Children.Add(m_ChatDialog);
         }
 
         private StackLayout generateChatDialog()
@@ -61,6 +68,7 @@ namespace PhoneTag.XamarinForms.Pages
             ScrollView chatBox = new ScrollView();;
 
             chatBox.Content = m_ChatBox = new Label();
+            m_ChatBox.TextColor = Color.White;
 
             return chatBox;
         }

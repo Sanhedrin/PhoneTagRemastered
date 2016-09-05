@@ -43,7 +43,8 @@ namespace PhoneTag.XamarinForms.Extensions
             BindablePicker durationPicker = new BindablePicker()
             {
                 Title = "Game Duration",
-                BackgroundColor = Color.Black
+                BackgroundColor = Color.Black,
+                TextColor = Color.White
             };
             durationPicker.ItemsSource = new List<int>();
             for (int i = 5; i <= k_MaxMinutesPerGame; i += 5) { durationPicker.ItemsSource.Add(i); durationPicker.Items.Add(i.ToString()); }
@@ -73,7 +74,8 @@ namespace PhoneTag.XamarinForms.Extensions
             BindablePicker uavPicker = new BindablePicker()
             {
                 Title = "Seconds per player location update on the map",
-                BackgroundColor = Color.Black
+                BackgroundColor = Color.Black,
+                TextColor = Color.White
             };
             uavPicker.ItemsSource = new List<int>();
             for (int i = 10; i <= k_HalfHourInSeconds; i += 10) { uavPicker.ItemsSource.Add(i); uavPicker.Items.Add(i.ToString()); }
@@ -113,7 +115,8 @@ namespace PhoneTag.XamarinForms.Extensions
             BindablePicker playersPerTeamPicker = new BindablePicker()
             {
                 Title = "Number of players per team",
-                BackgroundColor = Color.Black
+                BackgroundColor = Color.Black,
+                TextColor = Color.White
             };
             playersPerTeamPicker.ItemsSource = new List<int>();
             for (int i = 1; i <= k_MaxPlayersPerTeam; i++) { playersPerTeamPicker.ItemsSource.Add(i); playersPerTeamPicker.Items.Add(i.ToString()); }

@@ -11,6 +11,8 @@ namespace PhoneTag.XamarinForms.Pages
     {
         private void initializeComponent()
         {
+            BackgroundColor = Color.Black;
+
             NavigationPage.SetHasBackButton(this, true);
 
             Title = "Choose the game area";

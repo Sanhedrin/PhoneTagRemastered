@@ -23,7 +23,8 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
                     new AnimatedImage()
                     {
                         ImageName = "loading_logo",
-                        Animate = true
+                        Animate = true,
+                        AnimationFrames = 30
                     },
                     new Label
                     {

@@ -106,7 +106,7 @@ namespace PhoneTag.XamarinForms.Pages
 
             if (displayTip)
             {
-                bool understood = await DisplayAlert(String.Format("Game Mode Information: {0}", modeName), 
+                bool understood = await DisplayAlert(String.Format("Game Mode Information: {0}", modeName),
                     GameModeFactory.GetDescriptionForMode(modeName), "Don't show again", "Ok");
 
                 CrossSettings.Current.AddOrUpdateValue(modeName, !understood);

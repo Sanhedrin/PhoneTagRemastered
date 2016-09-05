@@ -20,14 +20,21 @@ namespace PhoneTag.XamarinForms.Pages
         {
             RelativeLayout layout = generatePageLayout();
             FriendListButton friendListButton = generateFriendListButton();
-            
-            BackgroundImage = "mainmenu_background.png";
+
+            Image bgImage = new Image
+            {
+                Source = "mainmenu_background.png",
+                Aspect = Aspect.Fill
+            };
+            AbsoluteLayout.SetLayoutFlags(bgImage, AbsoluteLayoutFlags.None);
+            AbsoluteLayout.SetLayoutBounds(bgImage, new Rectangle(0, 0, CrossScreen.Current.Size.Width, CrossScreen.Current.Size.Height));
+
             Title = "Main Menu";
-            Padding = new Thickness(0, 20, 0, 0);
             BackgroundColor = Color.White;
             Content = new AbsoluteLayout
             {
                 Children = {
+                    bgImage,
                     layout,
                     friendListButton
                 }
@@ -63,7 +70,7 @@ namespace PhoneTag.XamarinForms.Pages
                             ClickAction = () => { CreateGameButton_Clicked(); }
                         },
                         Constraint.RelativeToParent((parent) => { return parent.Width * 0.170; }),
-                        Constraint.RelativeToParent((parent) => { return parent.Height * 0.22; }),
+                        Constraint.RelativeToParent((parent) => { return parent.Height * 0.28; }),
                         Constraint.RelativeToParent((parent) => { return parent.Width * 0.677; })
                     },
                     {
@@ -75,7 +82,7 @@ namespace PhoneTag.XamarinForms.Pages
                             ClickAction = () => { FindGameButton_Clicked(); }
                         },
                         Constraint.RelativeToParent((parent) => { return parent.Width * 0.170; }),
-                        Constraint.RelativeToParent((parent) => { return parent.Height * 0.661; }),
+                        Constraint.RelativeToParent((parent) => { return parent.Height * 0.761; }),
                         Constraint.RelativeToParent((parent) => { return parent.Width * 0.677; })
 
                     },
