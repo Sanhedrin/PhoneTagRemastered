@@ -29,7 +29,7 @@ namespace PhoneTag.WebServices
         public static IMongoDatabase LocalDatabase { get; private set; }
         public static bool IsReady { get; private set; }
 
-        private const String k_ServerVersion = "1.0.0.0";
+        private const String k_ServerVersion = "1.1.0.0";
 
         /// <summary>
         /// Initializes the database connection.

@@ -89,6 +89,14 @@ namespace PhoneTag.SharedCodebase.Views
             }
         }
 
+        public async Task TimeUp()
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                await client.PostMethodAsync(String.Format("rooms/{0}/timeup", RoomId));
+            }
+        }
+
         /// <summary>
         /// Gets all enemy players in my sight range.
         /// </summary>
@@ -120,7 +128,7 @@ namespace PhoneTag.SharedCodebase.Views
         /// <param name="i_Location">Location to use as the search base.</param>
         /// <param name="i_SearchRadius">Maximum distance of the play area from the user in km.</param>
         /// <returns>A list of matching room ids</returns>
-        public static async Task<List<String>> GetAllRoomsInRange(GeoPoint i_Location, float i_SearchRadius)
+        public static async Task<List<String>> GetAllRoomsInRange(GeoPoint i_Location, double i_SearchRadius)
         {
             using (HttpClient client = new HttpClient())
             {

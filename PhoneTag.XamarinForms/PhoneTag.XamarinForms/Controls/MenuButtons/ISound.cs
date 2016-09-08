@@ -9,5 +9,6 @@ namespace PhoneTag.XamarinForms.Controls.MenuButtons
     public interface ISound
     {
         void ButtonClick();
+        void PlayBam();
     }
 }

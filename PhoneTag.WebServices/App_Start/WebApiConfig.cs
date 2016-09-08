@@ -21,8 +21,8 @@ namespace PhoneTag.WebServices
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}/{action}",
-                defaults: new { id = RouteParameter.Optional, action = RouteParameter.Optional }
+                routeTemplate: "api/{controller}/{id}/{action}/{param}",
+                defaults: new { id = RouteParameter.Optional, action = RouteParameter.Optional, param = RouteParameter.Optional }
             );
         }
     }

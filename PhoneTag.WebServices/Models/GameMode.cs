@@ -86,5 +86,7 @@ namespace PhoneTag.WebServices.Models
         }
 
         public abstract void GameStateUpdate(List<String> i_LivingUsers);
+
+        public abstract void TimeUp();
     }
 }

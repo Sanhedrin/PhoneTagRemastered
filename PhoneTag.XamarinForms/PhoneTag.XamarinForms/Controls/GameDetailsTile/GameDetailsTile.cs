@@ -13,6 +13,8 @@ namespace PhoneTag.XamarinForms.Controls.GameDetailsTile
     public class GameDetailsTile : StackLayout
     {
         private String m_GameRoomId;
+        private Button m_RoomButton;
+        private Button m_RoomNameButton;
 
         public GameDetailsTile()
         {
@@ -30,8 +32,7 @@ namespace PhoneTag.XamarinForms.Controls.GameDetailsTile
                     Orientation = StackOrientation.Horizontal;
                     HorizontalOptions = LayoutOptions.FillAndExpand;
 
-                    //The game's name goes on the button, clicking tries to join the room.
-                    Children.Add(new Button()
+                    Children.Add(m_RoomNameButton = new Button()
                     {
                         Text = room.GameDetails.Name,
                         TextColor = Color.Black,
@@ -41,12 +42,15 @@ namespace PhoneTag.XamarinForms.Controls.GameDetailsTile
                         IsEnabled = !m_GameRoomId.Equals(UserView.Current?.PlayingIn) //Disable if already in room.
                     });
 
-                    Children.Add(new Label()
+                    //The game's name goes on the button, clicking tries to join the room.
+                    Children.Add(m_RoomButton = new Button()
                     {
-                        BackgroundColor = Color.Gray,
-                        TextColor = Color.Black,
                         Text = constructDetails(room),
-                        WidthRequest = CrossScreen.Current.Size.Width * 3 / 4
+                        TextColor = Color.Black,
+                        BackgroundColor = Color.Gray,
+                        WidthRequest = CrossScreen.Current.Size.Width * 3 / 4,
+                        Command = new Command(() => { joinGameRoom(); }),
+                        IsEnabled = !m_GameRoomId.Equals(UserView.Current?.PlayingIn) //Disable if already in room.
                     });
                 }
             }
@@ -74,9 +78,9 @@ namespace PhoneTag.XamarinForms.Controls.GameDetailsTile
             {
                 builder.AppendLine(i_Room.GameDetails.Mode.Name);
                 builder.AppendLine(String.Format("{0} minutes", i_Room.GameDetails.GameDurationInMins));
-                builder.AppendLine(String.Format("{0} / {1} players",
+                builder.Append(String.Format("{0} / {1} players",
                     i_Room.LivingUsers.Count.ToString(), i_Room.GameDetails.Mode.TotalNumberOfPlayers));
-                builder.AppendLine(String.Format("{0} friends", i_Room.FriendsInRoomFor(UserView.Current).Count.ToString()));
+                builder.Append(String.Format("({0} friends)", i_Room.FriendsInRoomFor(UserView.Current).Count.ToString()));
             }
             catch (Exception e)
             {
@@ -85,6 +89,16 @@ namespace PhoneTag.XamarinForms.Controls.GameDetailsTile
             }
 
             return builder.ToString();
+        }
+
+        /// <summary>
+        /// Refreshes the current visual representation of the tile.
+        /// </summary>
+        public async Task Refresh()
+        {
+            GameRoomView room = await GameRoomView.GetRoom(m_GameRoomId);
+            m_RoomNameButton.Text = room.GameDetails.Name;
+            m_RoomButton.Text = constructDetails(room);
         }
     }
 }

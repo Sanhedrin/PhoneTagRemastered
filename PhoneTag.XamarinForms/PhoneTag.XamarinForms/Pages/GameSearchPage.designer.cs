@@ -14,7 +14,7 @@ namespace PhoneTag.XamarinForms.Pages
 {
     public partial class GameSearchPage : TrailableContentPage
     {
-        private int k_MaxSearchDistance = 10;
+        private int k_MaxSearchDistance = 100 * 10;
         
         private void initializeNoResultComponent()
         {
@@ -137,17 +137,17 @@ namespace PhoneTag.XamarinForms.Pages
         {
             pickerSearchRadius = new BindablePicker()
             {
-                Title = "Search Radius",
+                Title = "Search Radius in Meters",
                 BindingContext = this
             };
             pickerSearchRadius.Items.Clear();
             pickerSearchRadius.ItemsSource = (IList)pickerSearchRadius.Items;
-            for (int i = 1; i <= k_MaxSearchDistance; ++i)
+            for (int i = 100; i <= k_MaxSearchDistance; i += 100)
             {
                 pickerSearchRadius.Items.Add(i.ToString());
             }
             pickerSearchRadius.SetBinding(BindablePicker.SelectedItemProperty, "SearchRadius");
-            SearchRadius = 3;
+            SearchRadius = 300;
         }
     }
 }

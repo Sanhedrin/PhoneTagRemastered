@@ -19,32 +19,36 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
 
         protected override void setupTile()
         {
-            StackLayout detailsStack = generateDetailStack();
-            StackLayout actionStack = generateActionStack();
+            Grid detailsGrid = generateDetailGrid();
 
-            Children.Add(detailsStack,
-                Constraint.RelativeToParent((parent) => { return 0; }),
-                Constraint.RelativeToParent((parent) => { return CrossScreen.Current.Size.Height / 16; }));
-            Children.Add(actionStack,
-                Constraint.RelativeToParent((parent) => { return CrossScreen.Current.Size.Width / 2; }),
-                Constraint.RelativeToParent((parent) => { return CrossScreen.Current.Size.Height / 16; }));
-
+            Children.Add(detailsGrid,
+                Constraint.RelativeToParent((parent) => { return parent.Width / 8; }),
+                Constraint.RelativeToParent((parent) => { return parent.Height / 5; }));
+            
             initializeComponent();
         }
 
-        private StackLayout generateDetailStack()
+        private Grid generateDetailGrid()
         {
-            StackLayout layout = new StackLayout();
-            
+            Grid layout = new Grid()
+            {
+                ColumnSpacing = 10,
+                BackgroundColor = Color.Transparent,
+                ColumnDefinitions =
+                {
+                    new ColumnDefinition { Width = new GridLength(0.1, GridUnitType.Star) },
+                    new ColumnDefinition { Width = new GridLength(0.1, GridUnitType.Star) },
+                    new ColumnDefinition { Width = new GridLength(0.25, GridUnitType.Star) }
+                }
+            };
+
             View profilePic = generateProfilePicture();
             View nameLabel = generateUserNameLabel();
-
-            layout.Orientation = StackOrientation.Horizontal;
-            layout.HorizontalOptions = new LayoutOptions() { Alignment = LayoutAlignment.Start };
-            layout.VerticalOptions = new LayoutOptions() { Alignment = LayoutAlignment.Center };
+            Button chooseTargetButton = generateChooseTargetButton();
             
-            layout.Children.Add(profilePic);
-            layout.Children.Add(nameLabel);
+            layout.Children.Add(profilePic, 0, 0);
+            layout.Children.Add(nameLabel, 1, 0);
+            layout.Children.Add(chooseTargetButton, 2, 0);
 
             return layout;
         }

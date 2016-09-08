@@ -3,6 +3,7 @@ using Nito.AsyncEx;
 using PhoneTag.SharedCodebase.Events.GameEvents;
 using PhoneTag.SharedCodebase.Utils;
 using PhoneTag.SharedCodebase.Views;
+using PhoneTag.XamarinForms.Controls.AnimatedImageControl;
 using PhoneTag.XamarinForms.Controls.GameDetailsTile;
 using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
@@ -69,6 +70,15 @@ namespace PhoneTag.XamarinForms.Pages
             {
                 m_GameRoomTileDisplay.Children.Clear();
 
+                m_GameRoomTileDisplay.Children.Add(
+                    new AnimatedImage()
+                    {
+                        ImageName = "loading_logo",
+                        Animate = true,
+                        AnimationFrames = 30
+                    }
+                );
+
                 await startGeoLocationListening();
 
                 Position userLocation = await CrossGeolocator.Current.GetPositionAsync(timeoutMilliseconds: 3);
@@ -78,6 +88,7 @@ namespace PhoneTag.XamarinForms.Pages
                 if (userLocation != null)
                 {
                     List<String> roomIds = await GameRoomView.GetAllRoomsInRange(new GeoPoint(userLocation.Latitude, userLocation.Longitude), SearchRadius);
+                    m_GameRoomTileDisplay.Children.Clear();
 
                     if (roomIds.Count > 0)
                     {

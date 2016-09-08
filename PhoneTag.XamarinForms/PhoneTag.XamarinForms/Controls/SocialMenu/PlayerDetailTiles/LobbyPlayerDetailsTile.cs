@@ -13,7 +13,7 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
     public class LobbyPlayerDetailsTile : PlayerDetailsTile
     {
         private ImageButton m_SocialButton;
-        private BoxView m_ReadyBox;
+        private Image m_ReadyImage;
 
         public LobbyPlayerDetailsTile(UserView i_UserView) : base(i_UserView)
         {
@@ -22,48 +22,39 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
 
         protected override void setupTile()
         {
-            StackLayout detailsStack = generateDetailStack();
-            StackLayout actionStack = generateActionStack();
-            
-            Children.Add(detailsStack, 
-                Constraint.RelativeToParent((parent) => { return 0; }),
-                Constraint.RelativeToParent((parent) => { return CrossScreen.Current.Size.Height / 16; }));
-            Children.Add(actionStack, 
-                Constraint.RelativeToParent((parent) => { return CrossScreen.Current.Size.Width / 2; }),
-                Constraint.RelativeToParent((parent) => { return CrossScreen.Current.Size.Height / 16; }));
+            Grid detailsGrid = generateTileLayout();
+
+            Children.Add(detailsGrid, 
+                Constraint.RelativeToParent((parent) => { return parent.Width / 8; }),
+                Constraint.RelativeToParent((parent) => { return parent.Height / 5; }));
 
             initializeComponent();
         }
 
-        private StackLayout generateActionStack()
+        private Grid generateTileLayout()
         {
-            StackLayout layout = new StackLayout();
-
-            m_SocialButton = generateSocialOperationButton();
-
-            layout.Orientation = StackOrientation.Horizontal;
-            layout.HorizontalOptions = new LayoutOptions() { Alignment = LayoutAlignment.End };
-
-            layout.Children.Add(m_SocialButton);
-
-            return layout;
-        }
-
-        private StackLayout generateDetailStack()
-        {
-            StackLayout layout = new StackLayout();
+            Grid layout = new Grid()
+            {
+                ColumnSpacing = 10,
+                BackgroundColor = Color.Transparent,
+                ColumnDefinitions =
+                {
+                    new ColumnDefinition { Width = new GridLength(0.25, GridUnitType.Star) },
+                    new ColumnDefinition { Width = new GridLength(0.25, GridUnitType.Star) },
+                    new ColumnDefinition { Width = new GridLength(0.25, GridUnitType.Star) },
+                    new ColumnDefinition { Width = new GridLength(0.1, GridUnitType.Star) }
+                }
+            };
             
-            m_ReadyBox = generateReadyBox();
+            m_ReadyImage = generateReadyImage();
             View profilePic = generateProfilePicture();
             View nameLabel = generateUserNameLabel();
+            //m_SocialButton = generateSocialOperationButton();
 
-            layout.Orientation = StackOrientation.Horizontal;
-            layout.HorizontalOptions = new LayoutOptions() { Alignment = LayoutAlignment.Start };
-            layout.VerticalOptions = new LayoutOptions() { Alignment = LayoutAlignment.Center };
-
-            layout.Children.Add(m_ReadyBox);
-            layout.Children.Add(profilePic);
-            layout.Children.Add(nameLabel);
+            layout.Children.Add(m_ReadyImage, 0, 0);
+            layout.Children.Add(profilePic, 1, 0);
+            layout.Children.Add(nameLabel, 2, 0);
+            //layout.Children.Add(m_SocialButton, 3, 0);
 
             return layout;
         }
@@ -105,18 +96,18 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
         }
 
         //Returns a box that's colored according to the player's ready status.
-        private BoxView generateReadyBox()
+        private Image generateReadyImage()
         {
-            BoxView readyBox = new BoxView();
+            Image readyImage = new Image() { Aspect = Aspect.AspectFill };
 
-            readyBox.Color = UserView.IsReady ? Color.Green : Color.Red;
+            readyImage.Source = UserView.IsReady ? "ready_check.png" : "unready_check.png";
 
-            return readyBox;
+            return readyImage;
         }
 
         public override void Refresh(PlayerDetailsTile i_PlayerDetails)
         {
-            m_ReadyBox.Color = i_PlayerDetails.UserView.IsReady ? Color.Green : Color.Red;
+            m_ReadyImage.Source = i_PlayerDetails.UserView.IsReady ? "ready_check.png" : "unready_check.png";
         }
     }
 }

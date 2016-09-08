@@ -12,6 +12,7 @@ using Android.Widget;
 using PhoneTag.XamarinForms.Droid.CustomControls.MenuButtons;
 using PhoneTag.XamarinForms.Controls.MenuButtons;
 using Plugin.CurrentActivity;
+using Android.Media;
 
 [assembly: Xamarin.Forms.Dependency(typeof(SoundableControl))]
 namespace PhoneTag.XamarinForms.Droid.CustomControls.MenuButtons
@@ -27,6 +28,16 @@ namespace PhoneTag.XamarinForms.Droid.CustomControls.MenuButtons
                 m_Root = CrossCurrentActivity.Current.Activity.FindViewById<View>(Android.Resource.Id.Content);
             }
             m_Root.PlaySoundEffect(SoundEffects.Click);
+        }
+
+        public void PlayBam()
+        {
+            MediaPlayer player = new MediaPlayer();
+
+            player.Reset();
+            //player.SetDataSource();
+            player.Prepare();
+            player.Start();
         }
     }
 }

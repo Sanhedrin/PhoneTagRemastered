@@ -21,36 +21,33 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu.PlayerDetailTiles
 
         protected override void setupTile()
         {
-            StackLayout detailsStack = generateDetailStack();
-            StackLayout actionStack = generateActionStack();
+            Grid detailsGrid = generateDetailGrid();
 
-            Children.Add(detailsStack,
-                Constraint.RelativeToParent((parent) => { return 0; }),
-                Constraint.RelativeToParent((parent) => { return parent.Height / 4; }),
-                Constraint.RelativeToParent((parent) => { return parent.Width / 3; }),
-                Constraint.RelativeToParent((parent) => { return parent.Height / 2; }));
-            Children.Add(actionStack,
-                Constraint.RelativeToParent((parent) => { return parent.Width / 3; }),
-                Constraint.RelativeToParent((parent) => { return parent.Height / 4; }),
-                Constraint.RelativeToParent((parent) => { return parent.Width * 2 / 3; }),
-                Constraint.RelativeToParent((parent) => { return parent.Height / 2; }));
+            Children.Add(detailsGrid,
+                Constraint.RelativeToParent((parent) => { return parent.Width / 8; }),
+                Constraint.RelativeToParent((parent) => { return parent.Height / 5; }));
 
             initializeComponent();
         }
 
-        private StackLayout generateDetailStack()
+        private Grid generateDetailGrid()
         {
-            StackLayout verticalLayout = new StackLayout() { Orientation = StackOrientation.Vertical };
+            Grid verticalLayout = new Grid()
+            { 
+                ColumnSpacing = 10,
+                BackgroundColor = Color.Transparent,
+                ColumnDefinitions =
+                {
+                    new ColumnDefinition { Width = new GridLength(0.1, GridUnitType.Star) },
+                    new ColumnDefinition { Width = new GridLength(0.1, GridUnitType.Star) }
+                }
+            };
 
             View profilePic = generateProfilePicture();
             View nameLabel = generateUserNameLabel();
-
-            verticalLayout.Orientation = StackOrientation.Horizontal;
-            verticalLayout.HorizontalOptions = new LayoutOptions() { Alignment = LayoutAlignment.Start };
-            verticalLayout.VerticalOptions = new LayoutOptions() { Alignment = LayoutAlignment.Center };
-
-            verticalLayout.Children.Add(profilePic);
-            verticalLayout.Children.Add(nameLabel);
+            
+            verticalLayout.Children.Add(profilePic, 0, 0);
+            verticalLayout.Children.Add(nameLabel, 1, 0);
 
             return verticalLayout;
         }

@@ -15,7 +15,7 @@ namespace PhoneTag.SharedCodebase.StaticInfo
     /// </summary>
     public static class PhoneTagInfo
     {
-        public const string ClientVersion = "1.0.0.0";
+        public const string ClientVersion = "1.1.0.0";
 
         /// <summary>
         /// Gets the application's version as stored on the server

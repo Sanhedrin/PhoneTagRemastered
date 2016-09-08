@@ -73,7 +73,7 @@ namespace PhoneTag.WebServices.Models
         //Closes an ongoing game room.
         private async Task closeOngoingGame()
         {
-            closePendingGame();
+            GameModeDetails.Mode.TimeUp();
         }
 
         //Closes a pending game room.
@@ -304,7 +304,6 @@ namespace PhoneTag.WebServices.Models
                             .Set("LivingUsers", this.LivingUsers)
                             .Set("DeadUsers", this.DeadUsers);
 
-                        GameModeDetails.Mode.GameEnded += Mode_GameEnded;
                         GameModeDetails.Mode.GameStateUpdate(LivingUsers);
                         
                         await Mongo.Database.GetCollection<BsonDocument>("Rooms").UpdateOneAsync(filter, update);
@@ -329,7 +328,7 @@ namespace PhoneTag.WebServices.Models
         }
 
         //Occurs if the last game state changed caused the game to end.
-        private void Mode_GameEnded(object sender, GameEndedEventArgs e)
+        public void Mode_GameEnded(object sender, GameEndedEventArgs e)
         {
             IEnumerable<String> users = LivingUsers.Union(DeadUsers);
 

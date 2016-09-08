@@ -13,6 +13,8 @@ namespace PhoneTag.XamarinForms.Controls.SocialMenu
     {
         protected List<UserView> m_Players = new List<UserView>();
 
+        public int PlayerCount { get { return m_Players.Count; } }
+
         protected PlayerListDisplay()
         {
             initializeLoadingComponent();

@@ -132,10 +132,12 @@ namespace PhoneTag.XamarinForms.Pages
 
         private async Task startGame(GameStartEvent i_GameStartEvent)
         {
+            m_ButtonReady.IsEnabled = false;
             m_GameRoom = await GameRoomView.GetRoom(i_GameStartEvent.GameId);
 
             if (m_GameRoom != null)
             {
+                await displayStartCountdown();
                 Application.Current.MainPage = new NavigationPage(new GamePage(m_GameRoom));
             }
             else

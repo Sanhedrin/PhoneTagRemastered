@@ -76,5 +76,13 @@ namespace PhoneTag.WebServices.Models.GameModes
                 onGameEnded(new GameEndedEventArgs(new GameEndedEvent(Teams[0])));
             }
         }
+
+        public override void TimeUp()
+        {
+            List<String> winningPlayers = Teams[0].Count > Teams[1].Count ? Teams[0] :
+                (Teams[0].Count < Teams[1].Count ? Teams[1] : new List<String>());
+
+            onGameEnded(new GameEndedEventArgs(new GameEndedEvent(winningPlayers)));
+        }
     }
 }

@@ -18,6 +18,7 @@ namespace PhoneTag.XamarinForms.Pages
     public partial class GameLobbyPage : ChatEmbeddedContentPage
     {
         private LobbyPlayerListDisplay m_LobbyPlayerList;
+        private GameDetailsTile m_RoomTile;
 
         private void initializeLoadingComponent()
         {
@@ -60,23 +61,54 @@ namespace PhoneTag.XamarinForms.Pages
 
                 if (m_GameRoom != null)
                 {
-                    Title = "Game Lobby";
-                    Padding = new Thickness(0, 20, 0, 0);
-                    
-                    StackLayout lobbyLayout = await generateLobbyLayout(i_GameRoomId);
-                    AbsoluteLayout.SetLayoutBounds(lobbyLayout, new Rectangle(0, 0, lobbyLayout.Width, lobbyLayout.Height));
-                    
-                    Content = new AbsoluteLayout();
-                    (Content as AbsoluteLayout).Children.Add(lobbyLayout);
+                    if (m_LobbyPlayerList == null)
+                    {
+                        Title = "Game Lobby";
+                        Padding = new Thickness(0, 20, 0, 0);
 
-                    initializeChat();
+                        StackLayout lobbyLayout = await generateLobbyLayout(i_GameRoomId);
+                        AbsoluteLayout.SetLayoutBounds(lobbyLayout, new Rectangle(0, 0, lobbyLayout.Width, lobbyLayout.Height));
+
+                        Content = new AbsoluteLayout();
+                        (Content as AbsoluteLayout).Children.Add(lobbyLayout);
+
+                        initializeChat();
+                    }
+                    else
+                    {
+                        m_RoomTile.Refresh();
+                        m_ButtonReady.IsEnabled = m_LobbyPlayerList.Refresh().PlayerCount > 1;
+                    }
                 }
+            }
+        }
+
+        //Displays a short countdown to let players know that the game is starting.
+        private async Task displayStartCountdown()
+        {
+            Button startCountdownLabel = new Button()
+            {
+                BackgroundColor = Color.Gray,
+                TextColor = Color.White,
+                FontSize = 24,
+                IsEnabled = false
+            };
+
+            AbsoluteLayout.SetLayoutFlags(startCountdownLabel, AbsoluteLayoutFlags.All);
+            AbsoluteLayout.SetLayoutBounds(startCountdownLabel, new Rectangle(0.4, 0.3, 0.9, 0.9));
+
+            (Content as AbsoluteLayout).Children.Add(startCountdownLabel);
+
+            for (int i = 3; i >= 0; --i)
+            {
+                startCountdownLabel.Text = $"Game starting in:{Environment.NewLine}{i}";
+                await Task.Delay(1000);
             }
         }
 
         private async Task<StackLayout> generateLobbyLayout(String i_GameRoomId)
         {
-            GameDetailsTile roomTile = await generateRoomTile(i_GameRoomId);
+            m_RoomTile = await generateRoomTile(i_GameRoomId);
             m_ButtonReady = generateReadyButton();
             Button viewMapButton = generateViewMapButton();
             m_LobbyPlayerList = (LobbyPlayerListDisplay)(m_LobbyPlayerList?.Refresh()) ?? new LobbyPlayerListDisplay();
@@ -90,7 +122,7 @@ namespace PhoneTag.XamarinForms.Pages
                     Alignment = LayoutAlignment.Fill
                 },
                 Children = {
-                    roomTile,
+                    m_RoomTile,
                     m_LobbyPlayerList,
                     viewMapButton,
                     m_ButtonReady

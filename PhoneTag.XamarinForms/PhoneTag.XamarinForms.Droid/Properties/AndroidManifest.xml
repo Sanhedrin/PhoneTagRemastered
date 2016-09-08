@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.Sanhedrin.PhoneTag" android:installLocation="preferExternal" android:versionCode="3" android:versionName="1.0.0.1 - FB Permission Workflow Update">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.Sanhedrin.PhoneTag" android:installLocation="preferExternal" android:versionCode="4" android:versionName="1.1.0.0 - UI revamp">
 	<uses-sdk />
 	<uses-permission android:name="android.permission.CAMERA" />
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

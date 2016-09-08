@@ -14,5 +14,10 @@ namespace PhoneTag.XamarinForms.iOS.CustomControls.MenuButtons
         {
             UIDevice.CurrentDevice.PlayInputClick();
         }
+
+        public void PlayBam()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

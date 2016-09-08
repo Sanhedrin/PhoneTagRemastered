@@ -13,9 +13,11 @@ namespace PhoneTag.XamarinForms.Pages
     public partial class ChatEmbeddedContentPage : TrailableContentPage
     {
         private bool m_ChatDialogOpen = false;
+        private bool m_NewMessage = false;
+        private bool m_MessageBlink = false;
 
         private ImageButton m_ChatButton;
-        private StackLayout m_ChatDialog;
+        private Grid m_ChatDialog;
         
         private void triggerChatBox()
         {
@@ -23,13 +25,16 @@ namespace PhoneTag.XamarinForms.Pages
             {
                 m_ChatDialog.TranslateTo(0, 0, 250, Easing.Linear);
                 m_ChatButton.TranslateTo(0, 0, 250, Easing.Linear);
+                m_ChatBorder.TranslateTo(0, 0, 250, Easing.Linear);
             }
             else
             {
-                m_ChatDialog.TranslateTo(-m_ChatDialog.Width, 0, 250, Easing.Linear);
-                m_ChatButton.TranslateTo(-m_ChatDialog.Width, 0, 250, Easing.Linear);
+                m_ChatDialog.TranslateTo(-m_ChatBorder.Width, 0, 250, Easing.Linear);
+                m_ChatButton.TranslateTo(-m_ChatBorder.Width, 0, 250, Easing.Linear);
+                m_ChatBorder.TranslateTo(-m_ChatBorder.Width, 0, 250, Easing.Linear);
 
                 m_ChatButton.Source = "chat_button.png";
+                m_NewMessage = false;
             }
 
             m_ChatDialogOpen = !m_ChatDialogOpen;
@@ -52,9 +57,9 @@ namespace PhoneTag.XamarinForms.Pages
 
         private void addMessageToBox(ChatMessageEvent i_EventDetails)
         {
-            if (!m_ChatDialogOpen)
+            if (!m_NewMessage && !m_ChatDialogOpen)
             {
-                m_ChatButton.Source = "chat_button_new_message.png";
+                newMessageBlink();
             }
 
             if (i_EventDetails.Message.StartsWith(Environment.NewLine))
@@ -72,6 +77,20 @@ namespace PhoneTag.XamarinForms.Pages
             m_ChatBoxText.Text = m_ChatBoxText.Text.Replace(Environment.NewLine + Environment.NewLine, Environment.NewLine);
 
             m_ChatBoxScrollView.ScrollToAsync(m_ChatBoxScrollView.ScrollX, m_ChatBoxText.Height, false);
+        }
+
+        private async Task newMessageBlink()
+        {
+            m_NewMessage = true;
+
+            while (m_NewMessage)
+            {
+                m_ChatButton.Source = m_MessageBlink ? "chat_button.png" : "chat_button_new_message.png";
+
+                m_MessageBlink = !m_MessageBlink;
+
+                await Task.Delay(1000);
+            }
         }
 
         private async Task sendMessage(string i_Message)

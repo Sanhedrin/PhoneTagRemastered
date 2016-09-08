@@ -19,9 +19,10 @@ namespace PhoneTag.XamarinForms.Pages
         private Stack<View> m_CurrentlyShowingDialogs = new Stack<View>();
 
         private ImageButton buttonShoot;
-        private StackLayout m_GameLayout;
+        private Grid m_GameLayout;
         private RelativeLayout m_CameraComponent;
-        private bool m_GameOver = false;
+        private Label m_TimerLabel;
+        private bool m_IsBamming;
 
         private void initializeComponent()
         {
@@ -30,7 +31,7 @@ namespace PhoneTag.XamarinForms.Pages
             NavigationPage.SetHasNavigationBar(this, false);
 
             buttonShoot = generateShootButton();
-            StackLayout gameStackLayout = generateGameLayout();
+            Grid gameStackLayout = generateGameLayout();
 
             Title = "PhoneTag!";
             Padding = new Thickness(0, 20, 0, 0);
@@ -48,42 +49,71 @@ namespace PhoneTag.XamarinForms.Pages
             AbsoluteLayout.SetLayoutFlags(gameLayout, AbsoluteLayoutFlags.All);
             AbsoluteLayout.SetLayoutBounds(gameLayout, new Rectangle(0, 0, 1, 1));
 
+            m_TimerLabel = generateTimerLabel();
+            AbsoluteLayout.SetLayoutFlags(m_TimerLabel, AbsoluteLayoutFlags.SizeProportional);
+            AbsoluteLayout.SetLayoutBounds(m_TimerLabel, new Rectangle(10, 10, 0.3, 0.05));
+
             (Content as AbsoluteLayout).Children.Add(gameLayout);
+            (Content as AbsoluteLayout).Children.Add(m_TimerLabel);
 
             initializeChat();
         }
 
-        private StackLayout generateGameLayout()
+        private Label generateTimerLabel()
+        {
+            m_TimerLabel = new Label()
+            {
+                BackgroundColor = Color.Transparent,
+                TextColor = Color.White
+            };
+
+            startTimerCountDown(m_GameRoomView.GameDetails.GameDurationInMins);
+
+            return m_TimerLabel;
+        }
+
+        private async Task startTimerCountDown(int i_GameDurationInMins)
+        {
+            TimeSpan timeLeft = new TimeSpan(i_GameDurationInMins / 60, i_GameDurationInMins % 60, 0);
+
+            m_TimerLabel.Text = timeLeft.ToString();
+
+            while (!m_GameOver && !timeLeft.Equals(new TimeSpan(0, 0, 0)))
+            {
+                timeLeft = timeLeft.Subtract(new TimeSpan(0, 0, 1));
+
+                m_TimerLabel.Text = timeLeft.ToString();
+
+                await Task.Delay(1000);
+            }
+
+            if (!m_GameOver)
+            {
+                m_GameRoomView.TimeUp();
+            }
+        }
+
+        private Grid generateGameLayout()
         {
             m_CameraComponent = generateCameraComponent();
 
-            m_GameLayout = new StackLayout
+            m_GameLayout = new Grid
             {
-                VerticalOptions = new LayoutOptions
+                BackgroundColor = Color.Black,
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                HorizontalOptions = new LayoutOptions() { Alignment = LayoutAlignment.Center },
+
+                RowDefinitions =
                 {
-                    Alignment = LayoutAlignment.Fill
-                },
-                Children = {
-                    m_CameraComponent,
-                    new RelativeLayout {
-                        Children = {
-                            {
-                                m_GameMap,
-                                Constraint.RelativeToParent((parent) => { return 0; }),
-                                Constraint.RelativeToParent((parent) => { return 0; }),
-                                Constraint.RelativeToParent((parent) => { return parent.Width; }),
-                                Constraint.RelativeToParent((parent) => { return parent.Height * 0.65; })
-                            },
-                            {
-                                buttonShoot,
-                                Constraint.RelativeToParent((parent) => { return parent.Width * 0.4; }),
-                                Constraint.RelativeToParent((parent) => { return parent.Height * 0.425; }),
-                                Constraint.RelativeToParent((parent) => { return parent.Width * 0.2125; })
-                            }
-                        }
-                    },
+                    new RowDefinition { Height = new GridLength(0.5, GridUnitType.Auto) },
+                    new RowDefinition { Height = new GridLength(0.5, GridUnitType.Auto) },
+                    new RowDefinition { Height = new GridLength(0.05, GridUnitType.Auto) }
                 }
             };
+
+            m_GameLayout.Children.Add(m_CameraComponent, 0, 0);
+            m_GameLayout.Children.Add(m_GameMap, 0, 1);
+            m_GameLayout.Children.Add(buttonShoot, 0, 2);
 
             return m_GameLayout;
         }
@@ -139,7 +169,7 @@ namespace PhoneTag.XamarinForms.Pages
         {
             ImageButton shootButton = new ImageButton
             {
-                Source = "shoot_button.png",
+                Source = m_HaveLost ? "exit_button.png" : "shoot_button.png",
                 IsEnabled = true,
                 ClickAction = () => { ShootButton_Clicked(); }
             };
@@ -197,12 +227,17 @@ namespace PhoneTag.XamarinForms.Pages
             i_Dialog.TranslationX = i_Dialog.TranslationY = 0;
 
             RelativeLayout layout = ((Content as AbsoluteLayout).Children.Where((view) => view is RelativeLayout).First() as RelativeLayout);
-
-            layout?.Children.Add(i_Dialog,
-                xConstraint: Constraint.RelativeToParent((parent) => { return 0; }),
-                yConstraint: Constraint.RelativeToParent((parent) => { return parent.Height; }));
             
+            layout?.Children.Add(i_Dialog,
+                yConstraint: Constraint.RelativeToParent((parent) => { return parentHeight(parent); }),
+                xConstraint: Constraint.RelativeToParent((parent) => { return 0; }));
+
             await i_Dialog.TranslateTo((Width - i_Dialog.Width) / 2, -i_Dialog.Height, 750, Easing.SpringOut);
+        }
+
+        private double parentHeight(View parent)
+        {
+            return parent.Height;
         }
 
         private async Task finishShowDialogSlideUp(View i_Dialog)
@@ -248,24 +283,48 @@ namespace PhoneTag.XamarinForms.Pages
             }
         }
 
+        //Shows a quick BAM animation to show that the player was killed.
+        private async Task bamTheScreen()
+        {
+            if (!m_IsBamming)
+            {
+                m_IsBamming = true;
+
+                Image bamImage = new Image() { Source = "bam.png" };
+                AbsoluteLayout.SetLayoutFlags(bamImage, AbsoluteLayoutFlags.All);
+                AbsoluteLayout.SetLayoutBounds(bamImage, new Rectangle(0, 0, 1, 0.5));
+
+                (Content as AbsoluteLayout).Children.Add(bamImage);
+
+                //DependencyService.Get<ISound>().PlayBam();
+
+                await bamImage.ScaleTo(0.001, 1, Easing.Linear);
+                await bamImage.ScaleTo(1, 250, Easing.Linear);
+
+                await Task.Delay(2000);
+
+                (Content as AbsoluteLayout).Children.Remove(bamImage);
+            }
+        }
+
         private async Task transitionToSpectatorMode()
         {
-            if (!m_GameOver)
+            if (!m_HaveLost)
             {
                 buttonShoot.Source = "exit_button.png";
-                m_GameOver = true;
+                m_HaveLost = true;
                 buttonShoot.IsEnabled = true;
+
+                bamTheScreen();
 
                 await m_CameraComponent.FadeTo(0, 750, Easing.Linear);
 
-                if (!m_GameOver)
+                if (!m_HaveLost)
                 {
                     Label deadLabel = generateDeadLabel();
 
                     m_GameLayout.Children.Remove(m_CameraComponent);
                     m_GameLayout.Children.Insert(0, deadLabel);
-
-                    buttonShoot.TranslateTo(0, Height / 12, 1, null);
 
                     deadLabel.FadeTo(1, 750, Easing.Linear);
                 }
@@ -274,9 +333,11 @@ namespace PhoneTag.XamarinForms.Pages
 
         private async Task transitionToGameEnd(List<String> i_WinnerIds)
         {
-            m_GameOver = true;
+            m_HaveLost = true;
             buttonShoot.Source = "exit_button.png";
             buttonShoot.IsEnabled = true;
+
+            m_TimerLabel.Text = String.Empty;
 
             await m_CameraComponent.FadeTo(0, 750, Easing.Linear);
             
@@ -285,19 +346,26 @@ namespace PhoneTag.XamarinForms.Pages
             m_GameLayout.Children.RemoveAt(0);
             m_GameLayout.Children.Insert(0, deadLabel);
 
-            buttonShoot.TranslateTo(0, Height / 12, 1, null);
-
             deadLabel.FadeTo(1, 750, Easing.Linear);
         }
 
         private async Task<Label> generateGameEndLabel(List<String> i_WinnerIds)
         {
-            StringBuilder gameEndMessage = new StringBuilder($"Game Over!.{Environment.NewLine}The winners are:{Environment.NewLine}");
+            StringBuilder gameEndMessage;
 
-            foreach(String id in i_WinnerIds)
+            if (i_WinnerIds.Count > 0)
             {
-                UserView user = await UserView.GetUser(id);
-                gameEndMessage.AppendLine(user.Username);
+                gameEndMessage = new StringBuilder($"Game Over!.{Environment.NewLine}The winners are:{Environment.NewLine}");
+
+                foreach (String id in i_WinnerIds)
+                {
+                    UserView user = await UserView.GetUser(id);
+                    gameEndMessage.AppendLine(user.Username);
+                }
+            }
+            else
+            {
+                gameEndMessage = new StringBuilder($"Game Over!.{Environment.NewLine}It's a tie!");
             }
 
             Label deadLabel = new Label()

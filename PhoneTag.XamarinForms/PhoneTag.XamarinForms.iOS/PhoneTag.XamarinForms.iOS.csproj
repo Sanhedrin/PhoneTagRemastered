@@ -395,6 +395,15 @@
   <ItemGroup>
     <BundleResource Include="Resources\mainmenu_background.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\ready_check.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\unready_check.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\bam.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.3.0.46-pre3\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.0.46-pre3\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

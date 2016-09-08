@@ -1,4 +1,5 @@
 ﻿using PhoneTag.XamarinForms.Controls.MenuButtons;
+using Plugin.XamJam.Screen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace PhoneTag.XamarinForms.Pages
         private Label m_ChatBoxText;
         private Entry m_ChatInput;
         private ScrollView m_ChatBoxScrollView;
+        private Image m_ChatBorder;
 
         protected void initializeChat()
         {
@@ -23,7 +25,11 @@ namespace PhoneTag.XamarinForms.Pages
 
                 m_ChatDialog = generateChatDialog();
                 AbsoluteLayout.SetLayoutFlags(m_ChatDialog, AbsoluteLayoutFlags.All);
-                AbsoluteLayout.SetLayoutBounds(m_ChatDialog, new Rectangle(5, 0.45, 0.8, 0.8));
+                AbsoluteLayout.SetLayoutBounds(m_ChatDialog, new Rectangle(3, 0.25, 0.64, 0.45));
+
+                m_ChatBorder = generateChatBorder();
+                AbsoluteLayout.SetLayoutFlags(m_ChatBorder, AbsoluteLayoutFlags.All);
+                AbsoluteLayout.SetLayoutBounds(m_ChatBorder, new Rectangle(5, 0.225, 0.8, 0.5));
 
                 m_ChatButton = generateChatButton();
                 AbsoluteLayout.SetLayoutFlags(m_ChatButton, AbsoluteLayoutFlags.All);
@@ -32,21 +38,39 @@ namespace PhoneTag.XamarinForms.Pages
 
             (Content as AbsoluteLayout).Children.Add(m_ChatButton);
             (Content as AbsoluteLayout).Children.Add(m_ChatDialog);
+            (Content as AbsoluteLayout).Children.Add(m_ChatBorder);
         }
 
-        private StackLayout generateChatDialog()
+        private Image generateChatBorder()
         {
-            StackLayout chatDialog = new StackLayout()
+            Image image = new Image
             {
-                BackgroundColor = Color.Black,
-                VerticalOptions = LayoutOptions.FillAndExpand
+                Source = "killcam_frame.png",
+                Aspect = Aspect.Fill
             };
 
+            return image;
+        }
+
+        private Grid generateChatDialog()
+        {
             ScrollView chatBox = generateChatBox();
             Entry inputBox = generateChatInput();
 
-            chatDialog.Children.Add(chatBox);
-            chatDialog.Children.Add(inputBox);
+            Grid chatDialog = new Grid()
+            {
+                BackgroundColor = Color.Black,
+                VerticalOptions = LayoutOptions.FillAndExpand,
+
+                RowDefinitions =
+                {
+                    new RowDefinition { Height = new GridLength(0.25, GridUnitType.Star) },
+                    new RowDefinition { Height = new GridLength(0.05, GridUnitType.Star) }
+                }
+            };
+
+            chatDialog.Children.Add(chatBox, 0, 0);
+            chatDialog.Children.Add(inputBox, 0, 1);
 
             return chatDialog;
         }
@@ -68,7 +92,8 @@ namespace PhoneTag.XamarinForms.Pages
         {
             m_ChatBoxScrollView = new ScrollView();;
 
-            m_ChatBoxScrollView.Content = m_ChatBoxText = new Label();
+            m_ChatBoxScrollView.Content = m_ChatBoxText = new Label() { FontSize = 12 } ;
+            m_ChatBoxScrollView.BackgroundColor = Color.Black;
             m_ChatBoxText.TextColor = Color.White;
 
             return m_ChatBoxScrollView;

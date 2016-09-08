@@ -62,7 +62,14 @@ namespace PhoneTag.XamarinForms.Pages
         //Opens the area chooser page to choose the game's area.
         private async Task SetGameAreaButton_Clicked()
         {
-            await Navigation.PushAsync(m_AreaChooserPage);
+            if (m_GameDetails != null)
+            {
+                await Navigation.PushAsync(m_AreaChooserPage);
+            }
+            else
+            {
+                await DisplayAlert("Error", "Please choose game mode before setting the game area", "Ok");
+            }
         }
 
         //Creates the game using the chosen parameters.

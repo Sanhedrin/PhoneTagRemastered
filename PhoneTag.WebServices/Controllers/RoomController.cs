@@ -71,6 +71,28 @@ namespace PhoneTag.WebServices.Controllers
         }
 
         /// <summary>
+        /// Reports that the given game has run out of time.
+        /// </summary>
+        [Route("api/rooms/{i_RoomId}/timeup")]
+        [HttpPost]
+        public async Task TimeUp([FromUri] string i_RoomId)
+        {
+            if (!String.IsNullOrEmpty(i_RoomId))
+            {
+                GameRoom room = await GetRoomModel(i_RoomId);
+
+                if (room != null)
+                {
+                    room.Expire();
+                }
+            }
+            else
+            {
+                ErrorLogger.Log("Invalid details given");
+            }
+        }
+
+        /// <summary>
         /// Handles a kill dispute request.
         /// </summary>
         [Route("api/rooms/{i_RoomId}/dispute")]
@@ -237,9 +259,11 @@ namespace PhoneTag.WebServices.Controllers
         /// <returns>A list of matching room ids</returns>
         [Route("api/rooms/find/{i_Lat}/{i_Lng}/{i_SearchRadius}")]
         [HttpGet]
-        public async Task<List<String>> GetRoomsInRange(double i_Lat, double i_Lng, float i_SearchRadius)
+        public async Task<List<String>> GetRoomsInRange(double i_Lat, double i_Lng, double i_SearchRadius)
         {
             List<String> roomIds = new List<string>();
+
+            i_SearchRadius /= 1000;
 
             try
             {
@@ -376,6 +400,8 @@ namespace PhoneTag.WebServices.Controllers
             {
                 ErrorLogger.Log("Invalid ID given");
             }
+
+            foundRoom.GameModeDetails.Mode.GameEnded += foundRoom.Mode_GameEnded;
 
             return foundRoom;
         }

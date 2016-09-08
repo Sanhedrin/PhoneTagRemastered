@@ -29,13 +29,16 @@ namespace PhoneTag.XamarinForms.Pages
         private const double k_DefaultGameRadius = 0.5;
         private const double k_DefaultGameZoom = 1;
         private const bool k_IsSetUpView = false;
+
+        private bool m_GameOver;
+        private bool m_HaveLost = false;
         private int k_InitialGpsDelay = 3000;
 
         private GameMapInteractive m_GameMap;
         private CameraPreview m_Camera;
         private GameRoomView m_GameRoomView;
         private CancellationTokenSource m_GpsCancellationToken;
-        
+
         public GamePage(GameRoomView i_GameRoomView) : base()
         {
             m_GameRoomView = i_GameRoomView;
@@ -191,7 +194,7 @@ namespace PhoneTag.XamarinForms.Pages
 
         private void ShootButton_Clicked()
         {
-            if (!m_GameOver)
+            if (!m_HaveLost)
             {
                 buttonShoot.IsEnabled = false;
 
@@ -206,25 +209,32 @@ namespace PhoneTag.XamarinForms.Pages
 
         public override void ParseEvent(Event i_EventDetails)
         {
-            if(i_EventDetails is KillRequestEvent)
+            if (!m_GameOver)
             {
-                handleKillRequestEvent(i_EventDetails as KillRequestEvent);
-            }
-            else if(i_EventDetails is PlayerKilledEvent)
-            {
-                handlePlayerKilledEvent(i_EventDetails as PlayerKilledEvent);
-            }
-            else if(i_EventDetails is KillDisputeEvent)
-            {
-                handleKillDisputeEvent(i_EventDetails as KillDisputeEvent);
-            }
-            else if(i_EventDetails is GameEndedEvent)
-            {
-                handleGameEndedEvent(i_EventDetails as GameEndedEvent);
-            }
-            else if (i_EventDetails is OutOfBoundsEvent)
-            {
-                handleOutOfBoundsEvent(i_EventDetails as OutOfBoundsEvent);
+                if (i_EventDetails is KillRequestEvent)
+                {
+                    handleKillRequestEvent(i_EventDetails as KillRequestEvent);
+                }
+                else if (i_EventDetails is PlayerKilledEvent)
+                {
+                    handlePlayerKilledEvent(i_EventDetails as PlayerKilledEvent);
+                }
+                else if (i_EventDetails is KillDisputeEvent)
+                {
+                    handleKillDisputeEvent(i_EventDetails as KillDisputeEvent);
+                }
+                else if (i_EventDetails is GameEndedEvent)
+                {
+                    handleGameEndedEvent(i_EventDetails as GameEndedEvent);
+                }
+                else if (i_EventDetails is OutOfBoundsEvent)
+                {
+                    handleOutOfBoundsEvent(i_EventDetails as OutOfBoundsEvent);
+                }
+                else
+                {
+                    base.ParseEvent(i_EventDetails);
+                }
             }
             else
             {
@@ -254,6 +264,8 @@ namespace PhoneTag.XamarinForms.Pages
 
         private async Task endGame(List<String> i_WinnerIds)
         {
+            m_GameOver = true;
+
             await hideDialogSlideDown();
 
             await transitionToGameEnd(i_WinnerIds);
@@ -300,16 +312,6 @@ namespace PhoneTag.XamarinForms.Pages
                 killConfirmationDialog.KillDenied += DisputeDialog_VoteSpare;
 
                 openDisputeDialog(killConfirmationDialog);
-
-                bool displayTip = CrossSettings.Current.GetValueOrDefault("KillDispute", true);
-
-                if (displayTip)
-                {
-                    bool understood = await TrailableContentPage.CurrentPage.DisplayAlert("Kill Dispute",
-                        $"{user.Username} claims they have been wrongfully marked as dead.{Environment.NewLine}This dialog will be shown to all players, letting them vote whether they think the shot image justifies killing {user.Username} or not.{Environment.NewLine}The majority of the votes decides what happens; If the majority voted yes, {user.Username} will be killed, but if the majority voted no the player taking the shot will be killed instead as penalty.", "Don't show again", "Ok");
-
-                    CrossSettings.Current.AddOrUpdateValue("KillDispute", !understood);
-                }
             }
         }
 
@@ -348,7 +350,7 @@ namespace PhoneTag.XamarinForms.Pages
         {
             displayNotification(i_PlayerKilledEvent);
 
-            if (i_PlayerKilledEvent.PlayerFBID.Equals(UserView.Current.FBID) && !m_GameOver)
+            if (i_PlayerKilledEvent.PlayerFBID.Equals(UserView.Current.FBID) && !m_HaveLost)
             {
                 playerKilled();
             }

@@ -28,7 +28,6 @@ namespace PhoneTag.XamarinForms.Pages
 
             CrossSettings.Current.AddOrUpdateValue("AreaChooser", true);
             CrossSettings.Current.AddOrUpdateValue("KillConfirmations", true);
-            CrossSettings.Current.AddOrUpdateValue("KillDispute", true);
             CrossSettings.Current.AddOrUpdateValue("IconTips", true);
 
             List<String> gameModeNames = await PhoneTagInfo.GetGameModeList();
